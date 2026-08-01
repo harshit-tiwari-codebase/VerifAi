@@ -1,7 +1,9 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/User");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateTokens");
+const { sendVerificationEmail } = require("../utils/sendEmail");
 
 const cookieOptions = {
   httpOnly: true,
@@ -10,18 +12,18 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
+const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 /**
- * Register a new user.
+ * Register a new user and send an email verification link.
  *
  * @route   POST /api/auth/register
  * @access  Public
  *
- * @param   {Object} req.body
- * @param   {string} req.body.name       - Full name of the user.
- * @param   {string} req.body.email      - User's email address. Must be unique.
- * @param   {string} req.body.password   - Plaintext password, min 8 characters. Hashed before storage.
+ * @sideEffects
+ *  - Generates a verification token (stored hashed) and emails the raw token as a link via Resend.
  *
- * @returns {201} { message, user: { id, name, email, role } } - Account created successfully.
+ * @returns {201} { message, user } - Account created, verification email sent.
  * @returns {400} { message } - Missing required fields, or password shorter than 8 characters.
  * @returns {409} { message } - Email is already registered.
  * @returns {500} { message } - Unexpected server/database error.
@@ -44,14 +46,22 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Raw token goes in the email link; only its hash is stored in the DB
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
+      verificationToken: hashedToken,
+      verificationTokenExpiry: new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS),
     });
 
+    await sendVerificationEmail(user.email, user.name, rawToken);
+
     return res.status(201).json({
-      message: "Registration successful",
+      message: "Registration successful. Please check your email to verify your account.",
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
@@ -61,23 +71,102 @@ const register = async (req, res) => {
 };
 
 /**
+ * Verify a user's email address using the token from the verification link.
+ *
+ * @route   GET /api/auth/verify-email/:token
+ * @access  Public
+ *
+ * @returns {200} { message } - Email verified successfully.
+ * @returns {400} { message } - Token missing, invalid, or expired.
+ * @returns {500} { message } - Unexpected server/database error.
+ */
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    if (!token) {
+      return res.status(400).json({ message: "Verification token is required" });
+    }
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      verificationToken: hashedToken,
+      verificationTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Verification link is invalid or has expired" });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = null;
+    user.verificationTokenExpiry = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Email verified successfully. You can now log in." });
+  } catch (error) {
+    console.error("Verify email error:", error.message);
+    return res.status(500).json({ message: "Server error during email verification" });
+  }
+};
+
+/**
+ * Resend a verification email (e.g. if the original link expired or was lost).
+ *
+ * @route   POST /api/auth/resend-verification
+ * @access  Public
+ *
+ * @returns {200} { message } - Generic success message regardless of whether the email
+ *                               exists or is already verified, to avoid user enumeration.
+ * @returns {400} { message } - Email not provided.
+ * @returns {500} { message } - Unexpected server/database error.
+ */
+const resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    const genericResponse = { message: "If an account exists and isn't verified, a new link has been sent." };
+
+    if (!user || user.isVerified) {
+      return res.status(200).json(genericResponse);
+    }
+
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+
+    user.verificationToken = hashedToken;
+    user.verificationTokenExpiry = new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS);
+    await user.save();
+
+    await sendVerificationEmail(user.email, user.name, rawToken);
+
+    return res.status(200).json(genericResponse);
+  } catch (error) {
+    console.error("Resend verification error:", error.message);
+    return res.status(500).json({ message: "Server error while resending verification email" });
+  }
+};
+
+/**
  * Authenticate a user and issue access/refresh tokens.
  *
  * @route   POST /api/auth/login
  * @access  Public
  *
- * @param   {Object} req.body
- * @param   {string} req.body.email      - Registered email address.
- * @param   {string} req.body.password   - Plaintext password to verify against the stored hash.
- *
  * @sideEffects
  *  - Appends the new refresh token to `user.refreshTokens`.
  *  - Updates `user.lastLogin` to the current timestamp.
- *  - Sets `accessToken` and `refreshToken` httpOnly cookies (see `cookieOptions`).
+ *  - Sets `accessToken` and `refreshToken` httpOnly cookies.
  *
- * @returns {200} { message, accessToken, user: { id, name, email, role } } - Login successful.
+ * @returns {200} { message, accessToken, user } - Login successful.
  * @returns {400} { message } - Missing email or password.
- * @returns {401} { message } - Email not found, or password does not match ("Invalid credentials" in both cases to avoid user enumeration).
+ * @returns {401} { message } - Invalid credentials.
+ * @returns {403} { message } - Account exists but email is not yet verified.
  * @returns {500} { message } - Unexpected server/database error.
  */
 const login = async (req, res) => {
@@ -96,6 +185,10 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    if (!user.isVerified) {
+      return res.status(403).json({ message: "Please verify your email before logging in" });
     }
 
     const accessToken = generateAccessToken(user);
@@ -125,17 +218,9 @@ const login = async (req, res) => {
  * @route   POST /api/auth/refresh
  * @access  Public (requires a valid `refreshToken` cookie)
  *
- * @param   {string} req.cookies.refreshToken - Refresh token issued at login/last refresh.
- *
- * @sideEffects
- *  - Removes the presented refresh token from `user.refreshTokens` and replaces it with a newly generated one (rotation).
- *  - Sets new `accessToken` and `refreshToken` cookies.
- *
  * @returns {200} { accessToken } - New access token issued.
- * @returns {401} { message } - No `refreshToken` cookie present on the request.
- * @returns {403} { message } - Token failed JWT verification (invalid/expired signature).
- * @returns {403} { message } - Token is well-formed but not present in the user's stored `refreshTokens`
- *                               (e.g. already rotated/reused, or session was revoked).
+ * @returns {401} { message } - No refresh token cookie present.
+ * @returns {403} { message } - Token invalid/expired or not recognized.
  * @returns {500} { message } - Unexpected server/database error.
  */
 const refresh = async (req, res) => {
@@ -157,7 +242,6 @@ const refresh = async (req, res) => {
       return res.status(403).json({ message: "Refresh token not recognized" });
     }
 
-    // Rotate refresh token
     user.refreshTokens = user.refreshTokens.filter((t) => t !== token);
     const newRefreshToken = generateRefreshToken(user);
     user.refreshTokens.push(newRefreshToken);
@@ -179,16 +263,9 @@ const refresh = async (req, res) => {
  * Log out the current session by revoking its refresh token and clearing auth cookies.
  *
  * @route   POST /api/auth/logout
- * @access  Public (no-op safe even without a valid session)
+ * @access  Public
  *
- * @param   {string} [req.cookies.refreshToken] - Refresh token for the current session, if present.
- *
- * @sideEffects
- *  - If a refresh token cookie is present and decodable, removes it from `user.refreshTokens`
- *    (only that session is revoked; other devices/sessions remain logged in).
- *  - Clears the `accessToken` and `refreshToken` cookies regardless of whether a token was present.
- *
- * @returns {200} { message } - Always returned on success, even if no refresh token was present.
+ * @returns {200} { message } - Always returned on success.
  * @returns {500} { message } - Unexpected server/database error.
  */
 const logout = async (req, res) => {
@@ -211,4 +288,27 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, refresh, logout };
+/**
+ * Get the currently authenticated user's profile.
+ *
+ * @route   GET /api/auth/me
+ * @access  Private (requires valid access token)
+ *
+ * @returns {200} { user } - Profile without password/refreshTokens.
+ * @returns {404} { message } - User not found.
+ * @returns {500} { message } - Unexpected server/database error.
+ */
+const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password -refreshTokens -verificationToken");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error("GetMe error:", error.message);
+    return res.status(500).json({ message: "Server error while fetching user" });
+  }
+};
+
+module.exports = { register, login, refresh, logout, verifyEmail, resendVerification, getMe };

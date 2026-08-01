@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    verificationToken: {
+      type: String,
+      default: null,
+    },
+    verificationTokenExpiry: {
+      type: Date,
+      default: null,
+    },
     refreshTokens: {
       type: [String],
       default: [],
@@ -34,9 +42,7 @@ const userSchema = new mongoose.Schema(
     badges: {
       type: [
         {
-          challengeId: {
-            type: mongoose.Schema.Types.ObjectId, ref: "Challenge"
-          },
+          challengeId: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge" },
           score: Number,
           earnedAt: { type: Date, default: Date.now },
         },
