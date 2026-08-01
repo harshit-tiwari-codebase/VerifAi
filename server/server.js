@@ -1,25 +1,33 @@
-// server.js - Express entrypoint for the backend
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
+require("dotenv").config();
+const http = require("http");
+const { Server } = require("socket.io");
 
-const app = express();
-const port = process.env.PORT || 3001;
+const app = require("./src/app");
+const connectDB = require("./src/config/db");
 
-app.use(express.json());
+const PORT = process.env.PORT || 5000;
 
-app.get('/api/ping', (req, res) => {
-	res.json({ pong: true });
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  },
 });
 
-// Serve static client files in production if present
-const clientDist = path.join(__dirname, '..', 'client', 'src');
-app.use(express.static(clientDist));
+// Make io accessible in controllers via req.app.get("io")
+app.set("io", io);
 
-app.get('/', (req, res) => {
-	res.sendFile(path.join(clientDist, 'index.html'));
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
 });
 
-app.listen(port, () => {
-	console.log(`VerifAI server listening on port ${port}`);
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`VerifAI server listening on port ${PORT}`);
+  });
 });
