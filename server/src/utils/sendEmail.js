@@ -36,4 +36,61 @@ const sendVerificationEmail = async (toEmail, name, token) => {
   }
 };
 
-module.exports = { sendVerificationEmail };
+/**
+ * Send a password reset email.
+ *
+ * @param {string} toEmail - Recipient's email address.
+ * @param {string} name - Recipient's name.
+ * @param {string} token - Raw password reset token.
+ */
+const sendPasswordResetEmail = async (toEmail, name, token) => {
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+  try {
+    await resend.emails.send({
+      from: process.env.FROM_EMAIL || "onboarding@resend.dev",
+      to: toEmail,
+      subject: "Reset your VerifAI password",
+      html: `
+        <div style="font-family: sans-serif; max-width: 480px; margin: auto;">
+          <h2>Hello ${name},</h2>
+
+          <p>We received a request to reset your VerifAI account password.</p>
+
+          <p>If you requested this password reset, click the button below.</p>
+
+          <a
+            href="${resetUrl}"
+            style="
+              display:inline-block;
+              padding:12px 20px;
+              background:#EF4444;
+              color:#ffffff;
+              text-decoration:none;
+              border-radius:6px;
+              font-weight:bold;
+            "
+          >
+            Reset Password
+          </a>
+
+          <p style="margin-top:20px;color:#666;font-size:13px;">
+            This link will expire in <strong>30 minutes</strong>.
+          </p>
+
+          <p style="margin-top:20px;color:#666;font-size:13px;">
+            If you did not request a password reset, you can safely ignore this email.
+          </p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Failed to send password reset email:", error.message);
+    throw error;
+  }
+};
+
+module.exports = {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+};

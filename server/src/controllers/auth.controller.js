@@ -3,7 +3,12 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateTokens");
-const { sendVerificationEmail } = require("../utils/sendEmail");
+const { generateSecureToken } = require("../utils/tokenUtils");
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} = require("../utils/sendEmail");
+
 
 const cookieOptions = {
   httpOnly: true,
@@ -47,8 +52,7 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Raw token goes in the email link; only its hash is stored in the DB
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const { rawToken, hashedToken } = generateSecureToken();
 
     const user = await User.create({
       name,
@@ -136,8 +140,7 @@ const resendVerification = async (req, res) => {
       return res.status(200).json(genericResponse);
     }
 
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const { rawToken, hashedToken } = generateSecureToken();
 
     user.verificationToken = hashedToken;
     user.verificationTokenExpiry = new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS);
@@ -311,4 +314,98 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { register, login, refresh, logout, verifyEmail, resendVerification, getMe };
+/**
+ * Request a password reset email.
+ *
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ *
+ * @body
+ * {
+ *   "email": "user@example.com"
+ * }
+ *
+ * Security:
+ * - Always returns the same response even if the email doesn't exist
+ *   to prevent user enumeration attacks.
+ */
+const PASSWORD_RESET_TOKEN_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const genericResponse = {
+      message:
+        "If an account with that email exists, a password reset link has been sent.",
+    };
+
+    const user = await User.findOne({ email });
+
+    // Don't reveal whether the user exists
+    if (!user) {
+      return res.status(200).json(genericResponse);
+    }
+
+    // Generate secure token
+    const { rawToken, hashedToken } = generateSecureToken();
+
+    // Save only hashed token
+    user.passwordResetToken = hashedToken;
+    user.passwordResetTokenExpiry = new Date(
+      Date.now() + PASSWORD_RESET_TOKEN_EXPIRY_MS
+    );
+
+   await user.save();
+
+try {
+
+    await sendPasswordResetEmail(
+        user.email,
+        user.name,
+        rawToken
+    );
+
+} catch (error) {
+
+    console.error("Failed to send password reset email:", error.message);
+
+    // Cleanup token because email wasn't delivered
+    user.passwordResetToken = null;
+    user.passwordResetTokenExpiry = null;
+
+    await user.save();
+
+    return res.status(500).json({
+        message: "Failed to send password reset email. Please try again."
+    });
+
+}
+
+return res.status(200).json(genericResponse);
+
+  } catch (error) {
+    console.error("Forgot password error:", error.message);
+
+    return res.status(500).json({
+      message: "Server error while processing password reset request",
+    });
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  refresh,
+  logout,
+  verifyEmail,
+  resendVerification,
+  getMe,
+  forgotPassword,
+};

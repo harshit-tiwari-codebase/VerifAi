@@ -26,6 +26,9 @@ router.post("/refresh", refresh);
 router.post("/logout", logout);
 router.get("/me", verifyAccessToken, getMe);
 
+// Forget Password
+router.post("/forgot-password",forgotPassword);
+
 // Email verification
 router.get("/verify-email/:token", verifyEmail);
 router.post("/resend-verification", authLimiter, resendVerification);
