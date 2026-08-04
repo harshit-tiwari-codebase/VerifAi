@@ -8,6 +8,9 @@ const {
   getMe,
   verifyEmail,
   resendVerification,
+  forgotPassword,
+  resetPassword,
+  
 } = require("../controllers/auth.controller");
 const { verifyAccessToken } = require("../middlewares/authMiddleware");
 
@@ -27,7 +30,10 @@ router.post("/logout", logout);
 router.get("/me", verifyAccessToken, getMe);
 
 // Forget Password
-router.post("/forgot-password",forgotPassword);
+
+// Password reset
+router.post("/forgot-password", authLimiter, forgotPassword);
+router.post("/reset-password/:token", authLimiter, resetPassword);
 
 // Email verification
 router.get("/verify-email/:token", verifyEmail);

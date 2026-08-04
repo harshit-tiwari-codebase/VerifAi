@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      select: false,
     },
     role: {
       type: String,
@@ -36,10 +35,6 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    refreshTokens: {
-      type: [String],
-      default: [],
-    },
     passwordResetToken: {
       type: String,
       default: null,
@@ -48,13 +43,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    refreshTokens: {
+      type: [String],
+      default: [],
+    },
     badges: {
       type: [
         {
-          challengeId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Challenge",
-          },
+          challengeId: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge" },
           score: Number,
           earnedAt: { type: Date, default: Date.now },
         },
@@ -65,7 +61,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("User", userSchema);

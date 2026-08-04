@@ -1,14 +1,9 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 const User = require("../models/User");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateTokens");
-const { generateSecureToken } = require("../utils/tokenUtils");
-const {
-  sendVerificationEmail,
-  sendPasswordResetEmail,
-} = require("../utils/sendEmail");
-
+const { generateSecureToken, hashToken } = require("../utils/tokenUtils");
+const { sendVerificationEmail, sendPasswordResetEmail } = require("../utils/sendEmail");
 
 const cookieOptions = {
   httpOnly: true,
@@ -18,15 +13,13 @@ const cookieOptions = {
 };
 
 const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+const PASSWORD_RESET_TOKEN_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
 
 /**
  * Register a new user and send an email verification link.
  *
  * @route   POST /api/auth/register
  * @access  Public
- *
- * @sideEffects
- *  - Generates a verification token (stored hashed) and emails the raw token as a link via Resend.
  *
  * @returns {201} { message, user } - Account created, verification email sent.
  * @returns {400} { message } - Missing required fields, or password shorter than 8 characters.
@@ -50,8 +43,6 @@ const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Raw token goes in the email link; only its hash is stored in the DB
     const { rawToken, hashedToken } = generateSecureToken();
 
     const user = await User.create({
@@ -91,10 +82,8 @@ const verifyEmail = async (req, res) => {
       return res.status(400).json({ message: "Verification token is required" });
     }
 
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
     const user = await User.findOne({
-      verificationToken: hashedToken,
+      verificationToken: hashToken(token),
       verificationTokenExpiry: { $gt: new Date() },
     });
 
@@ -132,9 +121,8 @@ const resendVerification = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email });
-
     const genericResponse = { message: "If an account exists and isn't verified, a new link has been sent." };
+    const user = await User.findOne({ email });
 
     if (!user || user.isVerified) {
       return res.status(200).json(genericResponse);
@@ -156,15 +144,118 @@ const resendVerification = async (req, res) => {
 };
 
 /**
+ * Request a password reset link.
+ *
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ *
+ * @sideEffects
+ *  - Generates a reset token (stored hashed) and emails the raw token as a link.
+ *  - If the email fails to send, the token is rolled back so it can't be used.
+ *
+ * @returns {200} { message } - Generic success message regardless of whether the email
+ *                               exists, to avoid user enumeration.
+ * @returns {400} { message } - Email not provided.
+ * @returns {500} { message } - Reset email failed to send, or unexpected server error.
+ */
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const genericResponse = {
+      message: "If an account with that email exists, a password reset link has been sent.",
+    };
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json(genericResponse);
+    }
+
+    const { rawToken, hashedToken } = generateSecureToken();
+
+    user.passwordResetToken = hashedToken;
+    user.passwordResetTokenExpiry = new Date(Date.now() + PASSWORD_RESET_TOKEN_EXPIRY_MS);
+    await user.save();
+
+    try {
+      await sendPasswordResetEmail(user.email, user.name, rawToken);
+    } catch (emailError) {
+      console.error("Failed to send password reset email:", emailError.message);
+
+      // Roll back the token — no point leaving a valid reset token active
+      // for a link the user never received
+      user.passwordResetToken = null;
+      user.passwordResetTokenExpiry = null;
+      await user.save();
+
+      return res.status(500).json({ message: "Failed to send password reset email. Please try again." });
+    }
+
+    return res.status(200).json(genericResponse);
+  } catch (error) {
+    console.error("Forgot password error:", error.message);
+    return res.status(500).json({ message: "Server error while processing password reset request" });
+  }
+};
+
+/**
+ * Reset a user's password using the token from the reset email.
+ *
+ * @route   POST /api/auth/reset-password/:token
+ * @access  Public
+ *
+ * @sideEffects
+ *  - Sets a new hashed password and clears the reset token.
+ *  - Invalidates ALL existing sessions (clears `refreshTokens`) — if a
+ *    password was compromised, any session using the old credentials
+ *    should not survive the reset.
+ *
+ * @returns {200} { message } - Password reset successful.
+ * @returns {400} { message } - Token missing/invalid/expired, or password too short.
+ * @returns {500} { message } - Unexpected server/database error.
+ */
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Reset token is required" });
+    }
+    if (!password || password.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
+
+    const user = await User.findOne({
+      passwordResetToken: hashToken(token),
+      passwordResetTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Reset link is invalid or has expired" });
+    }
+
+    user.password = await bcrypt.hash(password, 12);
+    user.passwordResetToken = null;
+    user.passwordResetTokenExpiry = null;
+    user.refreshTokens = []; // log out every existing session
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successful. Please log in with your new password." });
+  } catch (error) {
+    console.error("Reset password error:", error.message);
+    return res.status(500).json({ message: "Server error during password reset" });
+  }
+};
+
+/**
  * Authenticate a user and issue access/refresh tokens.
  *
  * @route   POST /api/auth/login
  * @access  Public
- *
- * @sideEffects
- *  - Appends the new refresh token to `user.refreshTokens`.
- *  - Updates `user.lastLogin` to the current timestamp.
- *  - Sets `accessToken` and `refreshToken` httpOnly cookies.
  *
  * @returns {200} { message, accessToken, user } - Login successful.
  * @returns {400} { message } - Missing email or password.
@@ -297,13 +388,15 @@ const logout = async (req, res) => {
  * @route   GET /api/auth/me
  * @access  Private (requires valid access token)
  *
- * @returns {200} { user } - Profile without password/refreshTokens.
+ * @returns {200} { user } - Profile without password/refreshTokens/tokens.
  * @returns {404} { message } - User not found.
  * @returns {500} { message } - Unexpected server/database error.
  */
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password -refreshTokens -verificationToken");
+    const user = await User.findById(req.user.id).select(
+      "-password -refreshTokens -verificationToken -passwordResetToken"
+    );
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -314,91 +407,6 @@ const getMe = async (req, res) => {
   }
 };
 
-/**
- * Request a password reset email.
- *
- * @route   POST /api/auth/forgot-password
- * @access  Public
- *
- * @body
- * {
- *   "email": "user@example.com"
- * }
- *
- * Security:
- * - Always returns the same response even if the email doesn't exist
- *   to prevent user enumeration attacks.
- */
-const PASSWORD_RESET_TOKEN_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
-
-const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        message: "Email is required",
-      });
-    }
-
-    const genericResponse = {
-      message:
-        "If an account with that email exists, a password reset link has been sent.",
-    };
-
-    const user = await User.findOne({ email });
-
-    // Don't reveal whether the user exists
-    if (!user) {
-      return res.status(200).json(genericResponse);
-    }
-
-    // Generate secure token
-    const { rawToken, hashedToken } = generateSecureToken();
-
-    // Save only hashed token
-    user.passwordResetToken = hashedToken;
-    user.passwordResetTokenExpiry = new Date(
-      Date.now() + PASSWORD_RESET_TOKEN_EXPIRY_MS
-    );
-
-   await user.save();
-
-try {
-
-    await sendPasswordResetEmail(
-        user.email,
-        user.name,
-        rawToken
-    );
-
-} catch (error) {
-
-    console.error("Failed to send password reset email:", error.message);
-
-    // Cleanup token because email wasn't delivered
-    user.passwordResetToken = null;
-    user.passwordResetTokenExpiry = null;
-
-    await user.save();
-
-    return res.status(500).json({
-        message: "Failed to send password reset email. Please try again."
-    });
-
-}
-
-return res.status(200).json(genericResponse);
-
-  } catch (error) {
-    console.error("Forgot password error:", error.message);
-
-    return res.status(500).json({
-      message: "Server error while processing password reset request",
-    });
-  }
-};
-
 module.exports = {
   register,
   login,
@@ -406,6 +414,7 @@ module.exports = {
   logout,
   verifyEmail,
   resendVerification,
-  getMe,
   forgotPassword,
+  resetPassword,
+  getMe,
 };

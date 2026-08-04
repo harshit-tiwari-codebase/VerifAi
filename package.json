@@ -3,5 +3,8 @@
   "scripts": {
     "dev": "cd server && npm run dev",
     "start": "cd server && npm start"
+  },
+  "dependencies": {
+    "resend": "^6.18.1"
   }
 }
