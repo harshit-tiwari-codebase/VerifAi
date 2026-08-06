@@ -1,6 +1,21 @@
 const { Resend } = require("resend");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResendClient = () => {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+};
+
+const buildVerificationUrl = (token) => {
+  const apiBaseUrl = process.env.API_URL || process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  return `${apiBaseUrl}/api/auth/verify-email/${token}`;
+};
+
+const buildPasswordResetUrl = (token) => {
+  const apiBaseUrl = process.env.API_URL || process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  return `${apiBaseUrl}/api/auth/reset-password/${token}`;
+};
 
 /**
  * Send an email verification link to a newly registered user.
@@ -10,9 +25,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  * @param {string} token - Raw verification token (not hashed) to embed in the link.
  */
 const sendVerificationEmail = async (toEmail, name, token) => {
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
+  const verifyUrl = buildVerificationUrl(token);
 
   try {
+    const resend = getResendClient();
+    if (!resend) {
+      console.warn("RESEND_API_KEY not configured; skipping verification email send");
+      return;
+    }
+
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "onboarding@resend.dev",
       to: toEmail,
@@ -44,9 +65,15 @@ const sendVerificationEmail = async (toEmail, name, token) => {
  * @param {string} token - Raw password reset token.
  */
 const sendPasswordResetEmail = async (toEmail, name, token) => {
-  const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  const resetUrl = buildPasswordResetUrl(token);
 
   try {
+    const resend = getResendClient();
+    if (!resend) {
+      console.warn("RESEND_API_KEY not configured; skipping password reset email send");
+      return;
+    }
+
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "onboarding@resend.dev",
       to: toEmail,
@@ -91,6 +118,8 @@ const sendPasswordResetEmail = async (toEmail, name, token) => {
 };
 
 module.exports = {
+  buildVerificationUrl,
+  buildPasswordResetUrl,
   sendVerificationEmail,
   sendPasswordResetEmail,
 };
