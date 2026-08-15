@@ -24,5 +24,10 @@
     "postcss": "^8.4.45",
     "tailwindcss": "^3.4.10",
     "vite": "^5.4.2"
-  }
+  },
+  "description": "React (Vite) + Tailwind client implementing the landing page and the auth\r flow described in the project context: JWT access token in memory, refresh\r token in an httpOnly cookie, protected routes.",
+  "main": "postcss.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

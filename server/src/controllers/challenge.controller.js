@@ -66,6 +66,10 @@ const createChallenge = async (req, res, next) => {
   }
 };
 
+// FIX: unpublished/draft challenges must never appear in the public list.
+// Mentors/admins browsing their own drafts is a separate feature (not built
+// yet) — for now this endpoint is the public-facing list, so it only shows
+// published challenges to everyone, including the creator.
 const getChallenges = async (req, res, next) => {
   try {
     const {
@@ -77,7 +81,7 @@ const getChallenges = async (req, res, next) => {
       limit = 10,
     } = req.query;
 
-    const filter = {};
+    const filter = { isPublished: true };
 
     if (difficulty) filter.difficulty = difficulty;
     if (category) filter.category = category;
@@ -110,6 +114,10 @@ const getChallenges = async (req, res, next) => {
   }
 };
 
+// FIX: an unpublished challenge is now only visible to its owner or an
+// admin/mentor. Anyone else (including anonymous viewers via optionalAuth)
+// gets a 404 — same response as "doesn't exist" — so drafts don't leak
+// even to someone who guesses/finds the ObjectId.
 const getChallengeById = async (req, res, next) => {
   try {
     const challenge = await Challenge.findById(req.params.id).populate(
@@ -118,6 +126,17 @@ const getChallengeById = async (req, res, next) => {
     );
 
     if (!challenge) {
+      return res.status(404).json({
+        message: "Challenge not found",
+      });
+    }
+
+    const isOwner =
+      req.user && String(challenge.createdBy._id) === String(req.user.id);
+    const isPrivileged =
+      req.user && ["mentor", "admin"].includes(req.user.role);
+
+    if (!challenge.isPublished && !isOwner && !isPrivileged) {
       return res.status(404).json({
         message: "Challenge not found",
       });
