@@ -6,29 +6,53 @@
   * {
     @apply border-ink-600;
   }
-  body {
-    background-image: radial-gradient(
-        60% 50% at 50% 0%,
-        rgba(124, 111, 255, 0.08) 0%,
-        rgba(7, 10, 16, 0) 60%
-      ),
-      radial-gradient(
-        40% 40% at 85% 15%,
-        rgba(0, 217, 160, 0.06) 0%,
-        rgba(7, 10, 16, 0) 60%
-      );
+
+  html {
+    background: #04030a;
   }
+
+  body {
+    @apply bg-ink-900 text-mist-100;
+    background:
+      /* Main purple moon glow */
+      radial-gradient(
+        55% 45% at 50% -5%,
+        rgba(124, 58, 237, 0.16) 0%,
+        rgba(124, 58, 237, 0.08) 28%,
+        rgba(124, 58, 237, 0) 68%
+      ),
+      /* Secondary violet atmosphere */
+      radial-gradient(
+        35% 35% at 88% 18%,
+        rgba(168, 85, 247, 0.10) 0%,
+        rgba(168, 85, 247, 0) 70%
+      ),
+      /* Left-side moon reflection */
+      radial-gradient(
+        30% 30% at 8% 42%,
+        rgba(139, 92, 246, 0.055) 0%,
+        rgba(139, 92, 246, 0) 70%
+      ),
+      #04030a;
+
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
   h1,
   h2,
   h3,
   h4 {
     @apply font-display tracking-tight;
   }
+
   ::selection {
-    @apply bg-verify/30 text-mist-100;
+    background: rgba(124, 58, 237, 0.35);
+    color: #f4f6fa;
   }
+
   :focus-visible {
-    outline: 2px solid #00d9a0;
+    outline: 2px solid #8b5cf6;
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -38,11 +62,69 @@
   .container-xl {
     @apply mx-auto w-full max-w-6xl px-6;
   }
+
   .eyebrow {
     @apply font-mono text-xs uppercase tracking-[0.18em] text-verify;
   }
+
   .card {
     @apply rounded-xl border border-ink-600 bg-ink-800/60 backdrop-blur-sm;
+  }
+
+  /*
+   * DARK MOON AMBIENT SYSTEM
+   *
+   * Use these inside:
+   * relative overflow-hidden
+   */
+
+  .orb {
+    @apply pointer-events-none absolute rounded-full;
+    filter: blur(100px);
+    transform: translateZ(0);
+  }
+
+  .orb-verify {
+    background: radial-gradient(
+      circle,
+      rgba(124, 58, 237, 0.30) 0%,
+      rgba(124, 58, 237, 0.12) 35%,
+      rgba(124, 58, 237, 0) 72%
+    );
+  }
+
+  .orb-signal {
+    background: radial-gradient(
+      circle,
+      rgba(168, 85, 247, 0.22) 0%,
+      rgba(168, 85, 247, 0.08) 38%,
+      rgba(168, 85, 247, 0) 72%
+    );
+  }
+
+  /* Soft purple moonlight */
+  .moon-glow {
+    background: radial-gradient(
+      circle at center,
+      rgba(192, 132, 252, 0.12) 0%,
+      rgba(139, 92, 246, 0.07) 25%,
+      rgba(76, 29, 149, 0.025) 48%,
+      transparent 72%
+    );
+    filter: blur(30px);
+  }
+
+  /* Controlled purple glow for important UI */
+  .purple-glow {
+    box-shadow:
+      0 0 25px rgba(124, 58, 237, 0.12),
+      0 0 70px rgba(124, 58, 237, 0.06);
+  }
+
+  .purple-glow-strong {
+    box-shadow:
+      0 0 20px rgba(124, 58, 237, 0.22),
+      0 0 60px rgba(168, 85, 247, 0.10);
   }
 }
 

@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import {
   loginRequest,
   logoutRequest,
@@ -6,12 +13,13 @@ import {
   registerRequest,
   resendVerificationRequest,
 } from "../api/authApi";
+
 import { setAccessToken } from "../../../api/axiosInstance";
 
 const AuthContext = createContext(null);
 
 const STATUS = {
-  IDLE: "idle", // initial silent-refresh check not yet finished
+  IDLE: "idle",
   AUTHENTICATED: "authenticated",
   UNAUTHENTICATED: "unauthenticated",
 };
@@ -21,26 +29,37 @@ export function AuthProvider({ children }) {
   const [status, setStatus] = useState(STATUS.IDLE);
   const [authError, setAuthError] = useState(null);
 
-  // On first load, try to silently refresh using the httpOnly cookie so a
-  // page reload doesn't force a re-login while the refresh token is valid.
+  /*
+   * Restore the authenticated session on page reload.
+   *
+   * The refresh token is stored in an httpOnly cookie,
+   * so the browser sends it automatically.
+   */
   useEffect(() => {
     let cancelled = false;
 
     async function bootstrap() {
       try {
         const data = await refreshRequest();
+
         if (cancelled) return;
-        setAccessToken(data.accessToken);
-        setUser(data.user ?? null);
+
+        setAccessToken(data?.accessToken ?? null);
+        setUser(data?.user ?? null);
+        setAuthError(null);
         setStatus(STATUS.AUTHENTICATED);
       } catch {
         if (cancelled) return;
+
         setAccessToken(null);
+        setUser(null);
+        setAuthError(null);
         setStatus(STATUS.UNAUTHENTICATED);
       }
     }
 
     bootstrap();
+
     return () => {
       cancelled = true;
     };
@@ -48,44 +67,75 @@ export function AuthProvider({ children }) {
 
   async function login(credentials) {
     setAuthError(null);
+
     try {
       const data = await loginRequest(credentials);
-      setAccessToken(data.accessToken);
-      setUser(data.user ?? null);
+
+      setAccessToken(data?.accessToken ?? null);
+      setUser(data?.user ?? null);
       setStatus(STATUS.AUTHENTICATED);
+
       return data;
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Could not sign in.");
+      const message =
+        err?.response?.data?.message ||
+        "Could not sign in.";
+
+      setAuthError(message);
+
       throw err;
     }
   }
 
   async function register(details) {
     setAuthError(null);
+
     try {
       const data = await registerRequest(details);
+
+      /*
+       * Registration does not authenticate the user.
+       * The user must verify their email and then sign in.
+       */
       setAccessToken(null);
       setUser(null);
       setStatus(STATUS.UNAUTHENTICATED);
+
       return data;
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Could not create account.");
+      const message =
+        err?.response?.data?.message ||
+        "Could not create account.";
+
+      setAuthError(message);
+
       throw err;
     }
   }
 
   async function resendVerification(email) {
     setAuthError(null);
+
     try {
-      const data = await resendVerificationRequest({ email });
+      const data = await resendVerificationRequest({
+        email,
+      });
+
       return data;
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Could not resend verification email.");
+      const message =
+        err?.response?.data?.message ||
+        "Could not resend verification email.";
+
+      setAuthError(message);
+
       throw err;
     }
   }
 
   async function logout() {
+    setAuthError(null);
+
     try {
       await logoutRequest();
     } finally {
@@ -99,9 +149,15 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       status,
-      isAuthenticated: status === STATUS.AUTHENTICATED,
-      isLoading: status === STATUS.IDLE,
+
+      isAuthenticated:
+        status === STATUS.AUTHENTICATED,
+
+      isLoading:
+        status === STATUS.IDLE,
+
       authError,
+
       login,
       register,
       resendVerification,
@@ -110,11 +166,21 @@ export function AuthProvider({ children }) {
     [user, status, authError]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+
+  if (!ctx) {
+    throw new Error(
+      "useAuth must be used within an AuthProvider"
+    );
+  }
+
   return ctx;
 }
