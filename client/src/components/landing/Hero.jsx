@@ -8,18 +8,24 @@ export default function Hero() {
       <div className="grid items-center gap-16 md:grid-cols-2">
         <div className="animate-rise">
           <Badge tone="signal" className="mb-6">
-            <span className="h-1.5 w-1.5 rounded-full bg-signal animate-blink" />
+            <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-blink" />
             AI-evaluated · not AI-generated
           </Badge>
 
           <h1 className="text-4xl font-semibold leading-[1.08] text-mist-100 md:text-6xl">
             Your resume says
             <br />
+
             <span className="text-mist-500 line-through decoration-flag/60">
               "proficient in Node.js."
             </span>
+
             <br />
-            <span className="text-verify">VerifAI</span> makes it provable.
+
+            <span className="text-violet-400">
+              VerifAI
+            </span>{" "}
+            makes it provable.
           </h1>
 
           <p className="mt-6 max-w-lg text-base text-mist-300 md:text-lg">
@@ -30,11 +36,22 @@ export default function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Button as={Link} to="/register" variant="verify" size="lg">
+            <Button
+              as={Link}
+              to="/register"
+              variant="verify"
+              size="lg"
+            >
               Start a challenge
               <ArrowIcon />
             </Button>
-            <Button as="a" href="#demo" variant="ghost" size="lg">
+
+            <Button
+              as="a"
+              href="#demo"
+              variant="ghost"
+              size="lg"
+            >
               Watch it evaluate code
             </Button>
           </div>
@@ -56,7 +73,12 @@ export default function Hero() {
 
 function ArrowIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+    >
       <path
         d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12"
         stroke="currentColor"
@@ -71,57 +93,77 @@ function ArrowIcon() {
 function HeroTerminal() {
   return (
     <div className="animate-rise [animation-delay:150ms]">
-      <div className="card overflow-hidden shadow-2xl shadow-black/40">
+      <div className="card overflow-hidden shadow-2xl shadow-violet-950/20">
+        {/* Terminal header */}
         <div className="flex items-center gap-2 border-b border-ink-600 bg-ink-800/80 px-4 py-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-flag/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-mist-700/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-verify/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+
+          {/* Removed emerald/mint */}
+          <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
+
           <span className="ml-3 font-mono text-xs text-mist-500">
             submissions/api-rate-limiter.js
           </span>
         </div>
+
+        {/* Code */}
         <pre className="overflow-x-auto px-5 py-5 font-mono text-[13px] leading-6 text-mist-300">
           <code>
-            <span className="text-signal">function</span>{" "}
-            <span className="text-verify">tokenBucket</span>
+            <span className="text-violet-400">function</span>{" "}
+            <span className="text-purple-300">tokenBucket</span>
             {"("}
             <span className="text-mist-100">capacity, refillRate</span>
             {") {"}
             {"\n"}
+
             {"  "}
             <span className="text-mist-700">
               // O(1) refill — avoids per-request loop
             </span>
             {"\n"}
+
             {"  "}
-            <span className="text-signal">let</span> tokens = capacity;
+            <span className="text-violet-400">let</span> tokens = capacity;
             {"\n"}
+
             {"  "}
-            <span className="text-signal">let</span> last = Date.now();
+            <span className="text-violet-400">let</span> last = Date.now();
             {"\n\n"}
+
             {"  "}
-            <span className="text-signal">return</span> {"{"}
+            <span className="text-violet-400">return</span> {"{"}
             {"\n"}
+
             {"    "}allow() {"{"}
             {"\n"}
+
             {"      "}
             <span className="text-mist-700">/* ... */</span>
             {"\n"}
+
             {"    "}
             {"}"}
             {"\n"}
+
             {"  "}
             {"};"}
             {"\n"}
+
             {"}"}
           </code>
         </pre>
+
+        {/* Evaluation footer */}
         <div className="flex items-center justify-between border-t border-ink-600 bg-ink-800/60 px-5 py-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-verify">
+          <div className="flex items-center gap-2 font-mono text-xs text-violet-400">
             <CheckIcon />
             AI review: architecture sound · edge cases handled
           </div>
-          <Badge tone="verify">score 94</Badge>
+
+          <Badge tone="verify">
+            score 94
+          </Badge>
         </div>
       </div>
     </div>
@@ -130,7 +172,12 @@ function HeroTerminal() {
 
 function CheckIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 16 16"
+      fill="none"
+    >
       <path
         d="M3 8.5L6.2 11.5L13 4.5"
         stroke="currentColor"
