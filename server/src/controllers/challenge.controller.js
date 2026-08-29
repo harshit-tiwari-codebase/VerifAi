@@ -178,7 +178,7 @@ const getChallengeById = async (req, res, next) => {
     }
 
     const isOwner =
-      req.user && String(challenge.createdBy._id) === String(req.user.id);
+      req.user && challenge.createdBy && String(challenge.createdBy._id) === String(req.user.id);
     const isPrivileged =
       req.user && ["mentor", "admin"].includes(req.user.role);
 
