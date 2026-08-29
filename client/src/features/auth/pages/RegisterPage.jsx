@@ -5,10 +5,16 @@ import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import AuthLayout from "../../../components/layout/AuthLayout.jsx";
 import Input from "../../../components/ui/Input.jsx";
 import Button from "../../../components/ui/Button.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  register,
+  resendVerification,
+  selectAuthError,
+} from "../authSlice.js";
 
 export default function RegisterPage() {
-  const { register, authError, resendVerification } = useAuth();
+  const dispatch = useDispatch();
+  const authError = useSelector(selectAuthError);
 
   const [form, setForm] = useState({
     name: "",
@@ -68,16 +74,16 @@ export default function RegisterPage() {
     try {
       const email = form.email.trim();
 
-      await register({
+      await dispatch(register({
         ...form,
         name: form.name.trim(),
         email,
-      });
+      })).unwrap();
 
       setRegisteredEmail(email);
       setShowSuccess(true);
     } catch {
-      // authError is already set by AuthContext
+      // authError is already set by the Redux auth slice.
     } finally {
       setSubmitting(false);
     }
@@ -90,13 +96,13 @@ export default function RegisterPage() {
     setResendMessage("");
 
     try {
-      await resendVerification(registeredEmail);
+      await dispatch(resendVerification(registeredEmail)).unwrap();
 
       setResendMessage(
         "A fresh verification link is on its way."
       );
     } catch {
-      // authError is already set by AuthContext
+      // authError is already set by the Redux auth slice.
     } finally {
       setResending(false);
     }
