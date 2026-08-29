@@ -61,6 +61,7 @@ const createChallenge = async (req, res, next) => {
       starterCode,
       evaluationCriteria,
       referenceSolution,
+      isPublished,
     } = req.body;
 
     const challenge = await Challenge.create({
@@ -74,6 +75,7 @@ const createChallenge = async (req, res, next) => {
       starterCode,
       evaluationCriteria,
       referenceSolution,
+      isPublished,
       createdBy: req.user.id,
     });
 
