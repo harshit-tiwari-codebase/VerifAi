@@ -1,127 +1,138 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Award, ShieldCheck, UserRound } from "lucide-react";
-
+import { Award, Code2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
 import Badge from "../components/ui/Badge.jsx";
-import { useAuth } from "../features/auth/context/AuthContext.jsx";
+import { useSelector } from "react-redux";
+import {
+  selectIsAuthLoading,
+  selectUser,
+} from "../features/auth/authSlice.js";
+
+function formatJoinDate(isoString) {
+  if (!isoString) return null;
+  return new Date(isoString).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function DashboardSkeleton() {
+  // Shown while Redux auth status is "idle" — the /auth/refresh bootstrap
+  // call is genuinely async on every page load, so without this the page
+  // would flash empty name/role before real data arrives.
+  return (
+    <div className="min-h-screen bg-ink-900">
+      <Navbar />
+      <main className="container-xl py-10">
+        <div className="animate-pulse border-b border-ink-600 pb-6">
+          <div className="h-7 w-40 rounded bg-ink-800" />
+          <div className="mt-2 h-4 w-56 rounded bg-ink-800" />
+        </div>
+        <div className="mt-8 h-56 animate-pulse rounded-xl bg-ink-800" />
+      </main>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const user = useSelector(selectUser);
+  const isLoading = useSelector(selectIsAuthLoading);
 
-  const badgeCount = user?.badges?.length ?? 0;
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  // Every field below comes directly from GET /api/auth/me — nothing here
+  // is invented or estimated. If a field isn't in that response, it isn't
+  // rendered.
+  const badges = user?.badges ?? [];
+  const name = user?.name?.split(" ")[0] ?? "there";
   const role = user?.role ?? "student";
+  const joined = formatJoinDate(user?.createdAt);
 
   return (
-    <div className="min-h-screen bg-[#04030A]">
+    <div className="min-h-screen bg-ink-900">
       <Navbar />
 
-      <main className="container-xl relative py-14">
-        {/* Dark moon ambient background */}
-        <div className="pointer-events-none absolute -top-20 right-0 h-80 w-80 rounded-full bg-violet-600/[0.05] blur-3xl" />
-
-        {/* Header */}
-        <section className="relative">
-          <p className="eyebrow mb-3 text-violet-400">
-            your profile
-          </p>
-
-          <h1 className="text-3xl font-semibold text-mist-100 md:text-4xl">
-            Welcome
-            {user?.name ? `, ${user.name}` : ""}.
-          </h1>
-
-          <p className="mt-3 max-w-2xl text-mist-400">
-            Your verified engineering profile lives here. Complete
-            real-world challenges, earn proof-of-work badges, and
-            build a profile backed by evaluated submissions.
-          </p>
-        </section>
-
-        {/* Profile summary */}
-        <section className="relative mt-10 grid gap-4 md:grid-cols-3">
-          {/* Badges */}
-          <div className="card group relative overflow-hidden px-6 py-6 transition-all duration-300 hover:border-violet-500/20 hover:shadow-[0_0_35px_rgba(139,92,246,0.06)]">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-violet-600/10 blur-3xl" />
-
-            <div className="relative">
-              <div className="flex items-center justify-between">
-                <p className="font-mono text-xs uppercase tracking-[0.12em] text-mist-500">
-                  badges earned
-                </p>
-
-                <Award className="h-4 w-4 text-violet-400/70" />
-              </div>
-
-              <p className="mt-3 font-display text-4xl font-semibold text-violet-400">
-                {badgeCount}
+      <main className="container-xl py-10">
+        {/* Header — only real fields: name, role, join date */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink-600 pb-6">
+          <div>
+            <div className="flex items-center gap-3">
+              <p className="font-display text-2xl font-semibold text-mist-100">
+                {name}<span className="text-verify">.</span>
               </p>
-
-              <p className="mt-1 text-xs text-mist-700">
-                verified proof-of-work credentials
-              </p>
+              <Badge tone="signal">{role}</Badge>
             </div>
+            {joined && (
+              <p className="mt-1 text-sm text-mist-500">Member since {joined}</p>
+            )}
           </div>
 
-          {/* Role */}
-          <div className="card group relative overflow-hidden px-6 py-6 transition-all duration-300 hover:border-purple-500/20 hover:shadow-[0_0_35px_rgba(168,85,247,0.05)]">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-purple-500/8 blur-3xl" />
+          <Link
+            to="/challenges"
+            className="flex items-center gap-2 rounded-lg border border-verify/25 bg-verify/10 px-4 py-2 text-sm font-medium text-verify transition-colors hover:bg-verify/15"
+          >
+            <Code2 className="h-4 w-4" />
+            Browse challenges
+          </Link>
+        </div>
 
-            <div className="relative">
-              <div className="flex items-center justify-between">
-                <p className="font-mono text-xs uppercase tracking-[0.12em] text-mist-500">
-                  role
-                </p>
+        {/* Badges section — real data only, badges.length is honestly 0 for
+            every user right now since nothing in the backend issues a badge
+            yet (that happens after Judge0 + AI evaluation, which is Track B,
+            not built). No submissions list, no streak, no progress ring —
+            none of those have a backing endpoint yet, so they aren't here. */}
+        <section className="mt-8">
+          <h2 className="font-display text-lg font-semibold text-mist-100">
+            Verified badges
+          </h2>
 
-                <UserRound className="h-4 w-4 text-purple-300/70" />
+          {badges.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-ink-600 bg-ink-800/60 px-8 py-12 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-verify/10">
+                <Award className="h-5 w-5 text-verify" />
               </div>
-
-              <Badge tone="signal" className="mt-4">
-                {role}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Next step */}
-          <div className="card group relative flex flex-col justify-between overflow-hidden px-6 py-6 transition-all duration-300 hover:border-violet-500/20 hover:shadow-[0_0_35px_rgba(139,92,246,0.06)]">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-violet-600/8 blur-3xl" />
-
-            <div className="relative">
-              <div className="flex items-center justify-between">
-                <p className="font-mono text-xs uppercase tracking-[0.12em] text-mist-500">
-                  next step
-                </p>
-
-                <ShieldCheck className="h-4 w-4 text-violet-400/70" />
-              </div>
-
-              <p className="mt-3 text-sm text-mist-300">
-                Put your skills to the test with a real engineering
-                challenge.
+              <p className="mt-4 text-sm font-medium text-mist-100">
+                No verified badges yet
               </p>
+              <p className="mx-auto mt-1 max-w-sm text-sm text-mist-500">
+                Solve a real engineering challenge and pass evaluation to earn your first one.
+              </p>
+              <Link
+                to="/challenges"
+                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-verify px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-verify/90"
+              >
+                Solve your first challenge
+              </Link>
             </div>
-
-            <Link
-              to="/"
-              className="
-                relative mt-5
-                inline-flex items-center gap-2
-                font-mono text-sm
-                text-violet-400
-                transition-colors
-                hover:text-violet-300
-              "
-            >
-              Browse challenges
-
-              <ArrowRight
-                className="
-                  h-4 w-4
-                  transition-transform duration-200
-                  group-hover:translate-x-1
-                "
-              />
-            </Link>
-          </div>
+          ) : (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {badges.map((b, i) => (
+                <div
+                  key={b.challengeId ?? i}
+                  className="rounded-xl border border-ink-600 bg-ink-800/60 p-5"
+                >
+                  <div className="flex items-center justify-between">
+                    <Award className="h-4 w-4 text-verify" />
+                    <span className="font-mono text-lg font-semibold text-verify">
+                      {b.score ?? "—"}
+                    </span>
+                  </div>
+                  {/* NOTE: badges.challengeId is not populated by getMe() right
+                      now, so only the raw ObjectId is available — no challenge
+                      title to show here. Add
+                      .populate("badges.challengeId", "title") to the getMe
+                      controller if you want the title displayed instead. */}
+                  {b.earnedAt && (
+                    <p className="mt-3 text-xs text-mist-500">
+                      Earned {new Date(b.earnedAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

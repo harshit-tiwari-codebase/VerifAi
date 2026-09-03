@@ -5,10 +5,16 @@ import { ShieldCheck, ArrowRight } from "lucide-react";
 import AuthLayout from "../../../components/layout/AuthLayout.jsx";
 import Input from "../../../components/ui/Input.jsx";
 import Button from "../../../components/ui/Button.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  login,
+  resendVerification,
+  selectAuthError,
+} from "../authSlice.js";
 
 export default function LoginPage() {
-  const { login, authError, resendVerification } = useAuth();
+  const dispatch = useDispatch();
+  const authError = useSelector(selectAuthError);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,16 +57,16 @@ export default function LoginPage() {
     setResendMessage("");
 
     try {
-      await login({
+      await dispatch(login({
         email: form.email.trim(),
         password: form.password,
-      });
+      })).unwrap();
 
       navigate(redirectTo, {
         replace: true,
       });
     } catch {
-      // authError is already handled by AuthContext
+      // authError is already handled by the Redux auth slice.
     } finally {
       setSubmitting(false);
     }
@@ -72,13 +78,13 @@ export default function LoginPage() {
     setResending(true);
 
     try {
-      await resendVerification(form.email.trim());
+      await dispatch(resendVerification(form.email.trim())).unwrap();
 
       setResendMessage(
         "A fresh verification link is on its way."
       );
     } catch {
-      // authError is already handled by AuthContext
+      // authError is already handled by the Redux auth slice.
     } finally {
       setResending(false);
     }

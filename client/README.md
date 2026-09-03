@@ -18,13 +18,13 @@ is Space Grotesk, body is Inter, code/labels are JetBrains Mono. The hero and
 ```
 src/
   api/         → axios instance (JWT header, silent refresh) + authApi.js (register/login/refresh/logout)
-  context/      → AuthContext: global auth state, wraps the api layer
+  store/        → Redux store: global auth state and async auth actions
   routes/       → ProtectedRoute (requires session), PublicOnlyRoute (auth pages)
   components/   → ui/ (Button, Input, Badge) + layout/ (Navbar, Footer, AuthLayout) + landing/ (sections)
   pages/        → LandingPage, LoginPage, RegisterPage, DashboardPage, NotFoundPage
 ```
 
-Each layer only talks to the one below it: pages use context, context uses
+Each layer only talks to the one below it: pages dispatch Redux actions, the slice uses
 the api layer, the api layer talks to the Express backend. No component
 calls axios directly.
 

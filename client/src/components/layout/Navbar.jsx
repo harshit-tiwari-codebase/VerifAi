@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
-import { useAuth } from "../../features/auth/context/AuthContext.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  logout,
+  selectIsAuthenticated,
+} from "../../features/auth/authSlice.js";
 import Button from "../ui/Button.jsx";
 
 const LINKS = [
@@ -11,7 +15,8 @@ const LINKS = [
 ];
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
@@ -109,7 +114,7 @@ export default function Navbar() {
                 variant="verify"
                 size="sm"
                 onClick={async () => {
-                  await logout();
+                  await dispatch(logout());
                   navigate("/");
                 }}
               >
