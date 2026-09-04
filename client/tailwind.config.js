@@ -32,9 +32,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Manrope", "sans-serif"],
-        display: ["Sora", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ['"Plus Jakarta Sans"', "system-ui", "-apple-system", "sans-serif"],
+        display: ['"Space Grotesk"', '"Plus Jakarta Sans"', "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
       },
       spacing: {
         section: "6rem",

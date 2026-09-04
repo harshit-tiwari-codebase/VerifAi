@@ -56,6 +56,50 @@
     outline-offset: 2px;
     border-radius: 4px;
   }
+
+  /* Sleek root document scrollbar */
+  html {
+    scrollbar-color: rgba(147, 51, 234, 0.35) #070a10;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #070a10;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(147, 51, 234, 0.35);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.6);
+  }
+
+  /* Completely remove ugly scrollbars from all inner components & code areas */
+  .no-scrollbar,
+  pre,
+  code,
+  .overflow-x-auto,
+  .overflow-y-auto {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .no-scrollbar::-webkit-scrollbar,
+  pre::-webkit-scrollbar,
+  code::-webkit-scrollbar,
+  .overflow-x-auto::-webkit-scrollbar,
+  .overflow-y-auto::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
 }
 
 @layer components {
