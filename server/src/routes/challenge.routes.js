@@ -37,7 +37,7 @@ router.post(
   createChallenge
 );
 
-router.get("/", listChallengesValidator, validateRequest, getChallenges);
+router.get("/", listChallengesValidator, validateRequest, optionalAuth, getChallenges);
 
 router.get("/:id", challengeIdValidator, validateRequest, optionalAuth, getChallengeById);
 

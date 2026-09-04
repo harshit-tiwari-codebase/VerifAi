@@ -131,6 +131,7 @@ const getChallenges = async (req, res, next) => {
     const [challenges, total] = await Promise.all([
       Challenge.find(filter)
         .select("-testCases -referenceSolution -evaluationCriteria")
+        .populate("createdBy", "name email role")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(Number(limit)),

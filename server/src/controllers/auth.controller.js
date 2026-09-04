@@ -334,7 +334,7 @@ const refresh = async (req, res) => {
       return res.status(403).json({ message: "Invalid or expired refresh token" });
     }
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).populate("badges.challengeId", "title difficulty category");
     if (!user || !user.refreshTokens.includes(token)) {
       return res.status(403).json({ message: "Refresh token not recognized" });
     }
@@ -406,9 +406,9 @@ const logout = async (req, res) => {
  */
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select(
-      "-password -refreshTokens -verificationToken -passwordResetToken"
-    );
+    const user = await User.findById(req.user.id)
+      .select("-password -refreshTokens -verificationToken -passwordResetToken")
+      .populate("badges.challengeId", "title difficulty category");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

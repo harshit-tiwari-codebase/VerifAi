@@ -29,14 +29,8 @@ app.get("/", (req, res) => res.send("VerifAI API is running"));
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/challenges", challengeRoutes);
-
-
-//  challenge routes
-app.use("/api/challenge",challengeRoutes);
-
-// TODO: add this in Phase 3 (Judge0 execution + AI evaluation)
-// app.use("/api/submissions", submissionRoutes);
+app.use("/api/challenges", challengeRoutes);
+app.use("/api/challenge", challengeRoutes);
 
 // Error handling (must be last)
 app.use(notFound);
