@@ -95,14 +95,14 @@ export default function FeatureShowcase() {
   return (
     <section id="features" className="container-xl py-24 relative">
       <div className="mb-16 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
           <Zap className="h-3.5 w-3.5" />
           <span>Core Capabilities</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
           Everything you need to prove senior-level engineering competence.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed">
+        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
           VerifAI combines modern sandboxing, cutting-edge AI reasoning, and verifiable credentials into a single unified platform.
         </p>
       </div>
@@ -127,7 +127,7 @@ export default function FeatureShowcase() {
                   <div className="h-12 w-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:scale-105 group-hover:border-violet-400/40 transition-all">
                     <Icon className="h-6 w-6" />
                   </div>
-                  <span className="font-mono text-xs text-mist-500 uppercase tracking-widest px-2.5 py-1 rounded border border-ink-600 bg-ink-900">
+                  <span className="font-sans text-xs font-semibold text-mist-400 uppercase tracking-wider px-2.5 py-1 rounded border border-ink-600 bg-ink-900">
                     {feature.badge}
                   </span>
                 </div>
@@ -135,9 +135,9 @@ export default function FeatureShowcase() {
                 <h3 className="font-display text-xl font-semibold text-mist-100 group-hover:text-violet-300 transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-xs font-mono text-violet-400 mt-1">{feature.subtitle}</p>
+                <p className="text-xs font-sans font-medium text-violet-400 mt-1">{feature.subtitle}</p>
 
-                <p className="text-sm text-mist-300 mt-4 leading-relaxed">
+                <p className="text-sm text-mist-300 mt-4 leading-relaxed font-sans">
                   {feature.description}
                 </p>
 

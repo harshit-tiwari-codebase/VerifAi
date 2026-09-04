@@ -156,14 +156,14 @@ export default function PipelineSimulator() {
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
             <Radio className="h-3.5 w-3.5 animate-pulse text-violet-400" />
             <span>Under The Hood</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
             The 4-Stage Automated Pipeline. From submission to verifiable proof.
           </h2>
-          <p className="mt-4 text-mist-300 text-base leading-relaxed">
+          <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
             Click through the four stages or watch the live cycle to see how VerifAI orchestrates message queues, sandboxed containers, and AI LLMs in under 30 seconds.
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function PipelineSimulator() {
               Pause Simulation
             </Button>
           ) : (
-            <Button variant="verify" size="sm" onClick={handleStartAutoPlay} className="purple-glow">
+            <Button variant="verify" size="sm" onClick={handleStartAutoPlay} className="purple-glow font-medium">
               <Play className="h-4 w-4 mr-2 fill-current" />
               Watch Full Pipeline Cycle
             </Button>
@@ -222,7 +222,7 @@ export default function PipelineSimulator() {
                   <Icon className="h-5 w-5" />
                 </div>
                 <span
-                  className={`font-mono text-xs font-semibold px-2 py-0.5 rounded border ${
+                  className={`font-sans text-xs font-semibold px-2 py-0.5 rounded border ${
                     isActive
                       ? "bg-violet-500/20 text-violet-300 border-violet-500/40"
                       : isPassed
@@ -237,7 +237,7 @@ export default function PipelineSimulator() {
               <h3 className="font-display font-semibold text-sm text-mist-100 group-hover:text-violet-300 transition-colors">
                 {stage.title}
               </h3>
-              <p className="text-xs text-mist-500 mt-1 font-mono">{stage.subtitle}</p>
+              <p className="text-xs text-mist-400 mt-1 font-sans">{stage.subtitle}</p>
 
               {/* Step connection arrow for desktop */}
               {idx < STAGES.length - 1 && (
@@ -255,11 +255,11 @@ export default function PipelineSimulator() {
         {/* Stage Header Bar */}
         <div className="border-b border-ink-600 bg-ink-900/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-xs px-2.5 py-1 rounded bg-violet-500/15 border border-violet-500/30 text-violet-300">
+            <span className="font-sans text-xs font-medium px-2.5 py-1 rounded bg-violet-500/15 border border-violet-500/30 text-violet-300">
               {currentStage.flowLabel}
             </span>
-            <span className="hidden sm:inline text-xs font-mono text-mist-500">|</span>
-            <span className="text-xs font-mono text-mist-400">
+            <span className="hidden sm:inline text-xs font-sans text-mist-500">|</span>
+            <span className="text-xs font-sans text-mist-400">
               Stage {currentStage.number} of 04
             </span>
           </div>
@@ -268,10 +268,10 @@ export default function PipelineSimulator() {
           <div className="flex items-center gap-2 bg-ink-900 p-1 rounded-lg border border-ink-600">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-sans font-medium transition-colors ${
                 activeTab === "overview"
-                  ? "bg-violet-600/30 text-violet-300 font-medium"
-                  : "text-mist-500 hover:text-mist-300"
+                  ? "bg-violet-600/30 text-violet-300 font-semibold"
+                  : "text-mist-400 hover:text-mist-200"
               }`}
             >
               <Layers className="h-3.5 w-3.5" />
@@ -279,10 +279,10 @@ export default function PipelineSimulator() {
             </button>
             <button
               onClick={() => setActiveTab("json")}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-sans font-medium transition-colors ${
                 activeTab === "json"
-                  ? "bg-violet-600/30 text-violet-300 font-medium"
-                  : "text-mist-500 hover:text-mist-300"
+                  ? "bg-violet-600/30 text-violet-300 font-semibold"
+                  : "text-mist-400 hover:text-mist-200"
               }`}
             >
               <FileJson className="h-3.5 w-3.5" />

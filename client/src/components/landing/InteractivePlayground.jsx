@@ -228,14 +228,14 @@ export default function InteractivePlayground() {
 
       {/* Header */}
       <div className="mb-12 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
           <Sparkles className="h-3.5 w-3.5" />
           <span>Interactive Sandbox Simulator</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
           Experience VerifAI live. Test real engineering challenges.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed">
+        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
           Select a real backend challenge below. Hit <strong className="text-violet-400 font-normal">"Run Sandboxed Verification"</strong> to simulate Judge0 executing unit tests and the AI review engine grading your architecture.
         </p>
       </div>
@@ -258,9 +258,9 @@ export default function InteractivePlayground() {
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-mono text-xs text-violet-400">{item.category}</span>
+                <span className="font-sans text-xs font-medium text-violet-400">{item.category}</span>
                 <span
-                  className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
+                  className={`text-[10px] font-sans font-semibold uppercase px-2 py-0.5 rounded ${
                     item.difficulty === "Hard"
                       ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
                       : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
@@ -270,7 +270,7 @@ export default function InteractivePlayground() {
                 </span>
               </div>
               <h3 className="font-display text-sm font-semibold text-mist-100">{item.title}</h3>
-              <p className="text-xs text-mist-500 mt-1 line-clamp-1">{item.description}</p>
+              <p className="text-xs text-mist-400 mt-1 line-clamp-1 font-sans">{item.description}</p>
             </button>
           );
         })}
@@ -297,20 +297,20 @@ export default function InteractivePlayground() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setActiveTab("code")}
-                className={`px-2.5 py-1 rounded font-mono text-xs transition-colors ${
+                className={`px-3 py-1 rounded-lg font-sans text-xs font-medium transition-colors ${
                   activeTab === "code"
                     ? "bg-violet-500/20 text-violet-300"
-                    : "text-mist-500 hover:text-mist-300"
+                    : "text-mist-400 hover:text-mist-200"
                 }`}
               >
                 Code
               </button>
               <button
                 onClick={() => setActiveTab("tests")}
-                className={`px-2.5 py-1 rounded font-mono text-xs transition-colors ${
+                className={`px-3 py-1 rounded-lg font-sans text-xs font-medium transition-colors ${
                   activeTab === "tests"
                     ? "bg-violet-500/20 text-violet-300"
-                    : "text-mist-500 hover:text-mist-300"
+                    : "text-mist-400 hover:text-mist-200"
                 }`}
               >
                 Test Suite ({challenge.tests.length})
@@ -409,11 +409,11 @@ export default function InteractivePlayground() {
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-ink-600">
               <div className="flex items-center gap-2">
                 <Terminal className="h-4 w-4 text-violet-400" />
-                <span className="font-mono text-xs uppercase tracking-wider text-mist-300 font-semibold">
+                <span className="font-sans text-xs uppercase tracking-wider text-mist-300 font-semibold">
                   Evaluation Engine
                 </span>
               </div>
-              <span className="font-mono text-[11px] text-mist-500">
+              <span className="font-sans text-xs font-medium text-mist-400">
                 {isRunning ? "PROCESSING" : completed ? "VERIFIED" : "STANDBY"}
               </span>
             </div>
@@ -442,13 +442,13 @@ export default function InteractivePlayground() {
                     </div>
                     <div>
                       <p
-                        className={`text-xs font-mono font-medium ${
-                          isPast ? "text-mist-100" : isCurrent ? "text-violet-300" : "text-mist-600"
+                        className={`text-xs font-sans font-medium ${
+                          isPast ? "text-mist-100" : isCurrent ? "text-violet-300" : "text-mist-500"
                         }`}
                       >
                         {st.title}
                       </p>
-                      <p className="text-[11px] text-mist-500">{st.desc}</p>
+                      <p className="text-[11px] text-mist-400 font-sans">{st.desc}</p>
                     </div>
                   </div>
                 );
@@ -467,7 +467,7 @@ export default function InteractivePlayground() {
                   {/* Score & Verdict Banner */}
                   <div className="p-4 rounded-xl border border-violet-500/40 bg-violet-950/20 flex items-center justify-between">
                     <div>
-                      <p className="text-[11px] font-mono uppercase text-violet-400">Verdict</p>
+                      <p className="text-[11px] font-sans font-semibold uppercase text-violet-400">Verdict</p>
                       <h4 className="font-display font-semibold text-mist-100 text-base">
                         {challenge.aiReview.verdict}
                       </h4>
@@ -476,17 +476,17 @@ export default function InteractivePlayground() {
                       <span className="font-display text-2xl font-bold text-violet-400">
                         {challenge.aiReview.score}
                       </span>
-                      <span className="font-mono text-xs text-mist-500">/100</span>
+                      <span className="font-sans text-xs text-mist-400">/100</span>
                     </div>
                   </div>
 
                   {/* Strengths */}
                   <div className="p-3.5 rounded-lg border border-ink-600 bg-ink-800/50 space-y-2">
-                    <p className="text-[11px] font-mono text-mist-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <p className="text-[11px] font-sans font-semibold text-mist-300 uppercase tracking-wider flex items-center gap-1.5">
                       <Zap className="h-3 w-3 text-violet-400" />
                       Key Strengths Identified
                     </p>
-                    <ul className="space-y-1.5 text-xs text-mist-300">
+                    <ul className="space-y-1.5 text-xs text-mist-300 font-sans">
                       {challenge.aiReview.strengths.map((str, sIdx) => (
                         <li key={sIdx} className="flex items-start gap-2">
                           <span className="text-emerald-400 mt-0.5">✓</span>
@@ -502,7 +502,7 @@ export default function InteractivePlayground() {
                       <Award className="h-5 w-5 text-violet-300" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-mono uppercase text-emerald-400 flex items-center gap-1">
+                      <span className="text-[10px] font-sans font-semibold uppercase text-emerald-400 flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" /> Badge Minted
                       </span>
                       <p className="font-display text-xs font-semibold text-mist-100 truncate">
@@ -514,14 +514,14 @@ export default function InteractivePlayground() {
               ) : isRunning ? (
                 <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-ink-600 rounded-xl">
                   <RefreshCw className="h-8 w-8 text-violet-400 animate-spin mb-3" />
-                  <p className="text-xs font-mono text-mist-200">Executing sandbox verification...</p>
-                  <p className="text-[11px] text-mist-500 mt-1">Collecting stdout & AI critique</p>
+                  <p className="text-xs font-sans font-medium text-mist-200">Executing sandbox verification...</p>
+                  <p className="text-[11px] font-sans text-mist-400 mt-1">Collecting stdout & AI critique</p>
                 </div>
               ) : (
                 <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-ink-600 rounded-xl bg-ink-800/20">
                   <Terminal className="h-8 w-8 text-mist-600 mb-2" />
-                  <p className="text-xs font-mono text-mist-400">Ready to execute</p>
-                  <p className="text-[11px] text-mist-600 mt-1 max-w-xs">
+                  <p className="text-xs font-sans font-medium text-mist-400">Ready to execute</p>
+                  <p className="text-[11px] font-sans text-mist-500 mt-1 max-w-xs">
                     Click "Run Sandboxed Verification" to watch the automated evaluation pipeline in action.
                   </p>
                 </div>
@@ -529,7 +529,7 @@ export default function InteractivePlayground() {
             </AnimatePresence>
           </div>
 
-          <div className="pt-4 border-t border-ink-600 flex items-center justify-between text-[11px] font-mono text-mist-600">
+          <div className="pt-4 border-t border-ink-600 flex items-center justify-between text-[11px] font-sans font-medium text-mist-500">
             <span>Judge0 v1.13 Isolated</span>
             <span>Gemini 1.5 Pro</span>
           </div>

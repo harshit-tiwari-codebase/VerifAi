@@ -88,7 +88,7 @@ function StatCard({ stat, active }) {
       </div>
 
       <p className="font-display font-medium text-sm text-mist-200">{stat.label}</p>
-      <p className="text-xs text-mist-500 mt-1 font-mono">{stat.detail}</p>
+      <p className="text-xs text-mist-400 mt-1 font-sans">{stat.detail}</p>
     </div>
   );
 }

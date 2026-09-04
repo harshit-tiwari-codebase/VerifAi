@@ -43,3 +43,18 @@ export async function resendVerificationRequest({ email }) {
   });
   return data;
 }
+
+export async function forgotPasswordRequest({ email }) {
+  const { data } = await axiosInstance.post("/auth/forgot-password", {
+    email,
+  });
+  return data;
+}
+
+export async function resetPasswordRequest({ token, password }) {
+  const { data } = await axiosInstance.post(`/auth/reset-password/${token}`, {
+    password,
+  });
+  return data;
+}
+

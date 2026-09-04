@@ -43,14 +43,14 @@ export default function ComparisonMatrix() {
   return (
     <section className="container-xl py-24 relative">
       <div className="mb-16 max-w-2xl text-center mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
           <Scale className="h-3.5 w-3.5" />
           <span>The Better Standard</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
           Why VerifAI replaces resumes and algorithmic trivia.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed">
+        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
           See how VerifAI compares against conventional resumes and LeetCode-style puzzle platforms.
         </p>
       </div>
@@ -58,7 +58,7 @@ export default function ComparisonMatrix() {
       <div className="card overflow-x-auto no-scrollbar border-ink-600 shadow-2xl">
         <table className="w-full min-w-[700px] text-left border-collapse">
           <thead>
-            <tr className="border-b border-ink-600 bg-ink-900/80 font-mono text-xs text-mist-400">
+            <tr className="border-b border-ink-600 bg-ink-900/80 font-sans text-xs font-semibold uppercase tracking-wider text-mist-400">
               <th className="p-4 md:p-5 w-1/4">Evaluation Vector</th>
               <th className="p-4 md:p-5 w-1/4 text-mist-500">Traditional Resumes</th>
               <th className="p-4 md:p-5 w-1/4 text-mist-500">LeetCode / Autograders</th>

@@ -92,7 +92,7 @@ export default function VerifyEmailPage() {
             isSuccess
               ? "bg-violet-600/[0.06]"
               : isError
-                ? "bg-flag/[0.04]"
+                ? "bg-red-600/[0.04]"
                 : "bg-purple-600/[0.04]"
           }`}
         />
@@ -106,7 +106,7 @@ export default function VerifyEmailPage() {
               isSuccess
                 ? "border-violet-400/20"
                 : isError
-                  ? "border-flag/20"
+                  ? "border-red-500/30"
                   : "border-purple-400/15"
             }
           `}
@@ -121,7 +121,7 @@ export default function VerifyEmailPage() {
                   isSuccess
                     ? "border-violet-400/20 bg-violet-500/10 text-violet-400"
                     : isError
-                      ? "border-flag/20 bg-flag/10 text-flag"
+                      ? "border-red-500/20 bg-red-500/10 text-red-400"
                       : "border-purple-400/20 bg-purple-500/10 text-purple-300"
                 }
               `}
@@ -150,7 +150,7 @@ export default function VerifyEmailPage() {
                     isSuccess
                       ? "border-violet-400/20 bg-violet-500/10 text-violet-400"
                       : isError
-                        ? "border-flag/20 bg-flag/10 text-flag"
+                        ? "border-red-500/30 bg-red-500/10 text-red-400"
                         : "border-purple-400/20 bg-purple-500/10 text-purple-300"
                   }
                 `}

@@ -63,14 +63,14 @@ export default function PublicProfileShowcase() {
   return (
     <section id="profile" className="container-xl py-24 relative">
       <div className="mb-16 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
           <UserCheck className="h-3.5 w-3.5" />
           <span>The Outcome</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
           Your public developer profile. Proof of work that recruiters trust.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed">
+        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
           Forget listing skills in a bulleted list. VerifAI generates a live portfolio of verified badges backed by real code submissions, execution telemetry, and AI review audits.
         </p>
       </div>
@@ -97,34 +97,34 @@ export default function PublicProfileShowcase() {
                 <h3 className="font-display text-lg font-semibold text-mist-100">
                   Alex Tiwari
                 </h3>
-                <span className="font-mono text-[11px] text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">
+                <span className="font-sans text-[11px] font-semibold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">
                   PROVER
                 </span>
               </div>
-              <p className="font-mono text-xs text-mist-500 mt-0.5">verifai.dev/u/alex-tiwari</p>
-              <p className="text-xs text-mist-300 mt-1">Backend & Distributed Systems Engineer</p>
+              <p className="font-sans text-xs text-mist-400 mt-0.5">verifai.dev/u/alex-tiwari</p>
+              <p className="text-xs text-mist-300 mt-1 font-sans">Backend & Distributed Systems Engineer</p>
             </div>
           </div>
 
           {/* Quick Metrics */}
-          <div className="grid grid-cols-3 gap-2 py-5 border-b border-ink-600 font-mono text-center">
+          <div className="grid grid-cols-3 gap-2 py-5 border-b border-ink-600 font-sans text-center">
             <div className="p-2 rounded-lg bg-ink-900/60 border border-ink-600/60">
-              <p className="text-[10px] text-mist-500 uppercase">Verified</p>
+              <p className="text-[10px] text-mist-400 font-medium uppercase tracking-wider">Verified</p>
               <p className="text-base font-semibold text-mist-100 mt-0.5">14</p>
             </div>
             <div className="p-2 rounded-lg bg-ink-900/60 border border-ink-600/60">
-              <p className="text-[10px] text-mist-500 uppercase">Avg Score</p>
+              <p className="text-[10px] text-mist-400 font-medium uppercase tracking-wider">Avg Score</p>
               <p className="text-base font-semibold text-violet-400 mt-0.5">96.3</p>
             </div>
             <div className="p-2 rounded-lg bg-ink-900/60 border border-ink-600/60">
-              <p className="text-[10px] text-mist-500 uppercase">Percentile</p>
+              <p className="text-[10px] text-mist-400 font-medium uppercase tracking-wider">Percentile</p>
               <p className="text-base font-semibold text-purple-300 mt-0.5">Top 2%</p>
             </div>
           </div>
 
           {/* Earned Badges List */}
           <div className="pt-5">
-            <p className="text-xs font-mono text-mist-500 uppercase tracking-wider mb-3">
+            <p className="text-xs font-sans text-mist-400 font-semibold uppercase tracking-wider mb-3">
               Earned Badges (Select to Inspect)
             </p>
             <div className="space-y-2">

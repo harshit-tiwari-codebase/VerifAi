@@ -1,5 +1,8 @@
+import React from "react";
 import { Link } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
+import VerifaiLogo from "../ui/VerifaiLogo.jsx";
+import CodeEditorShowcase from "./CodeEditorShowcase.jsx";
 
 export default function AuthLayout({
   eyebrow,
@@ -8,211 +11,82 @@ export default function AuthLayout({
   children,
 }) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#04030A]">
-      {/* =====================================================
-          GLOBAL DARK MOON ATMOSPHERE
-      ====================================================== */}
-
-      <div className="pointer-events-none absolute inset-0">
-        {/* Main moon */}
-        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-violet-600/[0.055] blur-[130px]" />
-
-        {/* Secondary violet atmosphere */}
-        <div className="absolute -bottom-40 right-[-120px] h-[500px] w-[500px] rounded-full bg-purple-600/[0.045] blur-[130px]" />
-
-        {/* Very subtle center light */}
-        <div className="absolute left-1/2 top-1/3 h-[350px] w-[350px] -translate-x-1/2 rounded-full bg-violet-500/[0.018] blur-[100px]" />
+    <div className="relative min-h-screen lg:h-screen lg:max-h-screen lg:overflow-hidden bg-[#04030a] text-mist-100 flex flex-col justify-between overflow-x-hidden">
+      {/* Dark Ambient Atmosphere (Preserved background styling) */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute -left-40 -top-40 h-[38rem] w-[38rem] rounded-full bg-violet-600/15 blur-[150px]" />
+        <div className="absolute right-0 bottom-0 h-[38rem] w-[38rem] rounded-full bg-purple-600/10 blur-[150px]" />
+        <div className="absolute left-1/3 top-1/2 h-[32rem] w-[32rem] rounded-full bg-indigo-600/10 blur-[160px]" />
       </div>
 
-      <div className="relative grid min-h-screen md:grid-cols-2">
+      <div className="relative z-10 flex flex-col lg:flex-row h-full w-full lg:overflow-hidden flex-1">
         {/* =====================================================
-            FORM SIDE
+            LEFT: AUTHENTICATION SIDE (Fits completely in 100vh)
         ====================================================== */}
+        <div className="w-full lg:w-[46%] xl:w-[44%] flex flex-col justify-between px-6 py-4 sm:px-10 xl:px-12 lg:h-full lg:overflow-hidden shrink-0">
+          {/* Top Bar: VerifAI Logo & Back Link */}
+          <div className="flex items-center justify-between shrink-0 pt-1">
+            <Link to="/" className="group flex items-center transition-transform hover:scale-[1.02]">
+              <VerifaiLogo size="md" />
+            </Link>
 
-        <div className="relative flex flex-col px-6 py-8 md:justify-center md:px-16 md:py-12">
-          {/* Mobile/top logo */}
-          <Link
-            to="/"
-            className="
-              group
-              mb-12
-              flex w-fit items-center gap-2.5
-              md:absolute md:left-16 md:top-10
-            "
-          >
-            <span
-              className="
-                relative flex h-8 w-8 items-center justify-center
-                rounded-lg
-                border border-violet-400/25
-                bg-violet-500/[0.07]
-                shadow-[0_0_20px_rgba(139,92,246,0.06)]
-                transition-all duration-200
-                group-hover:border-violet-400/45
-                group-hover:bg-violet-500/[0.11]
-              "
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-mist-400 hover:text-mist-100 transition-colors group px-3 py-1.5 rounded-lg border border-ink-600 hover:border-violet-500/40 bg-ink-800/40"
             >
-              <ShieldCheck
-                className="h-4 w-4 text-violet-400"
-                strokeWidth={2.2}
-              />
-            </span>
-
-            <span className="font-display text-lg font-semibold tracking-tight text-mist-100">
-              Verif
-              <span className="text-violet-400">AI</span>
-            </span>
-          </Link>
-
-          {/* Form content */}
-          <div className="mx-auto w-full max-w-sm">
-            {/* Eyebrow */}
-            <p className="eyebrow mb-3 text-violet-400">
-              {eyebrow}
-            </p>
-
-            {/* Title */}
-            <h1 className="text-3xl font-semibold leading-tight tracking-tight text-mist-100">
-              {title}
-            </h1>
-
-            {/* Subtitle */}
-            {subtitle && (
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-mist-500">
-                {subtitle}
-              </p>
-            )}
-
-            {/* Children */}
-            <div className="mt-8">
-              {children}
-            </div>
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+              <span>Back to home</span>
+            </Link>
           </div>
 
-          {/* Bottom security note */}
-          <div className="mt-10 flex items-center justify-center gap-2 md:absolute md:bottom-8 md:left-16">
-            <span className="h-1 w-1 rounded-full bg-violet-400/60" />
+          {/* Center Form Container */}
+          <div className="mx-auto w-full max-w-[390px] my-auto py-2">
+            {/* Optional eyebrow / title when passed from simple pages like VerifyEmail */}
+            {eyebrow && (
+              <div className="text-center mb-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-mono text-xs">
+                  <Sparkles className="h-3 w-3" />
+                  <span className="uppercase tracking-wider text-[11px]">{eyebrow}</span>
+                </div>
+              </div>
+            )}
 
-            <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-mist-700">
-              secure · verified · proof of work
-            </span>
+            {title && (
+              <div className="text-center mb-4">
+                <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-mist-100">
+                  {title}
+                </h1>
+                {subtitle && (
+                  <p className="mt-1 text-xs sm:text-sm text-mist-400 leading-relaxed">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Main Form Content */}
+            {children}
+          </div>
+
+          {/* Bottom Footer matching the screenshot */}
+          <div className="pt-2 pb-2 text-center text-xs text-mist-500 font-sans space-y-0.5 select-none shrink-0">
+            <p className="text-mist-400">
+              Powered by <span className="text-mist-200 font-medium">VerifAI Code Editor</span>
+            </p>
+            <p className="text-[11px] text-mist-600">
+              &copy; {new Date().getFullYear()} VerifAI. All rights reserved.
+            </p>
           </div>
         </div>
 
         {/* =====================================================
-            ATMOSPHERE / CODE SIDE
+            RIGHT: VERIFAI AI CODE EDITOR SHOWCASE
+            (70% visible, 30% hidden on right AND hidden from bottom too)
         ====================================================== */}
-
-        <div
-          className="
-            relative
-            hidden
-            overflow-hidden
-            border-l border-white/[0.06]
-            bg-[#07060D]/60
-            md:block
-          "
-        >
-          {/* Purple moon gradients */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(124,58,237,0.12),transparent_45%)]" />
-
-          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-violet-600/[0.06] blur-[110px]" />
-
-          <div className="pointer-events-none absolute -bottom-40 left-[-100px] h-96 w-96 rounded-full bg-purple-600/[0.04] blur-[110px]" />
-
-          {/* Subtle grid */}
-          <div
-            className="
-              pointer-events-none absolute inset-0
-              opacity-[0.025]
-              [background-image:linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)]
-              [background-size:48px_48px]
-            "
-          />
-
-          <div className="relative flex h-full flex-col justify-center px-14">
-            {/* Code label */}
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.7)]" />
-
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-mist-600">
-                authentication layer
-              </p>
-            </div>
-
-            <p className="mt-6 font-mono text-xs text-mist-600">
-              server/controllers/authController.js
-            </p>
-
-            {/* Code block */}
-            <div className="mt-4 rounded-xl border border-white/[0.06] bg-[#04030A]/70 p-5 shadow-2xl shadow-black/30 backdrop-blur-sm">
-              <pre className="overflow-hidden font-mono text-[13px] leading-6 text-mist-300">
-                <code>
-                  <span className="text-violet-400">
-                    const
-                  </span>{" "}
-                  tokens = {"{"}
-                  {"\n"}
-
-                  {"  "}
-                  access:{" "}
-                  <span className="text-purple-300">
-                    signAccess
-                  </span>
-                  (user),
-                  {"\n"}
-
-                  {"  "}
-                  refresh:{" "}
-                  <span className="text-purple-300">
-                    rotateRefresh
-                  </span>
-                  (user)
-                  {"\n"}
-
-                  {"};"}
-                  {"\n\n"}
-
-                  <span className="text-mist-700">
-                    // refresh token rotated on every use
-                  </span>
-
-                  {"\n"}
-
-                  <span className="text-mist-700">
-                    // old token invalidated in DB — detects replay
-                  </span>
-                </code>
-              </pre>
-            </div>
-
-            {/* Security status */}
-            <div className="mt-5 rounded-xl border border-white/[0.06] bg-[#04030A]/60 p-4">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-violet-400/15 bg-violet-500/[0.06]">
-                  <ShieldCheck
-                    className="h-3.5 w-3.5 text-violet-400"
-                    strokeWidth={2}
-                  />
-                </div>
-
-                <div>
-                  <p className="font-mono text-xs text-violet-300">
-                    access token · 15 min
-                  </p>
-
-                  <p className="mt-1 font-mono text-[10px] leading-relaxed text-mist-700">
-                    kept in memory, not localStorage
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom statement */}
-            <p className="mt-8 max-w-sm font-display text-sm leading-relaxed text-mist-600">
-              Your credentials authenticate your identity.
-              Your submissions prove your skills.
-            </p>
+        <div className="hidden lg:flex lg:w-[54%] xl:w-[56%] pt-4 lg:pt-6 xl:pt-7 pb-0 pl-3 lg:pl-5 pr-0 h-full items-start min-h-0 overflow-hidden relative">
+          {/* Sized to 143% width (30% hidden on right) and 132% height (30% hidden on bottom) */}
+          <div className="w-[143%] min-w-[143%] h-[132%] min-h-[132%]">
+            <CodeEditorShowcase />
           </div>
         </div>
       </div>

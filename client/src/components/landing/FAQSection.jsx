@@ -36,14 +36,14 @@ export default function FAQSection() {
   return (
     <section id="faq" className="container-xl py-24 relative">
       <div className="mb-16 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
           <HelpCircle className="h-3.5 w-3.5" />
           <span>Frequently Asked Questions</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
           Everything you need to know about VerifAI.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed">
+        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
           Have questions about the evaluation pipeline, sandboxing security, or public verification? We've got answers.
         </p>
       </div>

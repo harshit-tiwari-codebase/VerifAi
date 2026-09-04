@@ -23,10 +23,10 @@ export default function Footer() {
 
           {/* Quick Navigation */}
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-mist-300 font-semibold mb-3">
+            <p className="font-display text-xs uppercase tracking-wider text-mist-300 font-semibold mb-3">
               Platform
             </p>
-            <ul className="space-y-2 font-mono text-xs text-mist-500">
+            <ul className="space-y-2.5 font-sans text-xs text-mist-400">
               <li>
                 <a href="#architecture" className="hover:text-violet-300 transition-colors">
                   4-Stage Pipeline
@@ -62,12 +62,12 @@ export default function Footer() {
 
           {/* Tech Stack & Auth */}
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-mist-300 font-semibold mb-3">
+            <p className="font-display text-xs uppercase tracking-wider text-mist-300 font-semibold mb-3">
               Get Started
             </p>
-            <ul className="space-y-2 font-mono text-xs text-mist-500">
+            <ul className="space-y-2.5 font-sans text-xs text-mist-400">
               <li>
-                <Link to="/register" className="text-violet-400 hover:text-violet-300 transition-colors">
+                <Link to="/register" className="text-violet-400 hover:text-violet-300 transition-colors font-medium">
                   Create Candidate Profile →
                 </Link>
               </li>
@@ -76,7 +76,7 @@ export default function Footer() {
                   Sign In to Dashboard
                 </Link>
               </li>
-              <li className="pt-2 text-[11px] text-mist-600">
+              <li className="pt-2 text-[11px] text-mist-500 font-sans">
                 Stack: MERN · Monaco · Judge0 · Gemini · Redis
               </li>
             </ul>
@@ -84,7 +84,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-mist-600">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-sans text-mist-500">
           <p>© {new Date().getFullYear()} VerifAI. Proof of work, not claims of work.</p>
           <p className="flex items-center gap-1">
             Built with React 18, Tailwind CSS & Framer Motion

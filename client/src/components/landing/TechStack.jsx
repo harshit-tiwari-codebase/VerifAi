@@ -51,14 +51,14 @@ export default function TechStack() {
   return (
     <section id="stack" className="container-xl py-24 relative">
       <div className="mb-14 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-mono text-xs mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
           <Server className="h-3.5 w-3.5" />
           <span>Production Architecture</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
           Four production layers. Zero paid infrastructure.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed">
+        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
           Engineered from day one for extreme reliability, thread safety, and zero deployment cost utilizing best-in-class free tier services.
         </p>
       </div>
@@ -76,7 +76,7 @@ export default function TechStack() {
 
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-xs text-mist-600">0{idx + 1}</span>
+                  <span className="font-display font-semibold text-xs text-mist-500">0{idx + 1}</span>
                   <div className="h-8 w-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
                     <Icon className="h-4 w-4" />
                   </div>
@@ -85,22 +85,22 @@ export default function TechStack() {
                 <h3 className="font-display font-semibold text-base text-mist-100">
                   {layer.layer}
                 </h3>
-                <p className="text-xs font-mono text-violet-400 mt-0.5">{layer.role}</p>
+                <p className="text-xs font-sans font-medium text-violet-400 mt-0.5">{layer.role}</p>
 
                 <div className="mt-6 space-y-3 pt-4 border-t border-ink-600/80">
                   {layer.items.map((item) => (
                     <div key={item.name} className="flex flex-col">
-                      <span className="font-mono text-xs font-medium text-mist-200 flex items-center gap-1.5">
+                      <span className="font-sans text-xs font-medium text-mist-200 flex items-center gap-1.5">
                         <span className="h-1 w-1 rounded-full bg-violet-400" />
                         {item.name}
                       </span>
-                      <span className="text-[11px] text-mist-500 pl-2.5">{item.note}</span>
+                      <span className="text-[11px] text-mist-400 pl-2.5 font-sans">{item.note}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-ink-600/50 flex items-center justify-between text-[10px] font-mono text-mist-600">
+              <div className="mt-6 pt-4 border-t border-ink-600/50 flex items-center justify-between text-[10px] font-sans font-medium text-mist-500">
                 <span>STAGE 0{idx + 1}</span>
                 <span className="text-emerald-400">OPERATIONAL</span>
               </div>

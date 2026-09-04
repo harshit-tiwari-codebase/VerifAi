@@ -46,7 +46,7 @@ export default function Hero() {
           className="lg:col-span-7"
         >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-mono text-xs mb-6 shadow-[0_0_20px_rgba(147,51,234,0.15)]">
+          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-sans text-xs font-medium mb-6 shadow-[0_0_20px_rgba(147,51,234,0.15)]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-400" />
@@ -54,9 +54,9 @@ export default function Hero() {
             <span>AI-Evaluated Proof of Work · Zero Resume Inflation</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.1] text-mist-100 font-display">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] text-mist-100 font-display">
             Your resume says <br className="hidden sm:inline" />
-            <span className="text-mist-500 line-through decoration-violet-500/60 font-mono text-3xl sm:text-4xl lg:text-5xl">
+            <span className="text-mist-500 line-through decoration-violet-500/60 font-display font-medium text-3xl sm:text-4xl lg:text-5xl">
               "Proficient in Node.js"
             </span>
             <br />
@@ -66,7 +66,7 @@ export default function Hero() {
             makes it provable.
           </h1>
 
-          <p className="mt-6 max-w-xl text-base sm:text-lg text-mist-300 leading-relaxed font-sans">
+          <p className="mt-6 max-w-xl text-base sm:text-lg text-mist-300 leading-relaxed font-sans font-normal">
             Solve real production engineering challenges — distributed locks, token buckets, and database schema migrations — in an isolated sandbox. An AI evaluation engine reviews your architecture like a Staff Engineer, minting tamper-proof badges to your public profile.
           </p>
 
@@ -96,7 +96,7 @@ export default function Hero() {
           </div>
 
           {/* Architecture Trust Highlights */}
-          <div className="mt-12 flex flex-wrap items-center gap-y-3 gap-x-6 font-mono text-xs text-mist-500 border-t border-ink-600/70 pt-6">
+          <div className="mt-12 flex flex-wrap items-center gap-y-3 gap-x-6 font-sans text-xs font-medium text-mist-400 border-t border-ink-600/70 pt-6">
             <span className="flex items-center gap-2">
               <Cpu className="h-3.5 w-3.5 text-violet-400" />
               Judge0 Sandboxed Cgroups
@@ -179,7 +179,7 @@ export default function Hero() {
             {/* Simulated Live Action & Evaluation Footer */}
             <div className="border-t border-ink-600 bg-ink-800/80 p-4">
               <div className="flex items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2 text-xs font-mono text-mist-300">
+                <div className="flex items-center gap-2 text-xs font-sans font-medium text-mist-300">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                   <span>
                     {simStep === 0 && "12/12 Test Cases Passed"}
@@ -192,7 +192,7 @@ export default function Hero() {
                 <button
                   onClick={handleHeroPreview}
                   disabled={isSimulating}
-                  className="px-2.5 py-1 rounded text-[11px] font-mono bg-violet-500/20 text-violet-300 border border-violet-500/40 hover:bg-violet-500/30 transition-all flex items-center gap-1"
+                  className="px-2.5 py-1 rounded text-xs font-sans font-medium bg-violet-500/20 text-violet-300 border border-violet-500/40 hover:bg-violet-500/30 transition-all flex items-center gap-1"
                 >
                   <Play className="h-3 w-3 fill-current" />
                   {isSimulating ? "Evaluating..." : "Simulate"}
@@ -203,11 +203,11 @@ export default function Hero() {
               <div className="flex items-center justify-between p-3 rounded-lg border border-violet-500/30 bg-violet-950/20">
                 <div className="flex items-center gap-2">
                   <Award className="h-4 w-4 text-violet-400" />
-                  <span className="font-mono text-xs text-mist-200">
+                  <span className="font-sans text-xs font-medium text-mist-200">
                     Badge Minted: Rate Limiter Architect
                   </span>
                 </div>
-                <span className="font-mono text-xs font-bold text-violet-400 bg-violet-500/20 px-2 py-0.5 rounded border border-violet-500/30">
+                <span className="font-sans text-xs font-bold text-violet-400 bg-violet-500/20 px-2 py-0.5 rounded border border-violet-500/30">
                   SCORE 96
                 </span>
               </div>
