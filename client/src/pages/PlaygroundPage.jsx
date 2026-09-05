@@ -42,7 +42,7 @@ export default function PlaygroundPage() {
                 to="/challenges"
                 variant="verify"
                 size="sm"
-                className="purple-glow font-mono text-xs"
+                className="font-sans text-xs font-medium"
               >
                 Browse All Challenges →
               </Button>
@@ -56,7 +56,6 @@ export default function PlaygroundPage() {
         </main>
       </div>
 
-      <Footer />
     </div>
   );
 }

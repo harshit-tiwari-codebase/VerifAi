@@ -115,7 +115,7 @@ export default function ChallengesPage() {
                   setChallengeToEdit(null);
                   setIsEditorOpen(true);
                 }}
-                className="purple-glow self-start sm:self-auto font-mono text-xs"
+                className="self-start sm:self-auto font-sans text-xs font-medium"
               >
                 Author Challenge
               </Button>
@@ -255,7 +255,7 @@ export default function ChallengesPage() {
         </main>
       </div>
 
-      <Footer />
+    
 
       {/* Modals */}
       {detailId && (

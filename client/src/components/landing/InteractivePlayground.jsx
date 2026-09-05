@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
   CheckCircle2,
-  Sparkles,
+  ArrowUpRight,
   Terminal,
   Award,
   RefreshCw,
@@ -229,7 +229,7 @@ export default function InteractivePlayground() {
       {/* Header */}
       <div className="mb-12 max-w-2xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
-          <Sparkles className="h-3.5 w-3.5" />
+          <ArrowUpRight className="h-3.5 w-3.5" />
           <span>Interactive Sandbox Simulator</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
@@ -385,7 +385,7 @@ export default function InteractivePlayground() {
                 size="sm"
                 onClick={handleRunVerification}
                 disabled={isRunning}
-                className="purple-glow"
+                className="group"
               >
                 {isRunning ? (
                   <>

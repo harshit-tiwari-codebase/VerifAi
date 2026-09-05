@@ -43,7 +43,7 @@ export default function Navbar() {
     },
   ];
 
-  const currentLinks = isAuthenticated ? appLinks : appLinks;
+  const currentLinks = isAuthenticated ? appLinks : [];
 
   return (
     <header
@@ -138,14 +138,14 @@ export default function Navbar() {
               <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#070A10]" />
             </Link>
           ) : (
-            <div className="hidden sm:flex items-center gap-2 font-mono text-xs">
+            <div className="hidden sm:flex items-center gap-2 font-sans text-xs font-medium">
               <Link
                 to="/login"
                 className="px-3 py-1.5 text-mist-300 hover:text-white transition-colors"
               >
                 Sign in
               </Link>
-              <Button as={Link} to="/register" variant="verify" size="sm" className="purple-glow">
+              <Button as={Link} to="/register" variant="verify" size="sm" className="!rounded-lg">
                 Get verified
               </Button>
             </div>
@@ -205,24 +205,7 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <div className="flex flex-col space-y-1.5">
-                  {appLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      to={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`rounded-lg px-3 py-2 transition-all ${
-                        link.active
-                          ? "bg-violet-600/90 text-white font-medium"
-                          : "text-mist-400 hover:text-white"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-
-                <div className="pt-3 border-t border-white/[0.08] flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   <Button
                     as={Link}
                     to="/login"
@@ -238,7 +221,7 @@ export default function Navbar() {
                     to="/register"
                     variant="verify"
                     size="sm"
-                    className="w-full justify-center purple-glow"
+                    className="w-full justify-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Get verified

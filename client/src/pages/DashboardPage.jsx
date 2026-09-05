@@ -208,20 +208,21 @@ export default function DashboardPage() {
                     setChallengeToEdit(null);
                     setIsEditorOpen(true);
                   }}
-                  className="!px-3 !py-1 text-xs font-mono purple-glow"
+                  className="!px-3 !py-1 text-xs font-sans font-medium"
                 >
                   New Challenge
                 </Button>
               )}
 
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleLogout}
                 title="Sign out of your account"
-                className="inline-flex items-center rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs font-mono text-mist-400 hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10 transition-all duration-200"
+                className="!px-3 !py-1 text-xs font-sans text-mist-400 hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
               >
                 Sign out
-              </button>
+              </Button>
             </div>
           </section>
 
@@ -508,7 +509,7 @@ export default function DashboardPage() {
                     variant="verify"
                     size="sm"
                     onClick={() => setActiveViewTab("arena")}
-                    className="mt-3 font-mono text-xs purple-glow"
+                    className="mt-3 font-sans text-xs font-medium"
                   >
                     Explore Arena
                   </Button>
@@ -583,7 +584,7 @@ export default function DashboardPage() {
                     setChallengeToEdit(null);
                     setIsEditorOpen(true);
                   }}
-                  className="font-mono text-xs purple-glow"
+                  className="font-sans text-xs font-medium"
                 >
                   New Challenge
                 </Button>
@@ -591,8 +592,8 @@ export default function DashboardPage() {
 
               {myCreatedChallenges.length === 0 ? (
                 <div className="rounded-xl border border-white/[0.06] bg-[#090D17]/40 p-10 text-center space-y-2">
-                  <h3 className="font-mono text-sm text-white">No authored challenges yet</h3>
-                  <p className="font-mono text-xs text-mist-500 max-w-sm mx-auto">
+                  <h3 className="font-sans text-sm font-semibold text-white">No authored challenges yet</h3>
+                  <p className="font-sans text-xs text-mist-400 max-w-sm mx-auto">
                     Create production challenges for candidates to solve in the isolated sandbox.
                   </p>
                   <Button
@@ -602,7 +603,7 @@ export default function DashboardPage() {
                       setChallengeToEdit(null);
                       setIsEditorOpen(true);
                     }}
-                    className="mt-2 font-mono text-xs"
+                    className="mt-2 font-sans text-xs font-medium"
                   >
                     Author First Challenge
                   </Button>

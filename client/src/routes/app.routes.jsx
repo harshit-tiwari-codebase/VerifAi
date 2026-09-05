@@ -19,10 +19,6 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/challenges" element={<ChallengesPage />} />
-      <Route path="/playground" element={<PlaygroundPage />} />
-      <Route path="/leaderboard" element={<LeaderboardPage />} />
-      <Route path="/docs" element={<DocsPage />} />
 
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<LoginPage />} />
@@ -37,6 +33,10 @@ export default function AppRoutes() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/challenges" element={<ChallengesPage />} />
+        <Route path="/playground" element={<PlaygroundPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/docs" element={<DocsPage />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

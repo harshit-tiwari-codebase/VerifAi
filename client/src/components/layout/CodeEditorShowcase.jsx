@@ -3,7 +3,7 @@ import {
   FolderOpen,
   ChevronDown,
   X,
-  Sparkles,
+  ArrowUpRight,
   ShieldCheck,
   CheckCircle2,
 } from "lucide-react";
@@ -18,7 +18,7 @@ export default function CodeEditorShowcase() {
       {/* Top Heading */}
       <div className="relative z-10 mb-5 shrink-0 max-w-[65%]">
         <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-violet-500/15 border border-violet-400/25 text-violet-300 font-mono text-[11px] mb-2.5 backdrop-blur-sm shadow-sm">
-          <Sparkles className="h-3 w-3 text-violet-400" />
+          <ArrowUpRight className="h-3 w-3 text-violet-400" />
           <span>VerifAI Live Sandbox Engine</span>
         </div>
         <h2 className="text-xl sm:text-2xl xl:text-3xl font-bold font-display tracking-tight text-white leading-snug">

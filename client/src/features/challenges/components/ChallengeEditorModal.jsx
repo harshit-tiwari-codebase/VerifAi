@@ -465,7 +465,7 @@ export default function ChallengeEditorModal({
               size="sm"
               onClick={onClose}
               disabled={loading}
-              className="font-mono text-xs"
+              className="font-sans text-xs font-medium"
             >
               Cancel
             </Button>
@@ -474,7 +474,7 @@ export default function ChallengeEditorModal({
               variant="verify"
               size="sm"
               disabled={loading}
-              className="purple-glow font-mono text-xs"
+              className="font-sans text-xs font-medium"
             >
               {loading ? "Saving..." : isEditing ? "Update Challenge" : "Publish Challenge"}
             </Button>

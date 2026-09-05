@@ -100,18 +100,21 @@ export default function DeleteChallengeModal({
             size="sm"
             onClick={onClose}
             disabled={loading}
-            className="font-mono text-xs"
+            className="font-sans text-xs font-medium"
           >
             Cancel
           </Button>
-          <button
+          <Button
             type="button"
+            variant="danger"
+            size="sm"
             onClick={handleDelete}
+            loading={loading}
             disabled={loading}
-            className="inline-flex items-center justify-center rounded-lg bg-rose-600/90 px-3.5 py-1.5 font-mono text-xs font-medium text-white transition-colors hover:bg-rose-500 disabled:opacity-50"
+            className="font-sans text-xs font-medium"
           >
-            {loading ? "Deleting..." : "Delete Permanently"}
-          </button>
+            Delete Permanently
+          </Button>
         </div>
       </div>
     </div>

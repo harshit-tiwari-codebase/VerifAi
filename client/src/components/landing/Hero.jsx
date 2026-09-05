@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ShieldCheck,
-  Sparkles,
+  ArrowUpRight,
   ArrowRight,
   Terminal,
   Play,
@@ -77,10 +77,10 @@ export default function Hero() {
               to="/register"
               variant="verify"
               size="lg"
-              className="purple-glow font-medium group"
+              className="group"
             >
               Start a Challenge
-              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
             </Button>
 
             <Button
@@ -88,9 +88,9 @@ export default function Hero() {
               href="#playground"
               variant="ghost"
               size="lg"
-              className="border border-ink-600 hover:border-violet-500/40"
+              className="group"
             >
-              <Play className="h-4 w-4 mr-2 fill-current text-violet-400" />
+              <Play className="h-4 w-4 mr-1.5 fill-current text-violet-400 group-hover:scale-110 transition-transform duration-200" />
               Try Live Playground
             </Button>
           </div>
@@ -103,7 +103,7 @@ export default function Hero() {
             </span>
             <span className="h-1 w-1 rounded-full bg-ink-500 hidden sm:inline" />
             <span className="flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+              <ArrowUpRight className="h-3.5 w-3.5 text-purple-400" />
               Gemini & Groq AI Audit
             </span>
             <span className="h-1 w-1 rounded-full bg-ink-500 hidden sm:inline" />
@@ -189,14 +189,16 @@ export default function Hero() {
                   </span>
                 </div>
 
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleHeroPreview}
                   disabled={isSimulating}
-                  className="px-2.5 py-1 rounded text-xs font-sans font-medium bg-violet-500/20 text-violet-300 border border-violet-500/40 hover:bg-violet-500/30 transition-all flex items-center gap-1"
+                  className="!px-2.5 !py-1 !text-xs !rounded-lg"
                 >
-                  <Play className="h-3 w-3 fill-current" />
+                  <Play className="h-3 w-3 fill-current text-violet-400" />
                   {isSimulating ? "Evaluating..." : "Simulate"}
-                </button>
+                </Button>
               </div>
 
               {/* Dynamic Score Card */}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ShieldCheck } from "lucide-react";
 import Button from "../ui/Button.jsx";
 
 export default function CTA() {
@@ -12,8 +12,8 @@ export default function CTA() {
         <div className="pointer-events-none absolute -right-32 -bottom-32 h-64 w-64 rounded-full bg-purple-600/15 blur-3xl" />
 
         <div className="relative z-10 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-mono text-xs mb-6 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-sans text-xs font-medium mb-6 shadow-sm">
+            <ArrowUpRight className="h-3.5 w-3.5" />
             <span>Ready To Prove Your Engineering Craftsmanship?</span>
           </div>
 
@@ -32,10 +32,10 @@ export default function CTA() {
               to="/register"
               variant="verify"
               size="lg"
-              className="purple-glow font-medium group"
+              className="group"
             >
               Get Verified For Free
-              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
             </Button>
 
             <Button
@@ -43,13 +43,13 @@ export default function CTA() {
               href="#playground"
               variant="ghost"
               size="lg"
-              className="border border-ink-600 hover:border-violet-500/40"
+              className="group"
             >
               Try Playground Demo
             </Button>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 font-mono text-xs text-mist-500">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 font-sans text-xs font-medium text-mist-400">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               100% Free Tier Platform

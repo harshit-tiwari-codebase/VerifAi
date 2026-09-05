@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
             variant="verify"
             size="md"
             disabled={submitting}
-            className="w-full purple-glow"
+            className="w-full"
           >
             {submitting ? (
               <>

@@ -8,7 +8,6 @@ import {
   Check,
   CheckCircle2,
   Terminal,
-  Sparkles,
   GitCommit,
   UserCheck,
 } from "lucide-react";

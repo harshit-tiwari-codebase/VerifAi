@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import VerifaiLogo from "../ui/VerifaiLogo.jsx";
 import CodeEditorShowcase from "./CodeEditorShowcase.jsx";
 
@@ -45,7 +45,7 @@ export default function AuthLayout({
             {eyebrow && (
               <div className="text-center mb-3">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-mono text-xs">
-                  <Sparkles className="h-3 w-3" />
+                  <ArrowUpRight className="h-3 w-3" />
                   <span className="uppercase tracking-wider text-[11px]">{eyebrow}</span>
                 </div>
               </div>

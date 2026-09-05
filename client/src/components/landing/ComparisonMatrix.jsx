@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, X, Sparkles, Scale } from "lucide-react";
+import { Check, X, ArrowUpRight, Scale } from "lucide-react";
 
 const COMPARISONS = [
   {
@@ -64,7 +64,7 @@ export default function ComparisonMatrix() {
               <th className="p-4 md:p-5 w-1/4 text-mist-500">LeetCode / Autograders</th>
               <th className="p-4 md:p-5 w-1/4 text-violet-400 bg-violet-950/20 font-semibold border-l border-violet-500/30">
                 <span className="flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5" />
+                  <ArrowUpRight className="h-3.5 w-3.5" />
                   VerifAI Platform
                 </span>
               </th>

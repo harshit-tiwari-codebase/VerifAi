@@ -262,7 +262,7 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
                     variant="verify"
                     onClick={handleSimulateRun}
                     disabled={isRunning}
-                    className="!py-1 !px-3 text-xs font-mono purple-glow"
+                    className="!py-1 !px-3 text-xs font-sans font-medium"
                   >
                     {isRunning ? "Verifying..." : "Run Sandbox"}
                   </Button>

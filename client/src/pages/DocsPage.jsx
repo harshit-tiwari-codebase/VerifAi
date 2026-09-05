@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Copy, Check } from "lucide-react";
 import Navbar from "../components/layout/Navbar.jsx";
@@ -60,7 +60,7 @@ export default function DocsPage() {
                 to="/playground"
                 variant="verify"
                 size="sm"
-                className="purple-glow font-mono text-xs"
+                className="font-sans text-xs font-medium"
               >
                 Test in Playground →
               </Button>

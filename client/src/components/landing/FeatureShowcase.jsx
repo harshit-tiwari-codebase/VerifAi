@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
 import {
   Code2,
-  Sparkles,
+  ArrowUpRight,
   Shield,
   Award,
   Zap,
   CheckCircle,
   GitPullRequest,
   Lock,
-  ArrowUpRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -32,7 +31,7 @@ const data = await cache.getOrSet(key, async () => {
 }, { ttl: 300, lockTtl: 10 });`,
   },
   {
-    icon: Sparkles,
+    icon: ArrowUpRight,
     badge: "Pillar 02",
     title: "Dual-Model Senior AI Reviewer",
     subtitle: "Automated feedback like a Staff Engineer",

@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
             variant="verify"
             size="md"
             disabled={submitting}
-            className="w-full purple-glow"
+            className="w-full"
           >
             {submitting ? (
               <>
