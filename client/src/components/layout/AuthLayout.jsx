@@ -11,14 +11,7 @@ export default function AuthLayout({
   children,
 }) {
   return (
-    <div className="relative min-h-screen lg:h-screen lg:max-h-screen lg:overflow-hidden bg-[#04030a] text-mist-100 flex flex-col justify-between overflow-x-hidden">
-      {/* Dark Ambient Atmosphere (Preserved background styling) */}
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -left-40 -top-40 h-[38rem] w-[38rem] rounded-full bg-violet-600/15 blur-[150px]" />
-        <div className="absolute right-0 bottom-0 h-[38rem] w-[38rem] rounded-full bg-purple-600/10 blur-[150px]" />
-        <div className="absolute left-1/3 top-1/2 h-[32rem] w-[32rem] rounded-full bg-indigo-600/10 blur-[160px]" />
-      </div>
-
+    <div className="relative min-h-screen lg:h-screen lg:max-h-screen lg:overflow-hidden bg-black text-mist-100 flex flex-col justify-between overflow-x-hidden">
       <div className="relative z-10 flex flex-col lg:flex-row h-full w-full lg:overflow-hidden flex-1">
         {/* =====================================================
             LEFT: AUTHENTICATION SIDE (Fits completely in 100vh)

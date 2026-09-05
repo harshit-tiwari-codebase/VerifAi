@@ -83,7 +83,7 @@ export default function ChallengesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070A10] text-mist-100 flex flex-col justify-between selection:bg-violet-600/30">
+    <div className="min-h-screen bg-black text-mist-100 flex flex-col justify-between selection:bg-violet-600/30">
       <div>
         <Navbar />
 
@@ -123,7 +123,7 @@ export default function ChallengesPage() {
           </div>
 
           {/* Filter Toolbar */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-[#0B0F19]/90 p-2.5">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-[#0c0d12] p-2.5">
             <form onSubmit={handleSearchSubmit} className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-mist-500 stroke-[1.75]" />
               <input
@@ -131,7 +131,7 @@ export default function ChallengesPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search challenges by title, keyword, or concept..."
-                className="w-full rounded-lg border border-white/[0.06] bg-[#070A10] pl-9 pr-4 py-1.5 text-xs text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-lg border border-white/[0.06] bg-[#07080c] pl-9 pr-4 py-1.5 text-xs text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
               />
             </form>
 
@@ -142,7 +142,7 @@ export default function ChallengesPage() {
                   setCategory(e.target.value);
                   setPage(1);
                 }}
-                className="rounded-lg border border-white/[0.06] bg-[#070A10] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none"
+                className="rounded-lg border border-white/[0.06] bg-[#07080c] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -157,7 +157,7 @@ export default function ChallengesPage() {
                   setDifficulty(e.target.value);
                   setPage(1);
                 }}
-                className="rounded-lg border border-white/[0.06] bg-[#070A10] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none capitalize"
+                className="rounded-lg border border-white/[0.06] bg-[#07080c] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none capitalize"
               >
                 <option value="all">All Difficulties</option>
                 <option value="easy">Easy</option>

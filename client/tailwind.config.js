@@ -5,13 +5,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Dark surface scale — used for backgrounds, cards, borders
+        // Pure pitch-black surface scale — used for backgrounds, cards, borders
         ink: {
-          500: "#2A3441", // pending/inactive state dots
-          600: "#1C2430", // hairline borders
-          800: "#0D121B", // card/panel surface
-          900: "#070A10", // page background
-          950: "#040609", // deepest surface (e.g. primary button text-on-verify)
+          500: "#2D3245", // pending/inactive state dots
+          600: "#1C1F2E", // hairline borders
+          700: "#141722", // inner inset surfaces
+          800: "#0E1017", // card/panel surface (Sheryians UI style)
+          900: "#000000", // true pitch black background
+          950: "#000000", // deepest black
         },
         // Primary accent — was teal-green, now purple per request.
         // Keeping the token name "verify" (not renaming it) so every

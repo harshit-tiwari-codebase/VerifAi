@@ -24,13 +24,7 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#070A10] text-mist-100 selection:bg-violet-500/30 selection:text-white flex flex-col justify-between">
-      {/* Background Atmosphere */}
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -left-48 -top-48 h-[36rem] w-[36rem] rounded-full bg-violet-600/8 blur-[140px]" />
-        <div className="absolute right-0 top-1/3 h-[32rem] w-[32rem] rounded-full bg-purple-600/8 blur-[140px]" />
-      </div>
-
+    <div className="relative min-h-screen overflow-x-hidden bg-black text-mist-100 selection:bg-violet-500/30 selection:text-white flex flex-col justify-between">
       <div className="relative z-10">
         <Navbar />
 
@@ -344,7 +338,6 @@ export default function DocsPage() {
         </main>
       </div>
 
-      <Footer />
     </div>
   );
 }

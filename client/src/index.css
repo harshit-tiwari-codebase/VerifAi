@@ -8,34 +8,12 @@
   }
 
   html {
-    background: #04030a;
+    background: #000000;
   }
 
   body {
-    @apply bg-ink-900 text-mist-100;
-    background:
-      /* Main purple moon glow */
-      radial-gradient(
-        55% 45% at 50% -5%,
-        rgba(124, 58, 237, 0.16) 0%,
-        rgba(124, 58, 237, 0.08) 28%,
-        rgba(124, 58, 237, 0) 68%
-      ),
-      /* Secondary violet atmosphere */
-      radial-gradient(
-        35% 35% at 88% 18%,
-        rgba(168, 85, 247, 0.10) 0%,
-        rgba(168, 85, 247, 0) 70%
-      ),
-      /* Left-side moon reflection */
-      radial-gradient(
-        30% 30% at 8% 42%,
-        rgba(139, 92, 246, 0.055) 0%,
-        rgba(139, 92, 246, 0) 70%
-      ),
-      #04030a;
-
-    background-attachment: fixed;
+    @apply bg-black text-mist-100;
+    background: #000000;
     min-height: 100vh;
   }
 
@@ -100,6 +78,32 @@
     width: 0 !important;
     height: 0 !important;
   }
+
+  /* Ultra-sleek custom scrollbar for dashboard panels */
+  .custom-scrollbar {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(168, 85, 247, 0.45) transparent !important;
+    -ms-overflow-style: auto !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-radius: 9999px !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.75) !important;
+  }
 }
 
 @layer components {
@@ -112,7 +116,34 @@
   }
 
   .card {
-    @apply rounded-xl border border-ink-600 bg-ink-800/60 backdrop-blur-sm;
+    @apply rounded-2xl border border-white/[0.08] bg-[#0e1017];
+  }
+
+  /*
+   * RICH PURPLE COMPONENTS (Inspired by Reference Image 1)
+   */
+  .purple-comp {
+    background: linear-gradient(180deg, rgba(88, 28, 135, 0.45) 0%, rgba(46, 16, 101, 0.35) 40%, rgba(10, 4, 22, 0.95) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    box-shadow: 0 0 40px -10px rgba(147, 51, 234, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .purple-comp-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .purple-comp-hover:hover {
+    border-color: rgba(192, 132, 252, 0.55);
+    box-shadow: 0 0 50px -8px rgba(147, 51, 234, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+
+  /*
+   * CIRCULAR GLOW SYSTEM (For Landing Page ONLY)
+   */
+  .circular-glow-purple {
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.28) 0%, rgba(124, 58, 237, 0.12) 40%, transparent 70%);
+    filter: blur(80px);
   }
 
   /*
@@ -255,6 +286,132 @@
   .btn-sheen:hover::after {
     left: 180%;
   }
+}
+
+/* =========================================================
+ * CINEMATIC DARK TYPOGRAPHY ANIMATION
+ * Pure black background, 5.8s slow cinematic copper/burnt-purple sweep
+ * ========================================================= */
+
+@keyframes cinematicSweepText {
+  0% {
+    /* 0.0s: Left side begins illuminated */
+    background-position: -40% 50%;
+    opacity: 0.88;
+  }
+  58.6% {
+    /* 3.4s: Orange/copper illumination travels continuously from left to right (V -> e -> r -> i -> f -> A -> I) */
+    background-position: 90% 50%;
+    opacity: 0.98;
+  }
+  69.0% {
+    /* 3.4 - 4.0s: Right side reaches maximum illumination */
+    background-position: 110% 50%;
+    opacity: 1;
+  }
+  82.0% {
+    /* 4.0 - 4.8s: The illumination slowly recedes/fades, leaving center of word with subtle dark copper tone */
+    background-position: 50% 50%;
+    opacity: 0.28;
+  }
+  92.0% {
+    /* 5.3s: Subtle dark copper tone in center before transitioning back to start */
+    background-position: 15% 50%;
+    opacity: 0.18;
+  }
+  100% {
+    /* 5.8s: Smoothly returns to left side to restart sequence */
+    background-position: -40% 50%;
+    opacity: 0.88;
+  }
+}
+
+@keyframes cinematicGlowShift {
+  0% {
+    background-position: -40% 50%;
+    opacity: 0.09;
+  }
+  58.6% {
+    background-position: 90% 50%;
+    opacity: 0.12;
+  }
+  69.0% {
+    background-position: 110% 50%;
+    opacity: 0.12;
+  }
+  82.0% {
+    background-position: 50% 50%;
+    opacity: 0.04;
+  }
+  92.0% {
+    background-position: 15% 50%;
+    opacity: 0.02;
+  }
+  100% {
+    background-position: -40% 50%;
+    opacity: 0.09;
+  }
+}
+
+.cinematic-text-base {
+  color: #050505;
+  -webkit-text-fill-color: #050505;
+  -webkit-text-stroke: 1.2px #171717;
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.cinematic-text-sweep {
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(111, 41, 24, 0.25) 15%,
+    #6F2918 28%,
+    #581C87 38%,
+    #A8431F 46%,
+    #C85A2C 50%,
+    #A8431F 54%,
+    #7E22CE 62%,
+    #6F2918 72%,
+    rgba(111, 41, 24, 0.25) 85%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px rgba(200, 90, 44, 0.4);
+  animation: cinematicSweepText 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
+}
+
+.cinematic-text-glow {
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(111, 41, 24, 0.25) 15%,
+    #6F2918 28%,
+    #581C87 38%,
+    #A8431F 46%,
+    #C85A2C 50%,
+    #A8431F 54%,
+    #7E22CE 62%,
+    #6F2918 72%,
+    rgba(111, 41, 24, 0.25) 85%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(22px);
+  animation: cinematicGlowShift 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

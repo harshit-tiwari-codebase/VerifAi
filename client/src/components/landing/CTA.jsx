@@ -5,11 +5,9 @@ import Button from "../ui/Button.jsx";
 export default function CTA() {
   return (
     <section className="container-xl py-24 relative">
-      <div className="card relative overflow-hidden px-8 py-16 md:px-16 md:py-20 text-center border-violet-500/40 bg-gradient-to-b from-ink-800/80 to-[#070A10] shadow-[0_0_60px_rgba(147,51,234,0.15)]">
-        {/* Ambient atmospheric gradients */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(147,51,234,0.22),transparent_70%)]" />
-        <div className="pointer-events-none absolute -left-32 -bottom-32 h-64 w-64 rounded-full bg-violet-600/15 blur-3xl" />
-        <div className="pointer-events-none absolute -right-32 -bottom-32 h-64 w-64 rounded-full bg-purple-600/15 blur-3xl" />
+      <div className="purple-comp relative overflow-hidden px-8 py-16 md:px-16 md:py-20 text-center rounded-3xl">
+        {/* Soft Circular Purple Background Glow */}
+        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-[450px] w-[450px] rounded-full circular-glow-purple opacity-75" />
 
         <div className="relative z-10 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 font-sans text-xs font-medium mb-6 shadow-sm">

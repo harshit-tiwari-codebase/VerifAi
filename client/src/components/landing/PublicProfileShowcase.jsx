@@ -76,12 +76,9 @@ export default function PublicProfileShowcase() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Side: Mock Public Profile Card (5 cols) */}
-        <div className="lg:col-span-5 card p-6 md:p-8 border-ink-600 bg-ink-800/40 relative overflow-hidden shadow-2xl">
-          {/* Subtle purple aura */}
-          <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-violet-600/10 blur-3xl" />
-
+        <div className="lg:col-span-5 card p-6 md:p-8 border-white/[0.08] bg-[#0c0d12] relative overflow-hidden shadow-2xl">
           {/* Profile Header */}
-          <div className="flex items-center gap-4 pb-6 border-b border-ink-600">
+          <div className="flex items-center gap-4 pb-6 border-b border-white/[0.08]">
             <div className="relative">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-800 flex items-center justify-center font-display text-xl font-bold text-white shadow-lg shadow-violet-900/30">
                 AT
@@ -160,8 +157,8 @@ export default function PublicProfileShowcase() {
         </div>
 
         {/* Right Side: Credential Verification Certificate (7 cols) */}
-        <div className="lg:col-span-7 card p-6 md:p-8 border-violet-500/40 bg-ink-900/80 shadow-2xl relative">
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-ink-600">
+        <div className="lg:col-span-7 purple-comp p-6 md:p-8 rounded-2xl shadow-2xl relative">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-violet-500/20 border border-violet-400/40 flex items-center justify-center text-violet-300">
                 <ShieldCheck className="h-5 w-5" />

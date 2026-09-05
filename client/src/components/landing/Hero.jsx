@@ -33,9 +33,8 @@ export default function Hero() {
 
   return (
     <section className="container-xl relative pt-20 pb-20 md:pt-28 md:pb-28">
-      {/* Background radial glow */}
-      <div className="pointer-events-none absolute -left-40 top-0 h-[36rem] w-[36rem] rounded-full bg-violet-600/15 blur-[120px]" />
-      <div className="pointer-events-none absolute -right-32 top-32 h-[30rem] w-[30rem] rounded-full bg-purple-600/15 blur-[120px]" />
+      {/* Centered Circular Purple Glow */}
+      <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 h-[550px] w-[550px] rounded-full circular-glow-purple opacity-70" />
 
       <div className="grid items-center gap-12 lg:gap-16 lg:grid-cols-12 relative z-10">
         {/* Left Headline & CTAs (7 cols) */}
@@ -122,11 +121,11 @@ export default function Hero() {
           className="lg:col-span-5 relative"
         >
           {/* Ambient terminal backdrop glow */}
-          <div className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-violet-600/30 to-purple-600/20 blur-xl opacity-70" />
+          <div className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-violet-600/25 to-purple-600/15 blur-xl opacity-60" />
 
-          <div className="card overflow-hidden shadow-2xl border-ink-600 bg-[#070A10] relative">
+          <div className="card overflow-hidden shadow-2xl border-white/[0.08] bg-[#07080c] relative">
             {/* Terminal Header */}
-            <div className="flex items-center justify-between border-b border-ink-600 bg-ink-800/90 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#0d0f15] px-4 py-3">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
@@ -177,7 +176,7 @@ export default function Hero() {
             </pre>
 
             {/* Simulated Live Action & Evaluation Footer */}
-            <div className="border-t border-ink-600 bg-ink-800/80 p-4">
+            <div className="border-t border-white/[0.08] bg-[#0d0f15] p-4">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-2 text-xs font-sans font-medium text-mist-300">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />

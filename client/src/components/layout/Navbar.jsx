@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Menu, X, ChevronDown, CircleUserRound, LogOut } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { selectIsAuthenticated } from "../../features/auth/authSlice.js";
+import { logout, selectIsAuthenticated, selectUser } from "../../features/auth/authSlice.js";
 import Button from "../ui/Button.jsx";
 import VerifaiLogo from "../ui/VerifaiLogo.jsx";
 
-export default function Navbar() {
+export default function Navbar({ showNavigation = true }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -20,7 +25,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const appLinks = [
+  const navLinks = [
+    {
+      label: "Home",
+      href: "/",
+      active: location.pathname === "/",
+    },
     {
       label: "Challenges",
       href: "/challenges",
@@ -43,105 +53,155 @@ export default function Navbar() {
     },
   ];
 
-  const currentLinks = isAuthenticated ? appLinks : [];
+  const userInitial = (user?.name?.[0] || user?.email?.[0] || "U").toUpperCase();
+
+  const handleLogout = async () => {
+    setProfileMenuOpen(false);
+    await dispatch(logout());
+    navigate("/");
+  };
 
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-white/[0.08] bg-[#070A10]/95 backdrop-blur-md shadow-lg shadow-black/50"
-          : "bg-[#070A10]/70 backdrop-blur-sm border-b border-white/[0.04]"
+          ? "border-b border-white/[0.06] bg-black/80 backdrop-blur-xl py-3 shadow-lg shadow-black/40"
+          : "bg-transparent py-4"
       }`}
     >
-      <nav className="container-xl flex h-16 items-center justify-between">
-        {/* Brand Logo on Left */}
+      <nav className="container-xl flex items-center justify-between gap-4">
+        {/* Brand Logo */}
         <Link
-          to={isAuthenticated ? "/dashboard" : "/"}
-          className="group flex items-center gap-2 transition-transform hover:scale-[1.02]"
+          to="/"
+          className="group flex items-center gap-2 transition-transform hover:scale-[1.02] shrink-0"
         >
           <VerifaiLogo size="md" />
         </Link>
 
-        {/* Center Navigation Links with Fluid Animating Hover Effects */}
-        <div
-          className="hidden md:flex items-center gap-1"
-          onMouseLeave={() => setHoveredIdx(null)}
-        >
-          {currentLinks.map((link, idx) => {
-            const isActive = link.active;
-            const isExternalAnchor = link.href.startsWith("/#");
+        {/* Center Navigation: Sheryians-inspired floating pill container */}
+        {showNavigation && <div className="hidden md:flex items-center rounded-xl border-x-2 border-t-2 border-white/[0.08] bg-[#0e1017]/80 backdrop-blur-md px-1 py-2">
+          <div
+            className="flex items-center gap-0.5"
+            onMouseLeave={() => setHoveredIdx(null)}
+          >
+            {navLinks.map((link, idx) => {
+              const isActive = link.active;
 
-            const content = (
-              <span className="relative px-3.5 py-1.5 text-xs font-mono block transition-colors duration-200">
-                {/* Fluid Spring Hover Pill */}
-                {hoveredIdx === idx && (
-                  <motion.span
-                    layoutId="navbarHoverPill"
-                    transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                    className="absolute inset-0 rounded-lg bg-white/[0.06] border border-white/[0.06]"
-                  />
-                )}
-
-                {/* Animated Active Glowing Underline */}
-                {isActive && (
-                  <motion.span
-                    layoutId="navbarActiveLine"
-                    className="absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full bg-gradient-to-r from-violet-500 to-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.7)]"
-                  />
-                )}
-
-                <span
-                  className={`relative z-10 transition-colors ${
-                    isActive
-                      ? "text-white font-medium"
-                      : hoveredIdx === idx
-                      ? "text-mist-100"
-                      : "text-mist-400"
-                  }`}
+              return (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  className="relative px-3.5 py-2 text-xs font-sans font-medium block transition-colors duration-200"
                 >
-                  {link.label}
-                </span>
-              </span>
-            );
+                  {/* Active/Hover Pill */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="navbarActivePill"
+                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                      className="absolute inset-0 rounded-lg bg-white/[0.08] border border-white/[0.08]"
+                    />
+                  )}
+                  {hoveredIdx === idx && !isActive && (
+                    <motion.span
+                      layoutId="navbarHoverPill"
+                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                      className="absolute inset-0 rounded-lg bg-white/[0.04]"
+                    />
+                  )}
 
-            return isExternalAnchor ? (
-              <a
-                key={link.label}
-                href={link.href}
-                onMouseEnter={() => setHoveredIdx(idx)}
-              >
-                {content}
-              </a>
-            ) : (
-              <Link
-                key={link.label}
-                to={link.href}
-                onMouseEnter={() => setHoveredIdx(idx)}
-              >
-                {content}
-              </Link>
-            );
-          })}
-        </div>
+                  <span
+                    className={`relative z-10 transition-colors ${
+                      isActive
+                        ? "text-white font-semibold"
+                        : hoveredIdx === idx
+                        ? "text-mist-100"
+                        : "text-mist-400"
+                    }`}
+                  >
+                    {link.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>}
 
-        {/* Right Section: Clean, Minimal Profile Icon (or Auth for guests) */}
-        <div className="flex items-center gap-3">
+        {/* Right Section: Profile Avatar (Sheryians purple circle with initial) or Auth */}
+        <div className="flex items-center gap-3 shrink-0 ">
           {isAuthenticated ? (
-            /* Minimal Profile Icon on Right */
-            <Link
-              to="/dashboard"
-              title="Open Dashboard"
-              aria-label="Open Dashboard"
-              className="relative flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-mist-300 hover:text-white hover:border-violet-500/50 hover:bg-violet-500/10 hover:shadow-[0_0_15px_rgba(147,51,234,0.3)] transition-all duration-200 group"
-            >
-              <User className="h-4 w-4 stroke-[1.75] text-violet-300 group-hover:scale-110 transition-transform" />
-              <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-[#070A10]" />
-            </Link>
+            <div className="flex items-center gap-2.5 ">
+              {/* <Button
+                as={Link}
+                to="/dashboard"
+                variant="verify"
+                size="sm"
+                className="hidden sm:inline-flex !rounded-lg !px-3.5 !py-1.5"
+              >
+                Dashboard
+              </Button> */}
+
+              {/* Purple Circle Avatar with Initial */}
+              <div className="relative">
+                <button
+                  type="button"
+                  title="Open profile menu"
+                  aria-label="Open profile menu"
+                  aria-expanded={profileMenuOpen}
+                  onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
+                  className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-violet-500/40 transition-all group"
+                >
+                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white font-bold text-xs border border-white/20 shadow-[0_0_15px_rgba(147,51,234,0.35)] group-hover:scale-105 transition-transform">
+                    {userInitial}
+                    <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-black" />
+                  </span>
+                  <ChevronDown className="h-3.5 w-3.5 text-mist-500 group-hover:text-white transition-colors hidden sm:inline" />
+                </button>
+
+                <AnimatePresence>
+                  {profileMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                      className="absolute right-0 top-12 z-50 w-48 overflow-hidden rounded-lg border border-white/[0.16] bg-[#0e0b0d] shadow-2xl shadow-black/50"
+                    >
+                      <div className="flex items-center gap-3 border-b border-white/[0.12] px-4 py-3">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-sm font-bold text-white">
+                          {userInitial}
+                        </span>
+                        <span className="truncate text-sm font-medium text-mist-100">
+                          {user?.name || "User"}
+                        </span>
+                      </div>
+
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-mist-200 transition-colors hover:bg-white/[0.06] hover:text-white"
+                      >
+                        <CircleUserRound className="h-6 w-6 text-mist-400" />
+                        Profile
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-3 border-t border-white/[0.12] px-4 py-3 text-left text-sm text-mist-200 transition-colors hover:bg-rose-500/[0.08] hover:text-rose-400"
+                      >
+                        <LogOut className="h-6 w-6 text-rose-500" />
+                        Logout
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           ) : (
             <div className="hidden sm:flex items-center gap-2 font-sans text-xs font-medium">
               <Link
                 to="/login"
-                className="px-3 py-1.5 text-mist-300 hover:text-white transition-colors"
+                className="px-3 py-1.5 text-mist-400 hover:text-white transition-colors"
               >
                 Sign in
               </Link>
@@ -152,60 +212,61 @@ export default function Navbar() {
           )}
 
           {/* Mobile Menu Hamburger */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-lg border border-white/10 text-mist-300 hover:text-white hover:border-violet-500/40"
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
+          {showNavigation && (
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 rounded-lg border border-white/10 text-mist-300 hover:text-white hover:border-violet-500/40"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          )}
         </div>
       </nav>
 
       {/* Mobile Drawer */}
       <AnimatePresence>
-        {mobileMenuOpen && (
+        {showNavigation && mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-white/[0.08] bg-[#070A10]/98 backdrop-blur-xl px-6 py-4 space-y-3 font-mono text-xs"
+            className="md:hidden border-b border-white/[0.08] bg-black/95 backdrop-blur-xl px-6 py-6 space-y-3 font-sans text-xs"
           >
-            {isAuthenticated ? (
-              <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`rounded-lg px-3 py-2 transition-all ${
+                    link.active
+                      ? "bg-violet-600 text-white font-medium"
+                      : "text-mist-400 hover:text-white hover:bg-white/[0.04]"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="pt-2 border-t border-white/[0.08]">
+              {isAuthenticated ? (
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`rounded-lg px-3 py-2 flex items-center justify-between transition-all ${
-                    location.pathname === "/dashboard"
-                      ? "bg-violet-600/90 text-white font-medium"
-                      : "text-mist-400 hover:text-white"
-                  }`}
+                  className="flex items-center justify-between rounded-lg bg-[#0e1017] p-2.5 border border-white/[0.08]"
                 >
-                  <span>My Profile & Dashboard</span>
-                  <User className="h-3.5 w-3.5 text-violet-300" />
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-600 text-white font-bold text-xs">
+                      {userInitial}
+                    </span>
+                    <span className="text-white font-medium text-xs">{user?.name || "Dashboard"}</span>
+                  </div>
+                  <span className="text-[11px] text-violet-400 font-medium">Open →</span>
                 </Link>
-
-                <div className="h-px bg-white/[0.06] my-1" />
-
-                {appLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    to={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`rounded-lg px-3 py-2 transition-all ${
-                      link.active
-                        ? "bg-violet-600/90 text-white font-medium"
-                        : "text-mist-400 hover:text-white"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <>
-                <div className="flex flex-col gap-2">
+              ) : (
+                <div className="flex flex-col gap-2 pt-1">
                   <Button
                     as={Link}
                     to="/login"
@@ -227,8 +288,8 @@ export default function Navbar() {
                     Get verified
                   </Button>
                 </div>
-              </>
-            )}
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

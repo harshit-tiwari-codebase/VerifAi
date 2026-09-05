@@ -277,11 +277,11 @@ export default function InteractivePlayground() {
       </div>
 
       {/* Main Interactive IDE & Result Container */}
-      <div className="card overflow-hidden border-ink-600 grid grid-cols-1 lg:grid-cols-12 shadow-2xl">
+      <div className="card overflow-hidden border-white/[0.08] grid grid-cols-1 lg:grid-cols-12 shadow-2xl">
         {/* Left Side: Code Editor (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col border-b lg:border-b-0 lg:border-r border-ink-600 bg-[#070A10]">
+        <div className="lg:col-span-7 flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.08] bg-[#07080c]">
           {/* Editor Header */}
-          <div className="flex items-center justify-between border-b border-ink-600 bg-ink-800/80 px-4 py-3">
+          <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#0e1017] px-4 py-3">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
                 <span className="h-3 w-3 rounded-full bg-red-500/80" />
@@ -465,23 +465,23 @@ export default function InteractivePlayground() {
                   className="space-y-4"
                 >
                   {/* Score & Verdict Banner */}
-                  <div className="p-4 rounded-xl border border-violet-500/40 bg-violet-950/20 flex items-center justify-between">
+                  <div className="p-4 rounded-xl purple-comp flex items-center justify-between">
                     <div>
-                      <p className="text-[11px] font-sans font-semibold uppercase text-violet-400">Verdict</p>
-                      <h4 className="font-display font-semibold text-mist-100 text-base">
+                      <p className="text-[11px] font-sans font-semibold uppercase text-violet-300">Verdict</p>
+                      <h4 className="font-display font-semibold text-white text-base">
                         {challenge.aiReview.verdict}
                       </h4>
                     </div>
                     <div className="text-right">
-                      <span className="font-display text-2xl font-bold text-violet-400">
+                      <span className="font-display text-2xl font-bold text-white">
                         {challenge.aiReview.score}
                       </span>
-                      <span className="font-sans text-xs text-mist-400">/100</span>
+                      <span className="font-sans text-xs text-violet-300/80">/100</span>
                     </div>
                   </div>
 
                   {/* Strengths */}
-                  <div className="p-3.5 rounded-lg border border-ink-600 bg-ink-800/50 space-y-2">
+                  <div className="p-3.5 rounded-lg border border-white/[0.08] bg-[#0c0d14] space-y-2">
                     <p className="text-[11px] font-sans font-semibold text-mist-300 uppercase tracking-wider flex items-center gap-1.5">
                       <Zap className="h-3 w-3 text-violet-400" />
                       Key Strengths Identified
@@ -497,7 +497,7 @@ export default function InteractivePlayground() {
                   </div>
 
                   {/* Issued Badge Preview */}
-                  <div className="p-3.5 rounded-lg border border-violet-500/30 bg-violet-950/30 flex items-center gap-3">
+                  <div className="p-3.5 rounded-xl purple-comp flex items-center gap-3">
                     <div className="h-10 w-10 rounded-lg bg-violet-500/20 border border-violet-400/40 flex items-center justify-center shrink-0">
                       <Award className="h-5 w-5 text-violet-300" />
                     </div>

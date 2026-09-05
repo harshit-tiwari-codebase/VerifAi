@@ -13,13 +13,15 @@ import CTA from "../components/landing/CTA.jsx";
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#070A10] text-mist-100 selection:bg-violet-500/30 selection:text-white">
-      {/* Dynamic Background Atmosphere Glows */}
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -left-48 -top-48 h-[40rem] w-[40rem] rounded-full bg-violet-600/10 blur-[140px]" />
-        <div className="absolute right-0 top-1/4 h-[35rem] w-[35rem] rounded-full bg-purple-600/10 blur-[140px]" />
-        <div className="absolute left-1/4 top-2/3 h-[38rem] w-[38rem] rounded-full bg-indigo-600/8 blur-[160px]" />
-        <div className="absolute -right-48 bottom-10 h-[42rem] w-[42rem] rounded-full bg-violet-600/10 blur-[150px]" />
+    <div className="relative min-h-screen overflow-x-hidden bg-black text-mist-100 selection:bg-violet-500/30 selection:text-white">
+      {/* Clean Circular Purple Background Glows (Landing Page ONLY as requested) */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        {/* Top Hero circular glow */}
+        <div className="absolute -top-36 left-1/2 -translate-x-1/2 h-[600px] w-[600px] rounded-full circular-glow-purple pointer-events-none opacity-80" />
+        {/* Mid-page circular glow anchor */}
+        <div className="absolute top-[38%] left-1/2 -translate-x-1/2 h-[550px] w-[550px] rounded-full circular-glow-purple pointer-events-none opacity-60" />
+        {/* Lower CTA circular glow anchor */}
+        <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 h-[600px] w-[600px] rounded-full circular-glow-purple pointer-events-none opacity-75" />
       </div>
 
       <div className="relative z-10">
@@ -40,11 +42,6 @@ export default function LandingPage() {
           {/* 5. Deep Feature Matrix & Pillars */}
           <FeatureShowcase />
 
-          {/* 6. Why VerifAI: Resumes vs LeetCode vs VerifAI */}
-          <ComparisonMatrix />
-
-          {/* 7. Public Developer Profile & Cryptographic Badges */}
-          <PublicProfileShowcase />
 
           {/* 8. Zero-Cost Production Stack */}
           <TechStack />
