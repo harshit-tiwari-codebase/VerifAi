@@ -6,44 +6,412 @@
   * {
     @apply border-ink-600;
   }
-  body {
-    background-image: radial-gradient(
-        60% 50% at 50% 0%,
-        rgba(124, 111, 255, 0.08) 0%,
-        rgba(7, 10, 16, 0) 60%
-      ),
-      radial-gradient(
-        40% 40% at 85% 15%,
-        rgba(0, 217, 160, 0.06) 0%,
-        rgba(7, 10, 16, 0) 60%
-      );
+
+  html {
+    background: #000000;
   }
+
+  body {
+    @apply bg-black text-mist-100;
+    background: #000000;
+    min-height: 100vh;
+  }
+
   h1,
   h2,
   h3,
   h4 {
     @apply font-display tracking-tight;
   }
+
   ::selection {
-    @apply bg-verify/30 text-mist-100;
+    background: rgba(124, 58, 237, 0.35);
+    color: #f4f6fa;
   }
+
   :focus-visible {
-    outline: 2px solid #00d9a0;
+    outline: 2px solid #8b5cf6;
     outline-offset: 2px;
     border-radius: 4px;
+  }
+
+  /* Sleek root document scrollbar */
+  html {
+    scrollbar-color: rgba(147, 51, 234, 0.35) #070a10;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #070a10;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(147, 51, 234, 0.35);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.6);
+  }
+
+  /* Completely remove ugly scrollbars from all inner components & code areas */
+  .no-scrollbar,
+  pre,
+  code,
+  .overflow-x-auto,
+  .overflow-y-auto {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .no-scrollbar::-webkit-scrollbar,
+  pre::-webkit-scrollbar,
+  code::-webkit-scrollbar,
+  .overflow-x-auto::-webkit-scrollbar,
+  .overflow-y-auto::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Ultra-sleek custom scrollbar for dashboard panels */
+  .custom-scrollbar {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(168, 85, 247, 0.45) transparent !important;
+    -ms-overflow-style: auto !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-radius: 9999px !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.75) !important;
   }
 }
 
 @layer components {
   .container-xl {
-    @apply mx-auto w-full max-w-6xl px-6;
+    @apply w-full px-4 sm:px-8 lg:px-12 xl:px-16;
   }
+
   .eyebrow {
-    @apply font-mono text-xs uppercase tracking-[0.18em] text-verify;
+    @apply font-display text-xs font-semibold uppercase tracking-wider text-verify;
   }
+
   .card {
-    @apply rounded-xl border border-ink-600 bg-ink-800/60 backdrop-blur-sm;
+    @apply rounded-2xl border border-white/[0.08] bg-[#0e1017];
   }
+
+  /*
+   * RICH PURPLE COMPONENTS (Inspired by Reference Image 1)
+   */
+  .purple-comp {
+    background: linear-gradient(180deg, rgba(88, 28, 135, 0.45) 0%, rgba(46, 16, 101, 0.35) 40%, rgba(10, 4, 22, 0.95) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    box-shadow: 0 0 40px -10px rgba(147, 51, 234, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .purple-comp-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .purple-comp-hover:hover {
+    border-color: rgba(192, 132, 252, 0.55);
+    box-shadow: 0 0 50px -8px rgba(147, 51, 234, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+
+  /*
+   * CIRCULAR GLOW SYSTEM (For Landing Page ONLY)
+   */
+  .circular-glow-purple {
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.28) 0%, rgba(124, 58, 237, 0.12) 40%, transparent 70%);
+    filter: blur(80px);
+  }
+
+  /*
+   * DARK MOON AMBIENT SYSTEM
+   *
+   * Use these inside:
+   * relative overflow-hidden
+   */
+
+  .orb {
+    @apply pointer-events-none absolute rounded-full;
+    filter: blur(100px);
+    transform: translateZ(0);
+  }
+
+  .orb-verify {
+    background: radial-gradient(
+      circle,
+      rgba(124, 58, 237, 0.30) 0%,
+      rgba(124, 58, 237, 0.12) 35%,
+      rgba(124, 58, 237, 0) 72%
+    );
+  }
+
+  .orb-signal {
+    background: radial-gradient(
+      circle,
+      rgba(168, 85, 247, 0.22) 0%,
+      rgba(168, 85, 247, 0.08) 38%,
+      rgba(168, 85, 247, 0) 72%
+    );
+  }
+
+  /* Soft purple moonlight */
+  .moon-glow {
+    background: radial-gradient(
+      circle at center,
+      rgba(192, 132, 252, 0.12) 0%,
+      rgba(139, 92, 246, 0.07) 25%,
+      rgba(76, 29, 149, 0.025) 48%,
+      transparent 72%
+    );
+    filter: blur(30px);
+  }
+
+  /* Controlled purple glow for important UI */
+  .purple-glow {
+    box-shadow:
+      0 0 25px rgba(124, 58, 237, 0.12),
+      0 0 70px rgba(124, 58, 237, 0.06);
+  }
+
+  .purple-glow-strong {
+    box-shadow:
+      0 0 20px rgba(124, 58, 237, 0.22),
+      0 0 60px rgba(168, 85, 247, 0.10);
+  }
+
+  /*
+   * MODERN AWWWARDS / DRIBBBLE BUTTON SYSTEM
+   * Minimalist, architectural, high-end specular physics
+   */
+  .btn-specular-primary {
+    background: linear-gradient(180deg, #9333EA 0%, #7E22CE 50%, #6B21A8 100%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.35),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.25),
+      0 1px 2px 0 rgba(0, 0, 0, 0.4),
+      0 8px 20px -4px rgba(147, 51, 234, 0.35);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-specular-primary:hover {
+    background: linear-gradient(180deg, #A855F7 0%, #8B5CF6 50%, #7C3AED 100%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.2),
+      0 2px 4px 0 rgba(0, 0, 0, 0.4),
+      0 14px 28px -4px rgba(147, 51, 234, 0.55);
+    transform: translateY(-1px);
+  }
+
+  .btn-specular-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow:
+      inset 0 2px 4px 0 rgba(0, 0, 0, 0.3),
+      0 4px 12px -2px rgba(147, 51, 234, 0.35);
+  }
+
+  .btn-frosted-glass {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+      0 2px 8px -2px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-frosted-glass:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(192, 132, 252, 0.35);
+    color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+      0 8px 24px -4px rgba(124, 58, 237, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .btn-frosted-glass:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Elegant subtle glint sweep for modern luxury buttons */
+  .btn-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-sheen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 30%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: left 0.75s ease-in-out;
+    pointer-events: none;
+  }
+
+  .btn-sheen:hover::after {
+    left: 180%;
+  }
+}
+
+/* =========================================================
+ * CINEMATIC DARK TYPOGRAPHY ANIMATION
+ * Pure black background, 5.8s slow cinematic copper/burnt-purple sweep
+ * ========================================================= */
+
+@keyframes cinematicSweepText {
+  0% {
+    /* 0.0s: Left side begins illuminated */
+    background-position: -40% 50%;
+    opacity: 0.88;
+  }
+  58.6% {
+    /* 3.4s: Orange/copper illumination travels continuously from left to right (V -> e -> r -> i -> f -> A -> I) */
+    background-position: 90% 50%;
+    opacity: 0.98;
+  }
+  69.0% {
+    /* 3.4 - 4.0s: Right side reaches maximum illumination */
+    background-position: 110% 50%;
+    opacity: 1;
+  }
+  82.0% {
+    /* 4.0 - 4.8s: The illumination slowly recedes/fades, leaving center of word with subtle dark copper tone */
+    background-position: 50% 50%;
+    opacity: 0.28;
+  }
+  92.0% {
+    /* 5.3s: Subtle dark copper tone in center before transitioning back to start */
+    background-position: 15% 50%;
+    opacity: 0.18;
+  }
+  100% {
+    /* 5.8s: Smoothly returns to left side to restart sequence */
+    background-position: -40% 50%;
+    opacity: 0.88;
+  }
+}
+
+@keyframes cinematicGlowShift {
+  0% {
+    background-position: -40% 50%;
+    opacity: 0.09;
+  }
+  58.6% {
+    background-position: 90% 50%;
+    opacity: 0.12;
+  }
+  69.0% {
+    background-position: 110% 50%;
+    opacity: 0.12;
+  }
+  82.0% {
+    background-position: 50% 50%;
+    opacity: 0.04;
+  }
+  92.0% {
+    background-position: 15% 50%;
+    opacity: 0.02;
+  }
+  100% {
+    background-position: -40% 50%;
+    opacity: 0.09;
+  }
+}
+
+.cinematic-text-base {
+  color: #050505;
+  -webkit-text-fill-color: #050505;
+  -webkit-text-stroke: 1.2px #171717;
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.cinematic-text-sweep {
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(111, 41, 24, 0.25) 15%,
+    #6F2918 28%,
+    #581C87 38%,
+    #A8431F 46%,
+    #C85A2C 50%,
+    #A8431F 54%,
+    #7E22CE 62%,
+    #6F2918 72%,
+    rgba(111, 41, 24, 0.25) 85%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px rgba(200, 90, 44, 0.4);
+  animation: cinematicSweepText 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
+}
+
+.cinematic-text-glow {
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(111, 41, 24, 0.25) 15%,
+    #6F2918 28%,
+    #581C87 38%,
+    #A8431F 46%,
+    #C85A2C 50%,
+    #A8431F 54%,
+    #7E22CE 62%,
+    #6F2918 72%,
+    rgba(111, 41, 24, 0.25) 85%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(22px);
+  animation: cinematicGlowShift 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

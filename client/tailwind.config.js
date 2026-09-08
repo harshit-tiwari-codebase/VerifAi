@@ -5,46 +5,40 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Pure pitch-black surface scale — used for backgrounds, cards, borders
         ink: {
-          950: "#070A10",
-          900: "#0A0E14",
-          800: "#10151F",
-          700: "#161C29",
-          600: "#1E2530",
-          500: "#2A3242",
+          500: "#2D3245", // pending/inactive state dots
+          600: "#1C1F2E", // hairline borders
+          700: "#141722", // inner inset surfaces
+          800: "#0E1017", // card/panel surface (Sheryians UI style)
+          900: "#000000", // true pitch black background
+          950: "#000000", // deepest black
         },
+        // Primary accent — was teal-green, now purple per request.
+        // Keeping the token name "verify" (not renaming it) so every
+        // existing bg-verify / text-verify / border-verify / shadow-verify
+        // usage across the app picks up the new color automatically,
+        // without touching every component file.
+        verify: "#9333EA",
+        // Secondary accent — a lighter violet, still distinct enough from
+        // the new purple "verify" to read as a separate tone in LiveDemo.
+        signal: "#C084FC",
+        // Foreground text scale, light-on-dark
         mist: {
-          100: "#E8ECF1",
-          300: "#B7C0CE",
-          500: "#7A8699",
-          700: "#4C5566",
-        },
-        verify: {
-          DEFAULT: "#00D9A0",
-          soft: "#00D9A022",
-          dim: "#0A8F6B",
-        },
-        signal: {
-          DEFAULT: "#7C6FFF",
-          soft: "#7C6FFF22",
-          dim: "#5B4FDB",
-        },
-        flag: {
-          DEFAULT: "#FF6B5E",
+          100: "#F4F6FA", // primary text
+          300: "#C7CEDA", // secondary text
+          400: "#A6AEBD", // secondary/body copy on dashboard-style pages
+          500: "#8B93A3", // muted text
+          700: "#586173", // dim/pending text
         },
       },
       fontFamily: {
-        display: ["'Space Grotesk'", "sans-serif"],
-        body: ["'Inter'", "sans-serif"],
-        mono: ["'JetBrains Mono'", "monospace"],
+        sans: ['"Poppins"', "system-ui", "sans-serif"],
+        display: ['"Montserrat"', "Poppins", "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
       },
-      backgroundImage: {
-        "grid-fade":
-          "linear-gradient(to bottom, rgba(7,10,16,0) 0%, #070A10 100%)",
-      },
-      boxShadow: {
-        verify: "0 0 0 1px #00D9A033, 0 0 24px 0 #00D9A022",
-        signal: "0 0 0 1px #7C6FFF33, 0 0 24px 0 #7C6FFF22",
+      spacing: {
+        section: "6rem",
       },
       keyframes: {
         blink: {

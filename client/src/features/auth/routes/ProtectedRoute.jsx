@@ -1,5 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useSelector } from "react-redux";
+import {
+  selectIsAuthenticated,
+  selectIsAuthLoading,
+} from "../authSlice.js";
 
 /**
  * Wrap protected pages: <Route element={<ProtectedRoute />}>...</Route>
@@ -7,7 +11,8 @@ import { useAuth } from "../context/AuthContext.jsx";
  * the user back after they sign in.
  */
 export default function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const isLoading = useSelector(selectIsAuthLoading);
   const location = useLocation();
 
   if (isLoading) {

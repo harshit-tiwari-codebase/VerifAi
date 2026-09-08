@@ -2,7 +2,7 @@ import axiosInstance from "../../../api/axiosInstance";
 
 // Thin service layer — maps 1:1 to Section 7 of the project context
 // (POST /api/auth/register|login|refresh|logout). Keeping this separate from
-// the AuthContext means the request shape can change without touching any
+// the Redux auth slice means the request shape can change without touching any
 // component that consumes auth state.
 
 export async function registerRequest({ name, email, password }) {
@@ -27,6 +27,11 @@ export async function refreshRequest() {
   return data;
 }
 
+export async function getCurrentUserRequest() {
+  const { data } = await axiosInstance.get("/auth/me");
+  return data;
+}
+
 export async function logoutRequest() {
   const { data } = await axiosInstance.post("/auth/logout");
   return data;
@@ -38,3 +43,18 @@ export async function resendVerificationRequest({ email }) {
   });
   return data;
 }
+
+export async function forgotPasswordRequest({ email }) {
+  const { data } = await axiosInstance.post("/auth/forgot-password", {
+    email,
+  });
+  return data;
+}
+
+export async function resetPasswordRequest({ token, password }) {
+  const { data } = await axiosInstance.post(`/auth/reset-password/${token}`, {
+    password,
+  });
+  return data;
+}
+

@@ -310,9 +310,12 @@ const login = async (req, res) => {
  * Rotate the refresh token and issue a new access token.
  *
  * @route   POST /api/auth/refresh
- * @access  Public (requires a valid `refreshToken` cookie)
+ * @access  Public (requires a valid refreshToken cookie)
  *
- * @returns {200} { accessToken } - New access token issued.
+ * @returns {200} { accessToken, user } - New access token issued, plus the
+ *                current user profile — needed because AuthContext calls
+ *                this on every page load to restore session state, and has
+ *                no other way to get user back without an extra round trip.
  * @returns {401} { message } - No refresh token cookie present.
  * @returns {403} { message } - Token invalid/expired or not recognized.
  * @returns {500} { message } - Unexpected server/database error.
@@ -331,7 +334,7 @@ const refresh = async (req, res) => {
       return res.status(403).json({ message: "Invalid or expired refresh token" });
     }
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).populate("badges.challengeId", "title difficulty category");
     if (!user || !user.refreshTokens.includes(token)) {
       return res.status(403).json({ message: "Refresh token not recognized" });
     }
@@ -346,7 +349,16 @@ const refresh = async (req, res) => {
     res.cookie("refreshToken", newRefreshToken, cookieOptions);
     res.cookie("accessToken", newAccessToken, cookieOptions);
 
-    return res.status(200).json({ accessToken: newAccessToken });
+    return res.status(200).json({
+      accessToken: newAccessToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        badges: user.badges,
+      },
+    });
   } catch (error) {
     console.error("Refresh error:", error.message);
     return res.status(500).json({ message: "Server error during token refresh" });
@@ -394,9 +406,9 @@ const logout = async (req, res) => {
  */
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select(
-      "-password -refreshTokens -verificationToken -passwordResetToken"
-    );
+    const user = await User.findById(req.user.id)
+      .select("-password -refreshTokens -verificationToken -passwordResetToken")
+      .populate("badges.challengeId", "title difficulty category");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
