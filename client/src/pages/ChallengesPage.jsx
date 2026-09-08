@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Search } from "lucide-react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Search, X as XIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../features/auth/authSlice.js";
 import Navbar from "../components/layout/Navbar.jsx";
-import Footer from "../components/layout/Footer.jsx";
 import Button from "../components/ui/Button.jsx";
+import Pagination from "../components/ui/Pagination.jsx";
 import { getChallenges } from "../features/challenges/api/challengeApi.js";
 import ChallengeCard from "../features/challenges/components/ChallengeCard.jsx";
 import ChallengeDetailModal from "../features/challenges/components/ChallengeDetailModal.jsx";
@@ -22,20 +22,26 @@ const CATEGORIES = [
   { id: "debugging", label: "Debugging" },
 ];
 
+const DEBOUNCE_MS = 400;
+
 export default function ChallengesPage() {
   const user = useSelector(selectUser);
   const isPrivileged = user && ["mentor", "admin"].includes(user.role);
+
+  // URL-synced filter state
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlSearch = searchParams.get("search") || "";
+  const urlCategory = searchParams.get("category") || "all";
+  const urlDifficulty = searchParams.get("difficulty") || "all";
+  const urlPage = Number(searchParams.get("page")) || 1;
+
+  // Local search input (for debounce — may differ from URL until debounce fires)
+  const [searchInput, setSearchInput] = useState(urlSearch);
 
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 12, totalPages: 1 });
-
-  // Filters
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
-  const [difficulty, setDifficulty] = useState("all");
-  const [page, setPage] = useState(1);
 
   // Modals
   const [detailId, setDetailId] = useState(null);
@@ -43,43 +49,131 @@ export default function ChallengesPage() {
   const [challengeToEdit, setChallengeToEdit] = useState(null);
   const [challengeToDelete, setChallengeToDelete] = useState(null);
 
-  const fetchChallengesList = () => {
+  // Abort controller ref for cancelling stale requests
+  const abortRef = useRef(null);
+
+  // --- Helpers to update URL params ---
+  const updateParams = useCallback(
+    (updates) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        for (const [key, value] of Object.entries(updates)) {
+          if (!value || value === "all" || value === "1" || value === 1) {
+            next.delete(key);
+          } else {
+            next.set(key, String(value));
+          }
+        }
+        return next;
+      }, { replace: true });
+    },
+    [setSearchParams]
+  );
+
+  // --- Debounced search: sync searchInput → URL after DEBOUNCE_MS ---
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const trimmed = searchInput.trim();
+      if (trimmed !== urlSearch) {
+        updateParams({ search: trimmed, page: 1 });
+      }
+    }, DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [searchInput]); // intentionally only depend on searchInput
+
+  // Keep local input in sync if URL changes externally (e.g. back/forward)
+  useEffect(() => {
+    setSearchInput(urlSearch);
+  }, [urlSearch]);
+
+  // --- Fetch challenges when URL filter params change ---
+  useEffect(() => {
+    // Cancel any in-flight request
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     setError("");
 
-    const params = { page, limit: 12 };
-    if (search.trim()) params.search = search.trim();
-    if (category !== "all") params.category = category;
-    if (difficulty !== "all") params.difficulty = difficulty;
+    const params = { page: urlPage, limit: 12 };
+    if (urlSearch) params.search = urlSearch;
+    if (urlCategory !== "all") params.category = urlCategory;
+    if (urlDifficulty !== "all") params.difficulty = urlDifficulty;
 
-    getChallenges(params)
+    getChallenges(params, { signal: controller.signal })
       .then((data) => {
+        if (controller.signal.aborted) return;
         setChallenges(data.challenges || []);
         setPagination(data.pagination || { total: 0, page: 1, limit: 12, totalPages: 1 });
       })
       .catch((err) => {
+        if (controller.signal.aborted) return;
         setError(err?.response?.data?.message || "Failed to load engineering challenges.");
       })
       .finally(() => {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       });
-  };
 
-  useEffect(() => {
-    fetchChallengesList();
-  }, [page, category, difficulty]);
+    return () => controller.abort();
+  }, [urlPage, urlCategory, urlDifficulty, urlSearch]);
 
+  // --- Filter handlers ---
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setPage(1);
-    fetchChallengesList();
+    const trimmed = searchInput.trim();
+    updateParams({ search: trimmed, page: 1 });
+  };
+
+  const handleCategoryChange = (value) => {
+    updateParams({ category: value, page: 1 });
+  };
+
+  const handleDifficultyChange = (value) => {
+    updateParams({ difficulty: value, page: 1 });
+  };
+
+  const handlePageChange = (newPage) => {
+    updateParams({ page: newPage });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleClearFilters = () => {
-    setSearch("");
-    setCategory("all");
-    setDifficulty("all");
-    setPage(1);
+    setSearchInput("");
+    setSearchParams({}, { replace: true });
+  };
+
+  const hasActiveFilters = urlSearch || urlCategory !== "all" || urlDifficulty !== "all";
+
+  // Refetch helper for after create/edit/delete
+  const refetch = () => {
+    // Trigger re-fetch by bumping a dummy param (URL params haven't changed)
+    // Simplest: just re-call getChallenges inline
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLoading(true);
+    setError("");
+
+    const params = { page: urlPage, limit: 12 };
+    if (urlSearch) params.search = urlSearch;
+    if (urlCategory !== "all") params.category = urlCategory;
+    if (urlDifficulty !== "all") params.difficulty = urlDifficulty;
+
+    getChallenges(params, { signal: controller.signal })
+      .then((data) => {
+        if (controller.signal.aborted) return;
+        setChallenges(data.challenges || []);
+        setPagination(data.pagination || { total: 0, page: 1, limit: 12, totalPages: 1 });
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        setError(err?.response?.data?.message || "Failed to load engineering challenges.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
   };
 
   return (
@@ -128,21 +222,33 @@ export default function ChallengesPage() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-mist-500 stroke-[1.75]" />
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search challenges by title, keyword, or concept..."
-                className="w-full rounded-lg border border-white/[0.06] bg-[#07080c] pl-9 pr-4 py-1.5 text-xs text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-lg border border-white/[0.06] bg-[#07080c] pl-9 pr-8 py-1.5 text-xs text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                aria-label="Search challenges"
               />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchInput("");
+                    updateParams({ search: "", page: 1 });
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-mist-500 hover:text-mist-200 transition-colors"
+                  aria-label="Clear search"
+                >
+                  <XIcon className="h-3 w-3 stroke-[2]" />
+                </button>
+              )}
             </form>
 
             <div className="flex flex-wrap items-center gap-2">
               <select
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setPage(1);
-                }}
+                value={urlCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 className="rounded-lg border border-white/[0.06] bg-[#07080c] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none"
+                aria-label="Filter by category"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -152,12 +258,10 @@ export default function ChallengesPage() {
               </select>
 
               <select
-                value={difficulty}
-                onChange={(e) => {
-                  setDifficulty(e.target.value);
-                  setPage(1);
-                }}
+                value={urlDifficulty}
+                onChange={(e) => handleDifficultyChange(e.target.value)}
                 className="rounded-lg border border-white/[0.06] bg-[#07080c] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none capitalize"
+                aria-label="Filter by difficulty"
               >
                 <option value="all">All Difficulties</option>
                 <option value="easy">Easy</option>
@@ -165,7 +269,7 @@ export default function ChallengesPage() {
                 <option value="hard">Hard</option>
               </select>
 
-              {(search || category !== "all" || difficulty !== "all") && (
+              {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={handleClearFilters}
@@ -178,84 +282,65 @@ export default function ChallengesPage() {
           </div>
 
           {/* Grid */}
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div
-                  key={i}
-                  className="h-56 animate-pulse rounded-xl border border-white/[0.05] bg-[#0B0F19]/40 p-5 space-y-4"
-                />
-              ))}
-            </div>
-          ) : error ? (
-            <div className="rounded-xl border border-white/[0.08] bg-[#0B0F19] p-8 text-center">
-              <p className="text-xs font-mono text-rose-400">{error}</p>
-              <Button variant="ghost" size="sm" onClick={fetchChallengesList} className="mt-4">
-                Retry
-              </Button>
-            </div>
-          ) : challenges.length === 0 ? (
-            <div className="rounded-xl border border-white/[0.06] bg-[#0B0F19]/60 p-12 text-center space-y-2">
-              <h3 className="font-display text-sm font-semibold text-mist-100">
-                No matching challenges found
-              </h3>
-              <p className="text-xs text-mist-400 max-w-sm mx-auto">
-                Try loosening your filters or clearing search terms.
-              </p>
-              <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                Clear Filters
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {challenges.map((challenge) => (
-                <ChallengeCard
-                  key={challenge._id}
-                  challenge={challenge}
-                  currentUser={user}
-                  onView={(c) => setDetailId(c._id)}
-                  onEdit={(c) => {
-                    setChallengeToEdit(c);
-                    setIsEditorOpen(true);
-                  }}
-                  onDelete={(c) => setChallengeToDelete(c)}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-white/[0.06] pt-5">
-              <p className="text-xs font-mono text-mist-500">
-                Page {pagination.page} of {pagination.totalPages} ({pagination.total} challenges)
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="font-mono text-xs"
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={page >= pagination.totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  className="font-mono text-xs"
-                >
-                  Next
+          <div aria-live="polite" aria-atomic="true">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div
+                    key={i}
+                    className="h-56 animate-pulse rounded-xl border border-white/[0.05] bg-[#0B0F19]/40 p-5 space-y-4"
+                  />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="rounded-xl border border-white/[0.08] bg-[#0B0F19] p-8 text-center">
+                <p className="text-xs font-mono text-rose-400">{error}</p>
+                <Button variant="ghost" size="sm" onClick={refetch} className="mt-4">
+                  Retry
                 </Button>
               </div>
-            </div>
+            ) : challenges.length === 0 ? (
+              <div className="rounded-xl border border-white/[0.06] bg-[#0B0F19]/60 p-12 text-center space-y-2">
+                <h3 className="font-display text-sm font-semibold text-mist-100">
+                  No matching challenges found
+                </h3>
+                <p className="text-xs text-mist-400 max-w-sm mx-auto">
+                  Try loosening your filters or clearing search terms.
+                </p>
+                <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {challenges.map((challenge) => (
+                  <ChallengeCard
+                    key={challenge._id}
+                    challenge={challenge}
+                    currentUser={user}
+                    onView={(c) => setDetailId(c._id)}
+                    onEdit={(c) => {
+                      setChallengeToEdit(c);
+                      setIsEditorOpen(true);
+                    }}
+                    onDelete={(c) => setChallengeToDelete(c)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          {!loading && !error && (
+            <Pagination
+              page={urlPage}
+              totalPages={pagination.totalPages}
+              total={pagination.total}
+              onPageChange={handlePageChange}
+            />
           )}
         </main>
       </div>
-
-    
 
       {/* Modals */}
       {detailId && (
@@ -274,7 +359,7 @@ export default function ChallengesPage() {
             setIsEditorOpen(false);
             setChallengeToEdit(null);
           }}
-          onSaved={fetchChallengesList}
+          onSaved={refetch}
         />
       )}
 
@@ -283,7 +368,7 @@ export default function ChallengesPage() {
           isOpen={Boolean(challengeToDelete)}
           challenge={challengeToDelete}
           onClose={() => setChallengeToDelete(null)}
-          onDeleted={fetchChallengesList}
+          onDeleted={refetch}
         />
       )}
     </div>

@@ -12,7 +12,7 @@ import axiosInstance from "../../../api/axiosInstance";
  * @param {number} [params.limit=10]
  * @returns {Promise<{ challenges: Array, pagination: Object }>}
  */
-export async function getChallenges(params = {}) {
+export async function getChallenges(params = {}, options = {}) {
   // Clean up empty/undefined params so we don't send "?difficulty=&category="
   const cleanParams = {};
   Object.entries(params).forEach(([key, val]) => {
@@ -21,7 +21,10 @@ export async function getChallenges(params = {}) {
     }
   });
 
-  const { data } = await axiosInstance.get("/challenges", { params: cleanParams });
+  const config = { params: cleanParams };
+  if (options.signal) config.signal = options.signal;
+
+  const { data } = await axiosInstance.get("/challenges", config);
   return data;
 }
 
