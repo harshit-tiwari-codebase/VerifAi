@@ -16,6 +16,7 @@ import {
   FileCode,
   ShieldCheck,
   Flame,
+  ArrowUpRight,
 } from "lucide-react";
 import ProblemSpecPane from "../features/challenges/components/ProblemSpecPane.jsx";
 import EditorFooterBar from "../features/challenges/components/EditorFooterBar.jsx";
@@ -24,6 +25,7 @@ import VerificationModal from "../features/challenges/components/VerificationMod
 import ResultScreenModal from "../features/challenges/components/ResultScreenModal.jsx";
 import { DEFAULT_CHALLENGE_DATA } from "../features/challenges/data/mockChallengeData.js";
 import { getChallengeById } from "../features/challenges/api/challengeApi.js";
+import VerifaiLogo from "../components/ui/VerifaiLogo.jsx";
 import "../utils/monacoConfig.js"; // configure local Monaco worker setup & theme
 
 // Helper to generate clean starter code if a custom challenge has no starterCode template
@@ -38,7 +40,7 @@ function generateFallbackStarterCode(ch) {
 
   return `/**
  * Challenge: ${title}
- * Category: ${ch.category || "General"}
+ * Category: ${ch.category || "Distributed Systems"}
  * Difficulty: ${ch.difficulty || "Medium"}
  */
 
@@ -58,7 +60,7 @@ class ${className || "Solution"} {
   }
 }
 
-// Module export for sandboxed evaluation
+// Module export for Judge0 sandboxed evaluation
 if (typeof module !== "undefined") {
   module.exports = { ${className || "Solution"} };
 }
@@ -143,7 +145,6 @@ export default function ChallengeWorkspacePage() {
           if (mounted) setLoadingChallenge(false);
         });
     } else {
-      // Default rate limiter mock
       setChallenge(DEFAULT_CHALLENGE_DATA);
       setCode(DEFAULT_CHALLENGE_DATA.starterCode);
       if (editorRef.current) {
@@ -164,7 +165,7 @@ export default function ChallengeWorkspacePage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Autosave simulator (increments "Saved X s ago" every few seconds)
+  // Autosave simulator
   useEffect(() => {
     const saveTimer = setInterval(() => {
       setLastSavedSecondsAgo((prev) => (prev > 20 ? 1 : prev + 1));
@@ -183,7 +184,6 @@ export default function ChallengeWorkspacePage() {
     editorRef.current = editor;
     monacoRef.current = monaco;
 
-    // Track cursor movements
     editor.onDidChangeCursorPosition((e) => {
       setCursorPosition({
         line: e.position.lineNumber,
@@ -191,10 +191,8 @@ export default function ChallengeWorkspacePage() {
       });
     });
 
-    // Custom verifai-dark theme is loaded via monacoConfig
     monaco.editor.setTheme("verifai-dark");
 
-    // Ensure editor has current code value
     if (code && editor.getValue() !== code) {
       editor.setValue(code);
     }
@@ -204,7 +202,7 @@ export default function ChallengeWorkspacePage() {
   const handleCodeChange = (newCode) => {
     const updated = newCode || "";
     setCode(updated);
-    setLastSavedSecondsAgo(0); // instant reset on edit
+    setLastSavedSecondsAgo(0);
   };
 
   // Copy code handler
@@ -251,13 +249,13 @@ export default function ChallengeWorkspacePage() {
     }, 350);
   }, [challenge.testCases, isRunningTests, isVerificationOpen]);
 
-  // SUBMIT FLOW: opens full-screen verification modal
+  // SUBMIT FLOW
   const handleSubmitSolution = useCallback(() => {
     if (isRunningTests || isVerificationOpen) return;
     setIsVerificationOpen(true);
   }, [isRunningTests, isVerificationOpen]);
 
-  // When verification pipeline finishes, open result screen
+  // When verification pipeline finishes
   const handleVerificationComplete = () => {
     setIsVerificationOpen(false);
     setIsResultOpen(true);
@@ -282,37 +280,35 @@ export default function ChallengeWorkspacePage() {
   }, [handleRunTests, handleSubmitSolution]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#07080e] text-mist-100 flex flex-col selection:bg-violet-600/30 font-sans">
-      {/* Top Workspace Bar (Fixed height ~48px, Developer Tool Style) */}
-      <header className="h-12 bg-[#0a0b12] border-b border-[#1c2033] px-3 sm:px-4 flex items-center justify-between gap-3 shrink-0 select-none z-10">
-        {/* Left: Window Dots + Back Button + Breadcrumb & Title */}
+    <div className="h-screen w-screen overflow-hidden bg-black text-mist-100 flex flex-col selection:bg-violet-600/30 font-sans">
+      {/* Top Workspace Header Bar matching Web App Navbar */}
+      <header className="h-14 bg-black border-b border-white/[0.08] px-4 flex items-center justify-between gap-3 shrink-0 select-none z-10">
+        {/* Left: Brand / Back to Challenges / Challenge Details */}
         <div className="flex items-center gap-3 min-w-0">
-          {/* macOS window chrome dots */}
-          <div className="hidden sm:flex items-center gap-1.5 pr-2.5 border-r border-[#1c2033] shrink-0">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
-          </div>
+          <Link to="/" className="flex items-center gap-2 group mr-1">
+            <VerifaiLogo size={24} />
+          </Link>
+
+          <span className="text-white/20">/</span>
 
           <Link
             to="/challenges"
-            className="flex items-center gap-1 text-xs font-mono text-mist-400 hover:text-mist-100 transition-colors shrink-0"
+            className="flex items-center gap-1 font-mono text-xs text-mist-400 hover:text-mist-100 transition-colors shrink-0"
             title="Return to Challenges"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span className="hidden md:inline">Challenges</span>
+            <span>Challenges</span>
           </Link>
 
-          <span className="text-[#2d3245] hidden md:inline">/</span>
+          <span className="text-white/20 hidden md:inline">/</span>
 
           <div className="flex items-center gap-2 min-w-0">
-            <h1 className="font-mono text-xs font-semibold text-mist-100 truncate">
+            <h1 className="font-display text-xs sm:text-sm font-semibold text-white truncate">
               {challenge?.title || "Distributed Token Bucket Rate Limiter"}
             </h1>
 
             {/* Difficulty Pill */}
             <span
-              className={`rounded px-1.5 py-0.5 text-[10px] font-mono font-medium border shrink-0 capitalize ${
+              className={`rounded-full px-2 py-0.5 text-[10.5px] font-mono font-medium border shrink-0 capitalize ${
                 challenge?.difficulty === "Hard"
                   ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
                   : challenge?.difficulty === "Easy"
@@ -325,91 +321,94 @@ export default function ChallengeWorkspacePage() {
           </div>
         </div>
 
-        {/* Right: Elapsed Timer + Console Trigger + Primary Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Timer Chip */}
+        {/* Right: Timer / Console / Specular Action Buttons */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          {/* Elapsed Timer Chip */}
           <div
-            className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-[#1c2033] bg-[#0b0d14] text-[11px] font-mono text-mist-300"
-            title="Time spent on challenge"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-white/[0.08] bg-white/[0.03] text-[11px] font-mono text-mist-300"
+            title="Time elapsed on problem"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
             <span>{formatTimer(elapsedSeconds)}</span>
           </div>
 
-          {/* Toggle Console button */}
+          {/* Toggle Console */}
           <button
             type="button"
             onClick={() => setIsConsoleOpen((prev) => !prev)}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-mono border transition-colors ${
-              isConsoleOpen
-                ? "bg-violet-500/15 border-violet-500/40 text-violet-300"
-                : "border-[#1c2033] bg-[#0b0d14] text-mist-400 hover:text-mist-200"
+            className={`btn-frosted-glass flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
+              isConsoleOpen ? "text-violet-300 border-violet-500/40" : "text-mist-400"
             }`}
           >
-            <Terminal className="h-3 w-3" />
+            <Terminal className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Console</span>
           </button>
 
-          {/* Run Tests (Quick Header Button) */}
+          {/* Run Tests Button */}
           <button
             type="button"
             onClick={handleRunTests}
             disabled={isRunningTests || isVerificationOpen}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[#1c2033] bg-[#0b0d14] text-mist-200 hover:text-white hover:border-[#2d3245] active:scale-95 transition-all text-[11px] font-mono disabled:opacity-50"
+            className="btn-frosted-glass flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono text-mist-200 hover:text-white transition-all disabled:opacity-50"
             title="Run tests (⌘+Enter)"
           >
             {isRunningTests ? (
-              <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
             ) : (
-              <Play className="h-3 w-3 text-amber-400 fill-current" />
+              <Play className="h-3.5 w-3.5 text-amber-400 fill-current" />
             )}
             <span className="hidden sm:inline">Run</span>
           </button>
 
-          {/* Submit Solution (Quick Header Button) */}
+          {/* Submit Solution Button */}
           <button
             type="button"
             onClick={handleSubmitSolution}
             disabled={isRunningTests || isVerificationOpen}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-mist-100 text-black font-semibold hover:bg-white active:scale-95 transition-all text-[11px] font-mono shadow disabled:opacity-50"
+            className="btn-specular-primary flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium text-white shadow-lg transition-all disabled:opacity-50"
             title="Submit solution for AI evaluation (⌘+Shift+Enter)"
           >
             {isVerificationOpen ? (
-              <Loader2 className="h-3 w-3 animate-spin text-black" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
             ) : (
-              <Send className="h-3 w-3 text-black" />
+              <Send className="h-3.5 w-3.5 text-white" />
             )}
             <span>Submit</span>
           </button>
         </div>
       </header>
 
-      {/* Main Workspace Split Grid (Zero outer scrolling, full height fit) */}
-      <div className="flex-1 min-h-0 w-full grid grid-cols-1 lg:grid-cols-12 gap-2 p-2 overflow-hidden bg-[#07080e]">
+      {/* Main Workspace Split Grid */}
+      <div className="flex-1 min-h-0 w-full grid grid-cols-1 lg:grid-cols-12 gap-3 p-3 overflow-hidden bg-black">
         {/* Left Pane: Problem Spec & Rubric (5 cols) */}
         <section
           aria-label="Problem Specification"
-          className="lg:col-span-5 h-full flex flex-col min-h-0 rounded-xl border border-[#1c2033] bg-[#0d0f1c] overflow-hidden shadow-lg"
+          className="lg:col-span-5 h-full flex flex-col min-h-0 rounded-2xl border border-white/[0.08] bg-[#0c0d12] overflow-hidden shadow-2xl"
         >
           <ProblemSpecPane challenge={challenge} />
         </section>
 
-        {/* Right Pane: Code Editor + Bottom Test Console Drawer (7 cols) */}
+        {/* Right Pane: Code Editor + Test Console (7 cols) */}
         <section
           aria-label="Code Editor"
-          className="lg:col-span-7 h-full flex flex-col min-h-0 rounded-xl border border-[#1c2033] bg-[#0b0d14] overflow-hidden relative shadow-lg"
+          className="lg:col-span-7 h-full flex flex-col min-h-0 rounded-2xl border border-white/[0.08] bg-[#07080c] overflow-hidden relative shadow-2xl"
         >
-          {/* Editor Header Bar (Tabs & Quick Tools) */}
-          <div className="h-9 px-3.5 bg-[#0d0f1c] border-b border-[#1c2033] flex items-center justify-between shrink-0 select-none text-xs font-mono">
-            {/* Active file tab */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b0d14] text-mist-100 border border-[#1c2033] text-[11px] font-medium">
+          {/* Editor Header Bar */}
+          <div className="h-10 px-4 bg-[#0e1017] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none text-xs font-mono">
+            {/* macOS traffic light dots & active file tab */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 pr-2 border-r border-white/[0.08]">
+                <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+              </div>
+
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black text-mist-100 border border-white/[0.08] text-[11px] font-medium">
                 <FileCode className="h-3.5 w-3.5 text-violet-400" />
                 <span>solution.js</span>
               </div>
 
-              {/* Status pill */}
-              <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-cyan-300 border border-cyan-500/30 bg-cyan-500/10">
+              <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                 sandbox-ready
               </span>
             </div>
@@ -419,7 +418,7 @@ export default function ChallengeWorkspacePage() {
               <button
                 type="button"
                 onClick={handleResetStarterCode}
-                className="flex items-center gap-1 px-2 py-0.5 rounded text-mist-500 hover:text-mist-200 hover:bg-[#141724] transition-colors text-[11px]"
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors text-[11px]"
                 title="Reset to starter code"
               >
                 <RotateCcw className="h-3 w-3" />
@@ -429,7 +428,7 @@ export default function ChallengeWorkspacePage() {
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="flex items-center gap-1 px-2 py-0.5 rounded text-mist-400 hover:text-mist-200 hover:bg-[#141724] transition-colors text-[11px]"
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-mist-400 hover:text-mist-100 hover:bg-white/[0.06] transition-colors text-[11px]"
                 title="Copy code"
               >
                 {copiedCode ? (
@@ -447,8 +446,8 @@ export default function ChallengeWorkspacePage() {
             </div>
           </div>
 
-          {/* Monaco Editor Canvas (flex-1 fills available vertical space) */}
-          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-[#0b0d14]">
+          {/* Monaco Editor Canvas (Pure Black Background) */}
+          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-black">
             <Editor
               height="100%"
               width="100%"
@@ -458,7 +457,7 @@ export default function ChallengeWorkspacePage() {
               onMount={handleEditorDidMount}
               theme="verifai-dark"
               options={{
-                fontFamily: '"JetBrains Mono", "SF Mono", Menlo, Consolas, monospace',
+                fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
                 fontSize: 13,
                 lineHeight: 22,
                 minimap: { enabled: false },
@@ -469,7 +468,7 @@ export default function ChallengeWorkspacePage() {
                 bracketPairColorization: { enabled: true },
                 renderLineHighlight: "all",
                 lineNumbersMinChars: 3,
-                padding: { top: 12, bottom: 12 },
+                padding: { top: 14, bottom: 14 },
                 automaticLayout: true,
                 tabSize: 2,
                 scrollbar: {
@@ -482,7 +481,7 @@ export default function ChallengeWorkspacePage() {
               }}
             />
 
-            {/* Sliding Test Results Console inside editor frame */}
+            {/* Sliding Test Results Console */}
             <TestResultsConsole
               isOpen={isConsoleOpen}
               onClose={() => setIsConsoleOpen(false)}
@@ -495,7 +494,7 @@ export default function ChallengeWorkspacePage() {
             />
           </div>
 
-          {/* Editor Footer Bar (Autosave, Line/Col, Run Tests, Submit Solution) */}
+          {/* Editor Footer Bar */}
           <div className="shrink-0">
             <EditorFooterBar
               cursorPosition={cursorPosition}
@@ -509,7 +508,7 @@ export default function ChallengeWorkspacePage() {
         </section>
       </div>
 
-      {/* SUBMISSION VERIFICATION SEQUENCE MODAL (Full screen overlay) */}
+      {/* SUBMISSION VERIFICATION SEQUENCE MODAL */}
       <VerificationModal
         isOpen={isVerificationOpen}
         onComplete={handleVerificationComplete}

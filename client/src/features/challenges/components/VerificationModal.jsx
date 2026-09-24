@@ -18,7 +18,7 @@ const PIPELINE_STAGES = [
     icon: Cpu,
     logLines: [
       "→ Initializing Judge0 Linux sandbox worker (v1.13 CE)...",
-      "→ Dispatching starter_code.js with isolated cgroups...",
+      "→ Dispatching solution.js with isolated cgroups...",
       "✓ 4/4 public test cases passed in 38ms",
       "✓ 2/2 hidden stress test cases validated",
       "✓ 6/6 tests passed",
@@ -59,7 +59,7 @@ const PIPELINE_STAGES = [
   },
   {
     id: "scoring",
-    label: "Scoring",
+    label: "Scoring & Badge Minting",
     icon: Award,
     logLines: [
       "→ Aggregating correctness, code quality, and efficiency weights...",
@@ -105,12 +105,10 @@ export default function VerificationModal({
     let stageTimeout;
     let charInterval;
 
-    // Stage progression every ~950ms (total ~4.8s for 5 stages)
     const stageDuration = 950;
     const stage = PIPELINE_STAGES[currentStageIdx];
 
     if (stage) {
-      // Stream the log lines character by character
       let lineIdx = 0;
       let charIdx = 0;
       const targetLines = stage.logLines;
@@ -125,12 +123,11 @@ export default function VerificationModal({
           charIdx++;
           charInterval = setTimeout(typeNextChar, 12);
         } else {
-          // Completed line, push to streamedLogs
           setStreamedLogs((prev) => [...prev, currentLine]);
           setCurrentTypingText("");
           lineIdx++;
           charIdx = 0;
-          charInterval = setTimeout(typeNextChar, 40);
+          charInterval = setTimeout(typeNextChar, 35);
         }
       };
 
@@ -140,7 +137,6 @@ export default function VerificationModal({
         if (currentStageIdx < PIPELINE_STAGES.length - 1) {
           setCurrentStageIdx((prev) => prev + 1);
         } else {
-          // Finished all stages
           setTimeout(() => {
             if (isMounted) onComplete();
           }, 600);
@@ -168,11 +164,11 @@ export default function VerificationModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md animate-fade-in"
     >
-      <div className="relative flex flex-col w-full max-w-2xl bg-[#0b0d14] border border-[#1c2033] rounded-2xl shadow-2xl overflow-hidden">
-        {/* Top window chrome with traffic-light dots and title */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#1c2033] bg-[#0d0f1c] select-none">
+      <div className="relative flex flex-col w-full max-w-2xl bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden">
+        {/* Top window chrome */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.08] bg-[#07090F] select-none">
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
@@ -211,10 +207,10 @@ export default function VerificationModal({
                   key={stage.id}
                   className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
                     isCurrent
-                      ? "border-violet-500/50 bg-violet-950/20 shadow-[0_0_20px_rgba(147,51,234,0.15)] ring-1 ring-violet-500/30"
+                      ? "border-violet-500/50 bg-violet-950/20 shadow-[0_0_25px_rgba(147,51,234,0.15)] ring-1 ring-violet-500/30"
                       : isPast
                       ? "border-emerald-500/25 bg-[#0e1017]"
-                      : "border-[#1c2033]/60 bg-[#090b14]/40 opacity-40"
+                      : "border-white/[0.04] bg-[#07080c]/60 opacity-40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -224,7 +220,7 @@ export default function VerificationModal({
                           ? "border-violet-400/40 bg-violet-500/20 text-violet-300"
                           : isPast
                           ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                          : "border-[#1c2033] bg-[#141724] text-mist-600"
+                          : "border-white/[0.06] bg-[#07080c] text-mist-600"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -271,9 +267,9 @@ export default function VerificationModal({
             })}
           </div>
 
-          {/* Real-time terminal log stream with character-by-character typewriter effect */}
-          <div className="rounded-xl border border-[#1c2033] bg-[#070911] p-3.5 space-y-1 font-mono text-[11px] leading-relaxed">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1c2033] text-mist-500 text-[10px] uppercase tracking-wider">
+          {/* Real-time terminal log stream */}
+          <div className="rounded-xl border border-white/[0.08] bg-[#07080c] p-3.5 space-y-1 font-mono text-[11px] leading-relaxed">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.06] text-mist-500 text-[10px] uppercase tracking-wider">
               <span className="flex items-center gap-1.5">
                 <Terminal className="h-3 w-3 text-violet-400" />
                 Live Engine Stream
@@ -313,14 +309,14 @@ export default function VerificationModal({
         </div>
 
         {/* Modal footer */}
-        <div className="px-6 py-3 bg-[#0d0f1c] border-t border-[#1c2033] flex items-center justify-between text-xs font-mono">
+        <div className="px-6 py-3 bg-[#07090F] border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
           <span className="text-mist-500 text-[11px]">
             Sandboxed in isolated Linux cgroup · VerifAI v2.4
           </span>
           {canSkip && (
             <button
               onClick={onComplete}
-              className="px-2.5 py-1 rounded bg-[#1c2033] text-mist-200 hover:text-white transition-colors text-[11px]"
+              className="px-3 py-1 rounded-lg bg-white/[0.06] border border-white/[0.08] text-mist-200 hover:text-white transition-colors text-[11px]"
             >
               Skip to results →
             </button>

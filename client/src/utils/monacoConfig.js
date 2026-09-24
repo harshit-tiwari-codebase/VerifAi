@@ -13,7 +13,7 @@ self.MonacoEnvironment = {
   },
 };
 
-// Define custom theme matching VerifAI's exact visual language (#0b0d14 canvas, #0d0f1c panels, #1c2033 borders)
+// Define custom theme matching VerifAI's exact pitch black visual language (#000000 canvas, #0e1017 panels, white/[0.08] borders)
 monaco.editor.defineTheme("verifai-dark", {
   base: "vs-dark",
   inherit: true,
@@ -21,7 +21,7 @@ monaco.editor.defineTheme("verifai-dark", {
     { token: "comment", foreground: "64748b", fontStyle: "italic" },
     { token: "keyword", foreground: "c084fc", fontStyle: "bold" },
     { token: "keyword.control", foreground: "c084fc", fontStyle: "bold" },
-    { token: "identifier", foreground: "f1f5f9" },
+    { token: "identifier", foreground: "f4f6fa" },
     { token: "string", foreground: "34d399" },
     { token: "string.escape", foreground: "6ee7b7" },
     { token: "number", foreground: "fbbf24" },
@@ -33,22 +33,22 @@ monaco.editor.defineTheme("verifai-dark", {
     { token: "variable.name", foreground: "f8fafc" },
   ],
   colors: {
-    "editor.background": "#0b0d14",
-    "editor.foreground": "#f1f5f9",
-    "editorCursor.foreground": "#a855f7",
-    "editor.lineHighlightBackground": "#131627",
+    "editor.background": "#000000",
+    "editor.foreground": "#f4f6fa",
+    "editorCursor.foreground": "#c084fc",
+    "editor.lineHighlightBackground": "#0c0e17",
     "editorLineNumber.foreground": "#475569",
     "editorLineNumber.activeForeground": "#c084fc",
-    "editor.selectionBackground": "#9333ea38",
-    "editor.inactiveSelectionBackground": "#9333ea18",
-    "editorIndentGuide.background": "#1c2033",
-    "editorIndentGuide.activeBackground": "#334155",
+    "editor.selectionBackground": "#9333ea40",
+    "editor.inactiveSelectionBackground": "#9333ea20",
+    "editorIndentGuide.background": "#161926",
+    "editorIndentGuide.activeBackground": "#2d3245",
     "editorBracketMatch.background": "#9333ea25",
     "editorBracketMatch.border": "#a855f7",
-    "editorGutter.background": "#0b0d14",
-    "scrollbarSlider.background": "#1e293b66",
-    "scrollbarSlider.hoverBackground": "#33415599",
-    "scrollbarSlider.activeBackground": "#475569cc",
+    "editorGutter.background": "#000000",
+    "scrollbarSlider.background": "#ffffff15",
+    "scrollbarSlider.hoverBackground": "#ffffff25",
+    "scrollbarSlider.activeBackground": "#9333ea50",
   },
 });
 

@@ -11,7 +11,6 @@ import {
   Sparkles,
   Maximize2,
   Minimize2,
-  Play,
   RotateCcw,
 } from "lucide-react";
 
@@ -42,29 +41,29 @@ export default function TestResultsConsole({
 
   return (
     <div
-      className={`border-t border-[#1c2033] bg-[#0d0f1c] flex flex-col transition-all duration-200 ease-out relative z-30 shrink-0 select-none ${
+      className={`border-t border-white/[0.08] bg-[#0c0d12] flex flex-col transition-all duration-200 ease-out relative z-30 shrink-0 select-none ${
         isMaximized ? "h-[85%]" : "h-[45%]"
       }`}
     >
       {/* Progress hairline */}
-      <div className="h-0.5 w-full bg-[#1c2033] overflow-hidden shrink-0">
+      <div className="h-0.5 w-full bg-white/[0.06] overflow-hidden shrink-0">
         <div
-          className="h-full bg-gradient-to-r from-violet-500 via-amber-400 to-emerald-400 transition-all duration-300"
+          className="h-full bg-gradient-to-r from-violet-500 via-purple-400 to-emerald-400 transition-all duration-300"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
       {/* Header Tabs bar */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-[#090b14] border-b border-[#1c2033] shrink-0 text-xs font-mono">
+      <div className="flex items-center justify-between px-3 py-2 bg-[#07090F] border-b border-white/[0.08] shrink-0 text-xs font-mono">
         <div className="flex items-center gap-1.5">
           {/* Test cases tab */}
           <button
             type="button"
             onClick={() => setActiveTab("tests")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono transition-colors ${
               activeTab === "tests"
-                ? "bg-[#1c2033] text-mist-100 font-semibold"
-                : "text-mist-400 hover:text-mist-200 hover:bg-[#141724]"
+                ? "bg-violet-500/20 text-violet-300 font-medium"
+                : "text-mist-400 hover:text-mist-200"
             }`}
           >
             <span>Test Cases</span>
@@ -87,10 +86,10 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={() => setActiveTab("console")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono transition-colors ${
               activeTab === "console"
-                ? "bg-[#1c2033] text-mist-100 font-semibold"
-                : "text-mist-400 hover:text-mist-200 hover:bg-[#141724]"
+                ? "bg-violet-500/20 text-violet-300 font-medium"
+                : "text-mist-400 hover:text-mist-200"
             }`}
           >
             <Terminal className="h-3.5 w-3.5 text-mist-400" />
@@ -101,10 +100,10 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={() => setActiveTab("ai")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono transition-colors ${
               activeTab === "ai"
-                ? "bg-[#1c2033] text-violet-300 font-semibold"
-                : "text-mist-400 hover:text-mist-200 hover:bg-[#141724]"
+                ? "bg-violet-500/20 text-violet-300 font-medium"
+                : "text-mist-400 hover:text-mist-200"
             }`}
           >
             <BrainCircuit className="h-3.5 w-3.5 text-violet-400" />
@@ -124,7 +123,7 @@ export default function TestResultsConsole({
               <button
                 type="button"
                 onClick={onRunTests}
-                className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono text-mist-400 hover:text-mist-100 hover:bg-[#1c2033] transition-colors"
+                className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono text-mist-400 hover:text-mist-100 hover:bg-white/[0.06] transition-colors"
                 title="Rerun test suites"
               >
                 <RotateCcw className="h-3 w-3" />
@@ -136,7 +135,7 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={() => setIsMaximized((prev) => !prev)}
-            className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-[#1c2033] transition-colors"
+            className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors"
             title={isMaximized ? "Restore height" : "Maximize height"}
           >
             {isMaximized ? (
@@ -149,7 +148,7 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-[#1c2033] transition-colors"
+            className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors"
             title="Close test panel"
           >
             <ChevronDown className="h-4 w-4" />
@@ -158,7 +157,7 @@ export default function TestResultsConsole({
       </div>
 
       {/* Main Tab Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3 bg-[#0b0d14] text-xs font-mono select-text">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3.5 bg-[#07080c] text-xs font-mono select-text">
         {activeTab === "tests" && (
           <div className="space-y-2">
             {testCases.map((tc, idx) => {
@@ -171,11 +170,11 @@ export default function TestResultsConsole({
                   key={tc.id || idx}
                   className={`rounded-lg border transition-all duration-150 overflow-hidden ${
                     !isRevealed && !isCurrent
-                      ? "border-[#1c2033]/40 bg-[#090b14]/40 opacity-40"
+                      ? "border-white/[0.04] bg-[#05070B] opacity-40"
                       : isCurrent
                       ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20"
                       : tc.passed
-                      ? "border-emerald-500/20 bg-[#0a1114]/60 hover:border-emerald-500/40"
+                      ? "border-emerald-500/20 bg-emerald-500/[0.04] hover:border-emerald-500/40"
                       : "border-rose-500/30 bg-rose-500/10 hover:border-rose-500/50"
                   }`}
                 >
@@ -201,7 +200,7 @@ export default function TestResultsConsole({
                           </div>
                         )
                       ) : (
-                        <div className="h-3 w-3 rounded-full bg-[#1c2033] shrink-0" />
+                        <div className="h-3 w-3 rounded-full bg-white/10 shrink-0" />
                       )}
 
                       {/* Title */}
@@ -232,7 +231,7 @@ export default function TestResultsConsole({
 
                     <div className="flex items-center gap-2.5 shrink-0">
                       {isRevealed && tc.runtime && (
-                        <span className="text-[10.5px] font-mono text-mist-500 px-1.5 py-0.5 rounded bg-[#141724] border border-[#1c2033]">
+                        <span className="text-[10.5px] font-mono text-mist-500 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
                           {tc.runtime}
                         </span>
                       )}
@@ -254,9 +253,9 @@ export default function TestResultsConsole({
 
                   {/* Expanded test details */}
                   {isExpanded && isRevealed && (
-                    <div className="p-3 bg-[#07080f] border-t border-[#1c2033] space-y-2.5">
+                    <div className="p-3 bg-[#05070B] border-t border-white/[0.06] space-y-2.5">
                       {tc.isHidden ? (
-                        <div className="p-2.5 rounded bg-[#0b0d17] border border-[#1c2033] text-mist-400 text-[11px] leading-relaxed">
+                        <div className="p-2.5 rounded bg-[#07080c] border border-white/[0.05] text-mist-400 text-[11px] leading-relaxed">
                           <span className="text-amber-400 font-semibold">🔒 Input & expected output are masked</span> to safeguard anti-cheat validation.
                           <div className="mt-1 text-emerald-400 font-mono text-[10.5px]">
                             ✓ Runtime constraint verified in sandbox: {tc.runtime || "11ms"}
@@ -265,7 +264,7 @@ export default function TestResultsConsole({
                       ) : (
                         <>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                            <div className="p-2 rounded bg-[#0b0d14] border border-[#1c2033]">
+                            <div className="p-2 rounded bg-[#07080c] border border-white/[0.05]">
                               <span className="text-mist-500 text-[9.5px] uppercase block mb-1">
                                 Input
                               </span>
@@ -273,7 +272,7 @@ export default function TestResultsConsole({
                                 {tc.input || "None"}
                               </pre>
                             </div>
-                            <div className="p-2 rounded bg-[#0b0d14] border border-[#1c2033]">
+                            <div className="p-2 rounded bg-[#07080c] border border-white/[0.05]">
                               <span className="text-mist-500 text-[9.5px] uppercase block mb-1">
                                 Expected Output
                               </span>
@@ -297,7 +296,7 @@ export default function TestResultsConsole({
                           )}
 
                           {tc.logs && (
-                            <div className="p-2 rounded bg-[#05060b] border border-[#1c2033] text-[10.5px]">
+                            <div className="p-2 rounded bg-[#07080c] border border-white/[0.05] text-[10.5px]">
                               <span className="text-mist-500 text-[9.5px] uppercase block mb-1">
                                 Telemetry Log
                               </span>
@@ -328,7 +327,7 @@ export default function TestResultsConsole({
               [Compiler] starter_code.js compiled without syntax exceptions.
             </div>
             {revealedList.map((tc, idx) => (
-              <div key={idx} className="text-mist-300 pl-2 border-l border-[#1c2033]">
+              <div key={idx} className="text-mist-300 pl-2 border-l border-white/[0.08]">
                 <span className="text-mist-500">Suite #{idx + 1}:</span>{" "}
                 <span className={tc.passed ? "text-emerald-400" : "text-rose-400"}>
                   {tc.passed ? "✓ PASS" : "✗ FAIL"}
@@ -346,10 +345,10 @@ export default function TestResultsConsole({
 
         {activeTab === "ai" && (
           <div className="p-2 space-y-3 font-mono text-xs">
-            <div className="p-3 rounded-xl border border-violet-500/30 bg-violet-500/10 text-mist-200">
+            <div className="purple-comp rounded-xl p-3.5 text-mist-100">
               <div className="flex items-center gap-2 mb-1.5 text-violet-300 font-semibold">
                 <Sparkles className="h-4 w-4" />
-                <span>Preliminary Static Analysis</span>
+                <span className="font-display">Preliminary Static Analysis</span>
               </div>
               <p className="text-mist-300 text-[11.5px] leading-relaxed">
                 AST scan confirms constant delta arithmetic without background busy loops. Full AI Architectural Audit & tamper-proof credential scoring will occur upon solution submission.
@@ -357,19 +356,19 @@ export default function TestResultsConsole({
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div className="p-2 rounded-lg border border-[#1c2033] bg-[#0d0f1c]">
+              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
                 <span className="text-mist-500 text-[10px] block">Time Complexity</span>
                 <span className="text-emerald-400 font-semibold">O(1) Constant</span>
               </div>
-              <div className="p-2 rounded-lg border border-[#1c2033] bg-[#0d0f1c]">
+              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
                 <span className="text-mist-500 text-[10px] block">Space Complexity</span>
                 <span className="text-emerald-400 font-semibold">O(1) Auxiliary</span>
               </div>
-              <div className="p-2 rounded-lg border border-[#1c2033] bg-[#0d0f1c]">
+              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
                 <span className="text-mist-500 text-[10px] block">Plagiarism Signals</span>
                 <span className="text-sky-400 font-semibold">0 Detected</span>
               </div>
-              <div className="p-2 rounded-lg border border-[#1c2033] bg-[#0d0f1c]">
+              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
                 <span className="text-mist-500 text-[10px] block">Audit Readiness</span>
                 <span className="text-violet-300 font-semibold">Ready (~90+)</span>
               </div>
