@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth.routes");
 const challengeRoutes = require("./routes/challenge.routes")
 // const challengeRoutes = require("./routes/challengeRoutes");
 const { notFound, errorHandler } = require("../src/middlewares/errorMiddleware");
+const submissionRoutes = require("./routes/submission.routes");
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.get("/", (req, res) => res.send("VerifAI API is running"));
 app.use("/api/auth", authRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/challenge", challengeRoutes);
+
+
+app.use("/api/submissions", submissionRoutes);
 
 // Error handling (must be last)
 app.use(notFound);

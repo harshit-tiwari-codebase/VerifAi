@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { buildVerificationUrl, buildPasswordResetUrl } = require('../src/utils/sendEmail');
+const { buildVerificationUrl, buildPasswordResetUrl } = require('../utils/sendEmail');
 
 test('buildVerificationUrl uses the backend verification endpoint', () => {
   process.env.API_URL = 'http://localhost:5000';
