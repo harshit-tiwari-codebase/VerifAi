@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { X, Copy, Check, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { X, Copy, Check, AlertCircle, ArrowUpRight } from "lucide-react";
 import { getChallengeById } from "../api/challengeApi.js";
 
 const DIFFICULTY_CONFIG = {
@@ -240,14 +241,21 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
                 </pre>
               </div>
 
-              {/* Status Bar */}
-              <div className="border-t border-white/[0.08] bg-[#07090F] px-4 py-3">
-                <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
-                  <span className="text-[11px] font-mono text-amber-300/80">
-                    Submission workflow coming soon — code execution is not yet available.
+              {/* Status Bar / Workspace CTA */}
+              <div className="border-t border-white/[0.08] bg-[#07090F] px-4 py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="text-[11px] font-mono text-mist-400">
+                    Judge0 Isolated Sandbox & AI Review active.
                   </span>
                 </div>
+                <Link
+                  to={`/challenges/${challenge?.slug || challenge?._id || "rate-limiter"}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-mist-100 px-3.5 py-1.5 font-mono text-xs font-semibold text-black hover:bg-white transition-all shadow-md active:scale-95"
+                >
+                  <span>Open Interactive Workspace</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </div>
           </div>

@@ -17,6 +17,7 @@ const ChallengesPage = lazy(() => import("../pages/ChallengesPage.jsx"));
 const PlaygroundPage = lazy(() => import("../pages/PlaygroundPage.jsx"));
 const LeaderboardPage = lazy(() => import("../pages/LeaderboardPage.jsx"));
 const DocsPage = lazy(() => import("../pages/DocsPage.jsx"));
+const ChallengeWorkspacePage = lazy(() => import("../pages/ChallengeWorkspacePage.jsx"));
 
 function LazyFallback() {
   return (
@@ -49,6 +50,7 @@ export default function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/challenges/:slug" element={<ChallengeWorkspacePage />} />
           <Route path="/playground" element={<PlaygroundPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/docs" element={<DocsPage />} />

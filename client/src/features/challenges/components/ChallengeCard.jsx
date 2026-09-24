@@ -6,6 +6,7 @@ import {
   TestTube2,
   ShieldCheck,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import Button from "../../../components/ui/Button.jsx";
 
@@ -208,12 +209,12 @@ export default function ChallengeCard({
             )}
 
             <Button
-              type="button"
+              as={Link}
+              to={`/challenges/${challenge?.slug || challenge?._id || "rate-limiter"}`}
               variant="ghost"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                onView(challenge);
               }}
               aria-label={`Solve challenge: ${challengeTitle}`}
               className="
