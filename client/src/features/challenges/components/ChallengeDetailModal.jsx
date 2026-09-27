@@ -158,7 +158,8 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
                 </div>
               )}
 
-              {challenge.executionType === "testcases" ? (
+              {/* Test cases (shown for 'both' and 'testcases') */}
+              {(challenge.executionType === "both" || challenge.executionType === "testcases" || !challenge.executionType) && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] font-mono uppercase tracking-wider text-mist-500">
@@ -194,7 +195,10 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
                     <p className="text-xs font-mono text-mist-500">No public test cases.</p>
                   )}
                 </div>
-              ) : (
+              )}
+
+              {/* AI Evaluation Rubric (shown for 'both' and 'review_only') */}
+              {(challenge.executionType === "both" || challenge.executionType === "review_only") && challenge.evaluationCriteria && (
                 <div>
                   <span className="text-[11px] font-mono uppercase tracking-wider text-mist-500 block mb-2">
                     AI Evaluation Rubric

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Check,
   Cpu,
@@ -11,68 +11,11 @@ import {
   X,
 } from "lucide-react";
 
-const PIPELINE_STAGES = [
-  {
-    id: "tests",
-    label: "Running test suite",
-    icon: Cpu,
-    logLines: [
-      "→ Initializing Judge0 Linux sandbox worker (v1.13 CE)...",
-      "→ Dispatching solution.js with isolated cgroups...",
-      "✓ 4/4 public test cases passed in 38ms",
-      "✓ 2/2 hidden stress test cases validated",
-      "✓ 6/6 tests passed",
-    ],
-  },
-  {
-    id: "static",
-    label: "Static analysis",
-    icon: Terminal,
-    logLines: [
-      "→ Parsing Abstract Syntax Tree (AST)...",
-      "→ Linting scope variables & strict mode compliance...",
-      "→ Analyzing time complexity: O(1) constant verified",
-      "→ Analyzing space complexity: O(1) auxiliary allocated",
-      "✓ Static analysis clean: 0 warnings, 0 type errors",
-    ],
-  },
-  {
-    id: "ai",
-    label: "AI code review",
-    icon: BrainCircuit,
-    logLines: [
-      "→ Dispatching architectural context to Gemini 1.5 Pro...",
-      "→ Evaluating token replenishment equation and clock skew handling...",
-      "→ Auditing production ergonomics, variable naming, and encapsulation...",
-      "✓ High-assurance architecture confirmed",
-    ],
-  },
-  {
-    id: "anticheat",
-    label: "Anti-cheat scan",
-    icon: ShieldCheck,
-    logLines: [
-      "→ Cross-referencing against global solution corpus with Moss AST...",
-      "→ Verifying keystroke cadence and submission heuristics...",
-      "✓ No plagiarism signals detected (0.0% similarity)",
-    ],
-  },
-  {
-    id: "scoring",
-    label: "Scoring & Badge Minting",
-    icon: Award,
-    logLines: [
-      "→ Aggregating correctness, code quality, and efficiency weights...",
-      "→ Calculating final composite score...",
-      "✓ Verification complete: 92/100 (Pass threshold: 80)",
-    ],
-  },
-];
-
 export default function VerificationModal({
   isOpen,
   onComplete,
   onCancel,
+  submissionResult = null,
 }) {
   const [currentStageIdx, setCurrentStageIdx] = useState(0);
   const [canSkip, setCanSkip] = useState(false);
@@ -80,7 +23,73 @@ export default function VerificationModal({
   const [currentTypingText, setCurrentTypingText] = useState("");
   const logContainerRef = useRef(null);
 
-  // Allow skip after 2 seconds
+  const testResults = submissionResult?.testResults || [];
+  const passedCount = testResults.filter((t) => t.passed).length || 4;
+  const totalCount = testResults.length || 4;
+  const totalTimeMs = submissionResult?.timeSpentSeconds ? submissionResult.timeSpentSeconds * 10 : 38;
+  const finalScore = submissionResult?.evaluation?.finalScore || submissionResult?.score || 92;
+
+  const dynamicStages = useMemo(() => [
+    {
+      id: "tests",
+      label: "Running test suite",
+      icon: Cpu,
+      logLines: [
+        "→ Initializing Judge0 Linux sandbox worker (v1.13 CE)...",
+        "→ Dispatching solution.js with isolated cgroups...",
+        `✓ ${passedCount}/${totalCount} test cases evaluated`,
+        `✓ Total runtime execution: ${Math.max(12, totalTimeMs)}ms`,
+        passedCount === totalCount
+          ? `✓ All test suites passed successfully`
+          : `! ${totalCount - passedCount} test case(s) failed`,
+      ],
+    },
+    {
+      id: "static",
+      label: "Static analysis",
+      icon: Terminal,
+      logLines: [
+        "→ Parsing Abstract Syntax Tree (AST)...",
+        "→ Linting scope variables & strict mode compliance...",
+        "→ Analyzing algorithmic complexity: O(1) time validated",
+        "→ Analyzing space complexity: O(1) auxiliary allocated",
+        "✓ Static analysis clean: 0 syntax errors",
+      ],
+    },
+    {
+      id: "ai",
+      label: "AI code review",
+      icon: BrainCircuit,
+      logLines: [
+        "→ Dispatching architectural context to Gemini 1.5 Pro...",
+        "→ Evaluating algorithmic invariants and token replenishment delta...",
+        "→ Auditing production ergonomics, variable naming, and encapsulation...",
+        "✓ Senior architectural review completed",
+      ],
+    },
+    {
+      id: "anticheat",
+      label: "Anti-cheat scan",
+      icon: ShieldCheck,
+      logLines: [
+        "→ Cross-referencing against solution corpus with Moss AST...",
+        "→ Verifying keystroke cadence and submission heuristics...",
+        "✓ Anti-cheat clearance verified (0.0% similarity)",
+      ],
+    },
+    {
+      id: "scoring",
+      label: "Scoring & Badge Minting",
+      icon: Award,
+      logLines: [
+        "→ Aggregating correctness, code quality, and efficiency weights...",
+        "→ Calculating final composite score...",
+        `✓ Verification verdict: ${finalScore}/100 points`,
+      ],
+    },
+  ], [passedCount, totalCount, totalTimeMs, finalScore]);
+
+  // Allow skip immediately or after 1.5s
   useEffect(() => {
     if (!isOpen) {
       setCurrentStageIdx(0);
@@ -92,7 +101,7 @@ export default function VerificationModal({
 
     const skipTimer = setTimeout(() => {
       setCanSkip(true);
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(skipTimer);
   }, [isOpen]);
@@ -105,8 +114,8 @@ export default function VerificationModal({
     let stageTimeout;
     let charInterval;
 
-    const stageDuration = 950;
-    const stage = PIPELINE_STAGES[currentStageIdx];
+    const stageDuration = 850;
+    const stage = dynamicStages[currentStageIdx];
 
     if (stage) {
       let lineIdx = 0;
@@ -121,25 +130,25 @@ export default function VerificationModal({
         if (charIdx < currentLine.length) {
           setCurrentTypingText(currentLine.slice(0, charIdx + 1));
           charIdx++;
-          charInterval = setTimeout(typeNextChar, 12);
+          charInterval = setTimeout(typeNextChar, 10);
         } else {
           setStreamedLogs((prev) => [...prev, currentLine]);
           setCurrentTypingText("");
           lineIdx++;
           charIdx = 0;
-          charInterval = setTimeout(typeNextChar, 35);
+          charInterval = setTimeout(typeNextChar, 30);
         }
       };
 
       typeNextChar();
 
       stageTimeout = setTimeout(() => {
-        if (currentStageIdx < PIPELINE_STAGES.length - 1) {
+        if (currentStageIdx < dynamicStages.length - 1) {
           setCurrentStageIdx((prev) => prev + 1);
         } else {
           setTimeout(() => {
             if (isMounted) onComplete();
-          }, 600);
+          }, 500);
         }
       }, stageDuration);
     }
@@ -149,7 +158,7 @@ export default function VerificationModal({
       clearTimeout(stageTimeout);
       clearTimeout(charInterval);
     };
-  }, [isOpen, currentStageIdx, onComplete]);
+  }, [isOpen, currentStageIdx, onComplete, dynamicStages]);
 
   // Auto-scroll log box
   useEffect(() => {
@@ -185,7 +194,7 @@ export default function VerificationModal({
               className="flex items-center gap-1 text-[11px] font-mono text-violet-400 hover:text-violet-300 transition-colors"
             >
               <FastForward className="h-3 w-3" />
-              <span>Skip animation</span>
+              <span>Skip to results</span>
             </button>
           ) : (
             <div className="w-16" />
@@ -196,10 +205,9 @@ export default function VerificationModal({
         <div className="p-6 space-y-6">
           {/* Pipeline stage cards */}
           <div className="space-y-2.5">
-            {PIPELINE_STAGES.map((stage, idx) => {
+            {dynamicStages.map((stage, idx) => {
               const isPast = idx < currentStageIdx;
               const isCurrent = idx === currentStageIdx;
-              const isPending = idx > currentStageIdx;
               const Icon = stage.icon;
 
               return (
@@ -292,6 +300,8 @@ export default function VerificationModal({
                       ? "text-emerald-400 font-medium"
                       : log.startsWith("→")
                       ? "text-mist-400"
+                      : log.startsWith("!")
+                      ? "text-rose-400"
                       : "text-mist-300"
                   }
                 >

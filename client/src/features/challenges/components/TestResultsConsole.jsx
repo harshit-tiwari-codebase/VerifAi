@@ -6,12 +6,14 @@ import {
   ChevronDown,
   ChevronRight,
   Terminal,
+  Code2,
   BrainCircuit,
   Loader2,
-  Sparkles,
   Maximize2,
   Minimize2,
+  Play,
   RotateCcw,
+  Plus,
 } from "lucide-react";
 
 export default function TestResultsConsole({
@@ -23,8 +25,13 @@ export default function TestResultsConsole({
   progressPercent = 0,
   aiReviewData,
   onRunTests,
+  customInput = "",
+  setCustomInput,
+  customOutput = null,
+  onRunCustomTest,
+  isRunningCustom = false,
 }) {
-  const [activeTab, setActiveTab] = useState("tests"); // "tests" | "console" | "ai"
+  const [activeTab, setActiveTab] = useState("tests"); // "tests" | "custom" | "ai"
   const [expandedCaseId, setExpandedCaseId] = useState(null);
   const [isMaximized, setIsMaximized] = useState(false);
 
@@ -54,7 +61,7 @@ export default function TestResultsConsole({
       </div>
 
       {/* Header Tabs bar */}
-      <div className="flex items-center justify-between px-3 py-2 bg-[#07090F] border-b border-white/[0.08] shrink-0 text-xs font-mono">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#07090F] border-b border-white/[0.08] shrink-0 text-xs font-mono">
         <div className="flex items-center gap-1.5">
           {/* Test cases tab */}
           <button
@@ -82,21 +89,21 @@ export default function TestResultsConsole({
             )}
           </button>
 
-          {/* Console tab */}
+          {/* Custom Input Playground Tab */}
           <button
             type="button"
-            onClick={() => setActiveTab("console")}
+            onClick={() => setActiveTab("custom")}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono transition-colors ${
-              activeTab === "console"
+              activeTab === "custom"
                 ? "bg-violet-500/20 text-violet-300 font-medium"
                 : "text-mist-400 hover:text-mist-200"
             }`}
           >
-            <Terminal className="h-3.5 w-3.5 text-mist-400" />
-            <span>Stdout</span>
+            <Code2 className="h-3.5 w-3.5 text-mist-400" />
+            <span>Custom Input</span>
           </button>
 
-          {/* AI Review Preview tab */}
+          {/* AI Static Audit tab */}
           <button
             type="button"
             onClick={() => setActiveTab("ai")}
@@ -107,29 +114,29 @@ export default function TestResultsConsole({
             }`}
           >
             <BrainCircuit className="h-3.5 w-3.5 text-violet-400" />
-            <span>AI Static Audit</span>
+            <span>Telemetry & Insights</span>
           </button>
         </div>
 
         {/* Right controls */}
-        <div className="flex items-center gap-1.5">
-          {isRunning ? (
+        <div className="flex items-center gap-2">
+          {isRunning && (
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-amber-300 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
               <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
-              <span>Sandbox executing…</span>
+              <span>Sandbox running…</span>
             </div>
-          ) : (
-            onRunTests && (
-              <button
-                type="button"
-                onClick={onRunTests}
-                className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono text-mist-400 hover:text-mist-100 hover:bg-white/[0.06] transition-colors"
-                title="Rerun test suites"
-              >
-                <RotateCcw className="h-3 w-3" />
-                <span>Rerun</span>
-              </button>
-            )
+          )}
+
+          {onRunTests && !isRunning && activeTab === "tests" && (
+            <button
+              type="button"
+              onClick={onRunTests}
+              className="flex items-center gap-1 px-2.5 py-0.5 rounded text-[11px] font-mono text-mist-400 hover:text-mist-100 hover:bg-white/[0.06] transition-colors"
+              title="Rerun test suites"
+            >
+              <RotateCcw className="h-3 w-3" />
+              <span>Rerun</span>
+            </button>
           )}
 
           <button
@@ -157,7 +164,7 @@ export default function TestResultsConsole({
       </div>
 
       {/* Main Tab Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3.5 bg-[#07080c] text-xs font-mono select-text">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 bg-[#07080c] text-xs font-mono select-text">
         {activeTab === "tests" && (
           <div className="space-y-2">
             {testCases.map((tc, idx) => {
@@ -294,17 +301,6 @@ export default function TestResultsConsole({
                               </div>
                             </div>
                           )}
-
-                          {tc.logs && (
-                            <div className="p-2 rounded bg-[#07080c] border border-white/[0.05] text-[10.5px]">
-                              <span className="text-mist-500 text-[9.5px] uppercase block mb-1">
-                                Telemetry Log
-                              </span>
-                              <pre className="text-mist-400 font-mono whitespace-pre-wrap">
-                                {tc.logs}
-                              </pre>
-                            </div>
-                          )}
                         </>
                       )}
                     </div>
@@ -315,43 +311,66 @@ export default function TestResultsConsole({
           </div>
         )}
 
-        {activeTab === "console" && (
-          <div className="p-2 space-y-2 text-mist-300 font-mono text-[11.5px] leading-relaxed">
-            <div className="text-mist-500">
-              [Sandbox Engine] Initialized Judge0 container (Node.js v20.11 / v8 runtime)
-            </div>
-            <div className="text-mist-500">
-              [Isolation] CPU: 5.00s cap | RAM: 128MB ceiling | Wall timeout: 10s
-            </div>
-            <div className="text-emerald-400">
-              [Compiler] starter_code.js compiled without syntax exceptions.
-            </div>
-            {revealedList.map((tc, idx) => (
-              <div key={idx} className="text-mist-300 pl-2 border-l border-white/[0.08]">
-                <span className="text-mist-500">Suite #{idx + 1}:</span>{" "}
-                <span className={tc.passed ? "text-emerald-400" : "text-rose-400"}>
-                  {tc.passed ? "✓ PASS" : "✗ FAIL"}
-                </span>{" "}
-                <span className="text-mist-500">({tc.runtime || "10ms"})</span> - {tc.name || `Case #${idx + 1}`}
+        {/* Custom Input Playground Tab */}
+        {activeTab === "custom" && (
+          <div className="space-y-4 max-w-2xl font-mono text-xs">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-mist-400 text-[11px] uppercase tracking-wider block">
+                  Custom Input Payload
+                </label>
+                <span className="text-mist-500 text-[10px]">
+                  Pass arbitrary arguments to your solution
+                </span>
               </div>
-            ))}
-            {revealedCount === totalCount && (
-              <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 mt-2">
-                [Summary] All test suites processed. Result: {passedCount}/{totalCount} passed.
+              <textarea
+                rows={3}
+                value={customInput}
+                onChange={(e) => setCustomInput && setCustomInput(e.target.value)}
+                placeholder="e.g. capacity = 20, refillRate = 5, tokensRequested = 3"
+                className="w-full rounded-lg border border-white/[0.08] bg-[#0c0d12] p-3 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none font-mono"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onRunCustomTest}
+                disabled={isRunningCustom}
+                className="btn-frosted-glass flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono text-mist-100 hover:text-white transition-colors disabled:opacity-50"
+              >
+                {isRunningCustom ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
+                ) : (
+                  <Play className="h-3.5 w-3.5 text-amber-400 fill-current" />
+                )}
+                <span>Run Custom Test</span>
+              </button>
+            </div>
+
+            {customOutput && (
+              <div className="rounded-lg border border-white/[0.08] bg-[#0c0d12] p-3 space-y-1.5">
+                <span className="text-mist-500 text-[10px] uppercase tracking-wider block">
+                  Execution Output
+                </span>
+                <pre className="text-emerald-400 whitespace-pre-wrap font-mono text-[11.5px]">
+                  {customOutput}
+                </pre>
               </div>
             )}
           </div>
         )}
 
+        {/* Telemetry & Static Analysis Tab */}
         {activeTab === "ai" && (
-          <div className="p-2 space-y-3 font-mono text-xs">
-            <div className="purple-comp rounded-xl p-3.5 text-mist-100">
+          <div className="space-y-3 font-mono text-xs max-w-2xl">
+            <div className="rounded-xl border border-violet-500/20 bg-[#0e1017] p-3.5 text-mist-100">
               <div className="flex items-center gap-2 mb-1.5 text-violet-300 font-semibold">
-                <Sparkles className="h-4 w-4" />
-                <span className="font-display">Preliminary Static Analysis</span>
+                <BrainCircuit className="h-4 w-4" />
+                <span className="font-mono">Real-Time AST Telemetry</span>
               </div>
               <p className="text-mist-300 text-[11.5px] leading-relaxed">
-                AST scan confirms constant delta arithmetic without background busy loops. Full AI Architectural Audit & tamper-proof credential scoring will occur upon solution submission.
+                Live parser confirmed constant delta time arithmetic with zero unbounded loops. Formal multi-parameter scoring will execute when you submit your solution.
               </p>
             </div>
 
@@ -365,7 +384,7 @@ export default function TestResultsConsole({
                 <span className="text-emerald-400 font-semibold">O(1) Auxiliary</span>
               </div>
               <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
-                <span className="text-mist-500 text-[10px] block">Plagiarism Signals</span>
+                <span className="text-mist-500 text-[10px] block">Syntax Errors</span>
                 <span className="text-sky-400 font-semibold">0 Detected</span>
               </div>
               <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">

@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Challenge = require("../models/Challenge");
 
 /**
@@ -171,17 +172,35 @@ const getChallenges = async (req, res, next) => {
  */
 const getChallengeById = async (req, res, next) => {
   try {
-    const challenge = await Challenge.findById(req.params.id).populate(
-      "createdBy",
-      "name email",
-    );
+    const rawId = req.params.id;
+    let challenge = null;
+
+    if (mongoose.Types.ObjectId.isValid(rawId)) {
+      challenge = await Challenge.findById(rawId).populate("createdBy", "name email");
+    }
+
+    if (!challenge) {
+      // Fallback search by title or normalized slug
+      const normalizedTitle = rawId.replace(/[-_]/g, " ").trim();
+      challenge = await Challenge.findOne({
+        title: { $regex: new RegExp(`^${normalizedTitle}$`, "i") }
+      }).populate("createdBy", "name email");
+    }
+
+    if (!challenge) {
+      // Partial title match fallback
+      const partial = rawId.replace(/[-_]/g, ".*");
+      challenge = await Challenge.findOne({
+        title: { $regex: new RegExp(partial, "i") }
+      }).populate("createdBy", "name email");
+    }
 
     if (!challenge) {
       return res.status(404).json({ message: "Challenge not found" });
     }
 
     const isOwner =
-      req.user && challenge.createdBy && String(challenge.createdBy._id) === String(req.user.id);
+      req.user && challenge.createdBy && String(challenge.createdBy._id || challenge.createdBy) === String(req.user.id || req.user._id);
     const isPrivileged =
       req.user && ["mentor", "admin"].includes(req.user.role);
 

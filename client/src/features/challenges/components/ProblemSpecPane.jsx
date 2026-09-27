@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Copy, Sparkles, Cpu, Clock, Terminal, ShieldCheck, Zap } from "lucide-react";
+import { Check, Copy, BrainCircuit, Cpu, Clock, Terminal, ShieldCheck, Layers, SlidersHorizontal } from "lucide-react";
 
 export default function ProblemSpecPane({ challenge }) {
   const [copiedRubric, setCopiedRubric] = useState(false);
@@ -28,7 +28,7 @@ export default function ProblemSpecPane({ challenge }) {
             onClick={() => setActiveTab("description")}
             className={`px-3 py-1 rounded-lg text-xs font-mono transition-colors ${
               activeTab === "description"
-                ? "bg-violet-500/20 text-violet-300 font-medium"
+                ? "bg-white/[0.08] text-white font-medium"
                 : "text-mist-400 hover:text-mist-200"
             }`}
           >
@@ -39,11 +39,11 @@ export default function ProblemSpecPane({ challenge }) {
             onClick={() => setActiveTab("rubric")}
             className={`px-3 py-1 rounded-lg text-xs font-mono transition-colors flex items-center gap-1.5 ${
               activeTab === "rubric"
-                ? "bg-violet-500/20 text-violet-300 font-medium"
+                ? "bg-violet-500/15 text-violet-300 font-medium border border-violet-500/30"
                 : "text-mist-400 hover:text-mist-200"
             }`}
           >
-            <Sparkles className="h-3 w-3 text-violet-400" />
+            <BrainCircuit className="h-3.5 w-3.5 text-violet-400" />
             <span>AI Rubric</span>
           </button>
         </div>
@@ -60,10 +60,10 @@ export default function ProblemSpecPane({ challenge }) {
             {/* Header info */}
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-0.5 font-mono text-[10.5px] text-violet-300">
+                <span className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 font-mono text-[10.5px] text-mist-300">
                   {challenge?.category || "Distributed Systems"}
                 </span>
-                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] text-emerald-400">
+                <span className="rounded-md border border-emerald-500/20 bg-emerald-500/5 px-2 py-0.5 font-mono text-[10px] text-emerald-400">
                   Isolated V8
                 </span>
               </div>
@@ -172,7 +172,7 @@ export default function ProblemSpecPane({ challenge }) {
             </div>
           </>
         ) : (
-          /* AI Rubric Tab - Rich Purple Card */
+          /* AI Rubric Tab - Clean, Focused, Distraction-Free Card */
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[10.5px] font-mono font-semibold uppercase tracking-wider text-mist-400">
@@ -197,21 +197,21 @@ export default function ProblemSpecPane({ challenge }) {
               </button>
             </div>
 
-            {/* Accent Card: Rich Purple Comp from index.css */}
-            <div className="purple-comp rounded-xl p-4 text-[11.5px] leading-relaxed space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-violet-500/20">
+            {/* Clean Architectural Rubric Card (No distracting glow) */}
+            <div className="rounded-xl border border-violet-500/20 bg-[#0e1017] p-4 text-[11.5px] leading-relaxed space-y-3">
+              <div className="flex items-center justify-between pb-2.5 border-b border-white/[0.06]">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-3.5 w-3.5 text-violet-300" />
-                  <span className="font-semibold text-white text-xs font-display">
-                    Senior AI Review Protocol
+                  <SlidersHorizontal className="h-3.5 w-3.5 text-violet-400" />
+                  <span className="font-semibold text-white text-xs font-mono">
+                    Evaluation Matrix
                   </span>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-500/20 border border-violet-400/30 text-violet-200">
-                  Passing: {challenge?.aiReview?.passingThreshold || 80}/100
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-500/10 border border-violet-500/20 text-violet-300">
+                  Min Pass: {challenge?.aiReview?.passingThreshold || 80}/100
                 </span>
               </div>
 
-              <div className="whitespace-pre-line text-mist-100 text-[11.5px] leading-relaxed font-mono">
+              <div className="whitespace-pre-line text-mist-200 text-[11.5px] leading-relaxed font-mono">
                 {challenge?.aiReview?.rubric || challenge?.evaluationCriteria || `CRITERIA:
 • Algorithmic Complexity: Optimal O(1) time and auxiliary space consumption
 • Thread Safety & Concurrency: Deterministic state protection under concurrent bursts

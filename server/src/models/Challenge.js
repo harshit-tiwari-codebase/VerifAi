@@ -18,7 +18,6 @@ const testCaseSchema = new mongoose.Schema(
   { _id: true }
 );
 
-
 const challengeSchema = new mongoose.Schema(
   {
     title: {
@@ -37,12 +36,20 @@ const challengeSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["dsa", "bug-fix", "api-design", "schema-modeling", "system-design", "debugging"],
+      enum: [
+        "dsa",
+        "bug-fix",
+        "api-design",
+        "schema-modeling",
+        "system-design",
+        "debugging",
+      ],
       required: true,
     },
     executionType: {
       type: String,
-      enum: ["testcases", "review_only"],
+      enum: ["both", "testcases", "review_only"],
+      default: "both",
       required: true,
     },
     tags: {
@@ -51,16 +58,17 @@ const challengeSchema = new mongoose.Schema(
       set: (tags) => tags.map((t) => t.toLowerCase().trim()),
     },
 
-    // sirf executionType: "testcases" waalo ke liye
+    // Used for "testcases" and "both" execution types
     testCases: {
       type: [testCaseSchema],
       default: undefined,
       validate: {
         validator: function (arr) {
-          if (this.executionType !== "testcases") return true; // dusre type pe check hi mat karo
+          if (this.executionType === "review_only") return true;
           return Array.isArray(arr) && arr.length > 0;
         },
-        message: "A testcases challenge must contain at least one test case",
+        message:
+          "A challenge with automated tests must contain at least one test case",
       },
     },
     starterCode: {
@@ -68,20 +76,20 @@ const challengeSchema = new mongoose.Schema(
       default: "",
     },
 
-    // sirf executionType: "review_only" waalo ke liye (bug-fix me bhi kaam aa sakta hai)
+    // Used for "review_only" and "both" execution types
     evaluationCriteria: {
       type: String,
       validate: {
         validator: function (val) {
-          if (this.executionType !== "review_only") return true;
+          if (this.executionType === "testcases") return true;
           return !!val && val.trim().length > 0;
         },
-        message: "A review_only challenge must have evaluation criteria",
+        message: "An AI review enabled challenge must have evaluation criteria",
       },
     },
     referenceSolution: {
       type: String,
-      default: "", // hidden rahega response me, student ko kabhi nahi dikhega
+      default: "", // hidden in public responses
     },
 
     createdBy: {
@@ -101,5 +109,6 @@ challengeSchema.index({ title: "text" });
 challengeSchema.index({ difficulty: 1 });
 challengeSchema.index({ category: 1 });
 challengeSchema.index({ tags: 1 });
+challengeSchema.index({ executionType: 1 });
 
-module.exports = mongoose.model("Challenge", challengeSchema); 
+module.exports = mongoose.model("Challenge", challengeSchema);

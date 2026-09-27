@@ -9,6 +9,12 @@ const {
   deleteChallenge,
 } = require("../controllers/challenge.controller");
 
+const {
+  runChallengeCode,
+  createSubmission,
+  getChallengeSubmissions,
+} = require("../controllers/submission.controller");
+
 const { verifyAccessToken, requireRole } = require("../middlewares/authMiddleware");
 const optionalAuth = require("../middlewares/optionalAuth");
 const validateRequest = require("../middlewares/validateRequest");
@@ -23,10 +29,11 @@ const router = express.Router();
 
 const writeLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
+  max: 60,
   message: { message: "Too many requests, try again later" },
 });
 
+// Create challenge
 router.post(
   "/",
   verifyAccessToken,
@@ -37,10 +44,22 @@ router.post(
   createChallenge
 );
 
+// List challenges
 router.get("/", listChallengesValidator, validateRequest, optionalAuth, getChallenges);
 
+// Run tests for a challenge
+router.post("/:id/run", optionalAuth, runChallengeCode);
+
+// Submit solution for a challenge
+router.post("/:id/submit", optionalAuth, createSubmission);
+
+// Get submissions for a challenge
+router.get("/:id/submissions", optionalAuth, getChallengeSubmissions);
+
+// Get single challenge by ID
 router.get("/:id", challengeIdValidator, validateRequest, optionalAuth, getChallengeById);
 
+// Update challenge
 router.put(
   "/:id",
   verifyAccessToken,
@@ -52,6 +71,7 @@ router.put(
   updateChallenge
 );
 
+// Delete challenge
 router.delete(
   "/:id",
   verifyAccessToken,

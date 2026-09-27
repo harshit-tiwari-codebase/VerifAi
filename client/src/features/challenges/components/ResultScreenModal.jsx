@@ -6,12 +6,13 @@ import {
   Share2,
   ArrowRight,
   RotateCcw,
-  Sparkles,
+  SlidersHorizontal,
   ExternalLink,
   ShieldCheck,
   Check,
   X,
   Flame,
+  BrainCircuit,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -40,8 +41,8 @@ export default function ResultScreenModal({
     if (isPassed) {
       try {
         confetti({
-          particleCount: 65,
-          spread: 60,
+          particleCount: 50,
+          spread: 55,
           origin: { y: 0.6 },
           colors: ["#9333EA", "#C084FC", "#38BDF8", "#34D399", "#F59E0B"],
           disableForReducedMotion: true,
@@ -240,15 +241,12 @@ export default function ResultScreenModal({
             </div>
           </div>
 
-          {/* Badge Issued Card (if passed) with shine sweep animation */}
+          {/* Badge Issued Card (Clean, focused, no excessive glow) */}
           {isPassed ? (
-            <div className="purple-comp relative overflow-hidden rounded-xl p-4 font-mono shadow-[0_0_30px_rgba(147,51,234,0.2)]">
-              {/* Shine sweep overlay */}
-              <div className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
-
+            <div className="rounded-xl border border-violet-500/25 bg-[#0e1017] p-4 font-mono">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="h-12 w-12 rounded-xl bg-violet-500/25 border border-violet-400/40 flex items-center justify-center shrink-0">
+                  <div className="h-12 w-12 rounded-xl bg-violet-500/15 border border-violet-400/30 flex items-center justify-center shrink-0">
                     <Award className="h-6 w-6 text-violet-300" />
                   </div>
                   <div>
@@ -288,7 +286,7 @@ export default function ResultScreenModal({
           ) : (
             <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 font-mono text-xs text-amber-200">
               <div className="font-semibold text-amber-300 mb-1 flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4" />
+                <BrainCircuit className="h-4 w-4" />
                 <span>Almost there! Focus on edge case boundary protection</span>
               </div>
               <p className="text-mist-400 text-[11.5px] leading-relaxed">

@@ -25,9 +25,10 @@ const createChallengeValidator = [
     .withMessage("Invalid category"),
 
   body("executionType")
-    .isIn(["testcases", "review_only"])
+    .optional()
+    .isIn(["both", "testcases", "review_only"])
     .withMessage(
-      "Execution type must be either 'testcases' or 'review_only'"
+      "Execution type must be one of: 'both', 'testcases', or 'review_only'"
     ),
 
   body("tags")
@@ -37,40 +38,40 @@ const createChallengeValidator = [
 
   body("tags.*").optional().isString(),
 
-  // Conditional validation for test cases
+  // Conditional validation for test cases (required for "testcases" and "both")
   body("testCases").custom((value, { req }) => {
-    if (req.body.executionType === "testcases") {
+    const type = req.body.executionType || "both";
+    if (type === "testcases" || type === "both") {
       if (!Array.isArray(value) || value.length === 0) {
         throw new Error(
-          "At least one test case is required for a 'testcases' challenge"
+          "At least one test case is required when automated tests are enabled"
         );
       }
     }
-
     return true;
   }),
 
   body("testCases.*.expectedOutput")
-    .if((value, { req }) => req.body.executionType === "testcases")
+    .if((value, { req }) => {
+      const type = req.body.executionType || "both";
+      return type === "testcases" || type === "both";
+    })
     .notEmpty()
     .withMessage("Expected output is required for every test case"),
 
-  // Conditional validation for review-only challenges
+  // Conditional validation for AI review (required for "review_only" and "both")
   body("evaluationCriteria").custom((value, { req }) => {
-    if (req.body.executionType === "review_only") {
+    const type = req.body.executionType || "both";
+    if (type === "review_only") {
       if (!value || !value.trim()) {
         throw new Error(
-          "Evaluation criteria is required for a 'review_only' challenge"
+          "Evaluation criteria is required when AI review is enabled"
         );
       }
     }
-
     return true;
   }),
 ];
-
-
-
 
 const updateChallengeValidator = [
   body("title")
@@ -98,7 +99,7 @@ const updateChallengeValidator = [
 
   body("executionType")
     .optional()
-    .isIn(["testcases", "review_only"]),
+    .isIn(["both", "testcases", "review_only"]),
 
   body("tags")
     .optional()
@@ -108,8 +109,6 @@ const updateChallengeValidator = [
     .optional()
     .isArray({ min: 1 }),
 ];
-
-
 
 const listChallengesValidator = [
   query("difficulty")
@@ -158,4 +157,3 @@ module.exports = {
   listChallengesValidator,
   challengeIdValidator,
 };
-

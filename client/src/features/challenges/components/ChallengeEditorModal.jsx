@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { X, Plus, Trash2, AlertCircle } from "lucide-react";
+import {
+  X,
+  Plus,
+  Trash2,
+  AlertCircle,
+  Cpu,
+  BrainCircuit,
+  Sparkles,
+  Layers,
+  ShieldCheck,
+} from "lucide-react";
 import { createChallenge, updateChallenge } from "../api/challengeApi.js";
 import Button from "../../../components/ui/Button.jsx";
 import { ModernCodeIcon } from "../../../components/ui/Icons.jsx";
@@ -19,6 +29,33 @@ const DIFFICULTIES = [
   { value: "hard", label: "Hard" },
 ];
 
+const EXECUTION_MODES = [
+  {
+    value: "both",
+    label: "Automated Tests + AI Review (Both)",
+    badge: "Recommended",
+    badgeColor: "border-violet-500/30 bg-violet-500/10 text-violet-300",
+    description: "Evaluates automated test cases in the sandbox AND performs in-depth AI architectural review.",
+    icon: Sparkles,
+  },
+  {
+    value: "testcases",
+    label: "Automated Tests Only",
+    badge: "Judge0 / Sandbox",
+    badgeColor: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+    description: "Pure test-case verification comparing stdout/return values against expected outputs.",
+    icon: Cpu,
+  },
+  {
+    value: "review_only",
+    label: "AI Architectural Review Only",
+    badge: "AI Evaluator",
+    badgeColor: "border-sky-500/30 bg-sky-500/10 text-sky-300",
+    description: "Evaluates code against custom AI rubrics, Big-O complexity, and design patterns.",
+    icon: BrainCircuit,
+  },
+];
+
 export default function ChallengeEditorModal({
   isOpen,
   onClose,
@@ -29,9 +66,9 @@ export default function ChallengeEditorModal({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [difficulty, setDifficulty] = useState("easy");
+  const [difficulty, setDifficulty] = useState("medium");
   const [category, setCategory] = useState("dsa");
-  const [executionType, setExecutionType] = useState("testcases");
+  const [executionType, setExecutionType] = useState("both");
   const [tagsInput, setTagsInput] = useState("");
   const [starterCode, setStarterCode] = useState("");
   const [evaluationCriteria, setEvaluationCriteria] = useState("");
@@ -51,9 +88,9 @@ export default function ChallengeEditorModal({
     if (challengeToEdit) {
       setTitle(challengeToEdit.title || "");
       setDescription(challengeToEdit.description || "");
-      setDifficulty(challengeToEdit.difficulty || "easy");
+      setDifficulty(challengeToEdit.difficulty || "medium");
       setCategory(challengeToEdit.category || "dsa");
-      setExecutionType(challengeToEdit.executionType || "testcases");
+      setExecutionType(challengeToEdit.executionType || "both");
       setTagsInput(challengeToEdit.tags ? challengeToEdit.tags.join(", ") : "");
       setStarterCode(challengeToEdit.starterCode || "");
       setEvaluationCriteria(challengeToEdit.evaluationCriteria || "");
@@ -78,15 +115,20 @@ export default function ChallengeEditorModal({
     } else {
       setTitle("");
       setDescription("");
-      setDifficulty("easy");
+      setDifficulty("medium");
       setCategory("dsa");
-      setExecutionType("testcases");
+      setExecutionType("both");
       setTagsInput("");
-      setStarterCode("// Export function or template solution\n");
-      setEvaluationCriteria("");
+      setStarterCode("// Write your solution template here\n");
+      setEvaluationCriteria(
+        "Correctness, O(1) algorithmic complexity, clean OOP structure, and boundary edge case resilience."
+      );
       setReferenceSolution("");
       setIsPublished(true);
-      setTestCases([{ input: "", expectedOutput: "", isHidden: false }]);
+      setTestCases([
+        { input: "", expectedOutput: "", isHidden: false },
+        { input: "", expectedOutput: "", isHidden: true },
+      ]);
     }
 
     setFormError("");
@@ -107,6 +149,9 @@ export default function ChallengeEditorModal({
   }, [isOpen, loading, onClose]);
 
   if (!isOpen) return null;
+
+  const showTestCases = executionType === "both" || executionType === "testcases";
+  const showAiCriteria = executionType === "both" || executionType === "review_only";
 
   const handleAddTestCase = () => {
     setTestCases([...testCases, { input: "", expectedOutput: "", isHidden: false }]);
@@ -153,7 +198,7 @@ export default function ChallengeEditorModal({
       isPublished,
     };
 
-    if (executionType === "testcases") {
+    if (showTestCases) {
       const validTestCases = testCases.filter((tc) => tc.expectedOutput.trim() !== "");
       if (validTestCases.length === 0) {
         setFormError("At least one testcase with expected output is required.");
@@ -162,14 +207,17 @@ export default function ChallengeEditorModal({
       payload.testCases = validTestCases.map((tc) => ({
         input: tc.input.trim(),
         expectedOutput: tc.expectedOutput.trim(),
-        isHidden: tc.isHidden,
+        isHidden: Boolean(tc.isHidden),
       }));
-    } else {
+    }
+
+    if (showAiCriteria) {
       if (!evaluationCriteria.trim()) {
-        setFormError("Evaluation criteria is required for 'review_only' challenges.");
-        return;
+        payload.evaluationCriteria =
+          "General code quality, O(1) algorithmic efficiency, and edge case resilience.";
+      } else {
+        payload.evaluationCriteria = evaluationCriteria.trim();
       }
-      payload.evaluationCriteria = evaluationCriteria.trim();
     }
 
     setLoading(true);
@@ -196,14 +244,14 @@ export default function ChallengeEditorModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget && !loading) onClose();
       }}
     >
-      <div className="relative flex flex-col w-full max-w-3xl h-[90vh] max-h-[850px] bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative flex flex-col w-full max-w-3xl h-[90vh] max-h-[850px] bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden font-sans">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-[#07090F]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-[#07090F] select-none">
           <div className="flex items-center gap-2">
             <ModernCodeIcon className="h-4 w-4 text-violet-400" />
             <span className="font-mono text-sm font-semibold text-mist-100">
@@ -222,7 +270,7 @@ export default function ChallengeEditorModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
             {formError && (
               <div className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs font-mono text-rose-300">
                 <AlertCircle className="h-3.5 w-3.5 shrink-0 stroke-[1.75]" />
@@ -233,26 +281,26 @@ export default function ChallengeEditorModal({
             {/* Title */}
             <div>
               <label className="block text-xs font-mono text-mist-400 mb-1.5">
-                Title <span className="text-rose-400">*</span>
+                Challenge Title <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Distributed Token Bucket Rate Limiter"
-                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3.5 py-2 text-sm text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3.5 py-2 text-sm text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none font-mono"
                 required
               />
             </div>
 
-            {/* Difficulty, Category, Execution Type */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Difficulty, Category */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-mono text-mist-400 mb-1.5">Difficulty</label>
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none capitalize"
+                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none capitalize font-mono"
                 >
                   {DIFFICULTIES.map((d) => (
                     <option key={d.value} value={d.value}>
@@ -267,7 +315,7 @@ export default function ChallengeEditorModal({
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none"
+                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none font-mono"
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c.value} value={c.value}>
@@ -276,31 +324,77 @@ export default function ChallengeEditorModal({
                   ))}
                 </select>
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-mono text-mist-400 mb-1.5">Execution Type</label>
-                <select
-                  value={executionType}
-                  onChange={(e) => setExecutionType(e.target.value)}
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none"
-                >
-                  <option value="testcases">Automated Tests</option>
-                  <option value="review_only">AI Review Rubric</option>
-                </select>
+            {/* Execution & Verification Mode Selector Cards */}
+            <div>
+              <label className="block text-xs font-mono text-mist-400 mb-2">
+                Verification & Evaluation Strategy <span className="text-violet-400">*</span>
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {EXECUTION_MODES.map((mode) => {
+                  const isSelected = executionType === mode.value;
+                  const Icon = mode.icon;
+
+                  return (
+                    <div
+                      key={mode.value}
+                      onClick={() => setExecutionType(mode.value)}
+                      className={`cursor-pointer rounded-xl border p-3 flex flex-col justify-between transition-all duration-200 ${
+                        isSelected
+                          ? "border-violet-500/60 bg-violet-950/20 ring-1 ring-violet-500/40 shadow-lg shadow-violet-900/10"
+                          : "border-white/[0.06] bg-[#070A10]/70 hover:border-white/[0.12] hover:bg-[#090D17]"
+                      }`}
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <div
+                            className={`p-1.5 rounded-lg border ${
+                              isSelected
+                                ? "border-violet-400/30 bg-violet-500/20 text-violet-300"
+                                : "border-white/[0.06] bg-white/[0.02] text-mist-400"
+                            }`}
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                          </div>
+
+                          <span
+                            className={`rounded-full px-2 py-0.2 text-[9.5px] font-mono border ${mode.badgeColor}`}
+                          >
+                            {mode.badge}
+                          </span>
+                        </div>
+
+                        <div
+                          className={`text-xs font-mono font-semibold ${
+                            isSelected ? "text-white" : "text-mist-200"
+                          }`}
+                        >
+                          {mode.label}
+                        </div>
+                      </div>
+
+                      <p className="text-[10.5px] font-mono text-mist-500 mt-2 leading-relaxed">
+                        {mode.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Description */}
             <div>
               <label className="block text-xs font-mono text-mist-400 mb-1.5">
-                Description & Constraints <span className="text-rose-400">*</span>
+                Description & Problem Requirements <span className="text-rose-400">*</span>
               </label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Explain the problem statement, edge cases, and architectural constraints..."
-                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] p-3 text-xs text-mist-200 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                placeholder="Explain the problem statement, edge cases, requirements, and architectural constraints..."
+                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] p-3 text-xs text-mist-200 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none font-mono"
                 required
               />
             </div>
@@ -315,7 +409,7 @@ export default function ChallengeEditorModal({
                 value={tagsInput}
                 onChange={(e) => setTagsInput(e.target.value)}
                 placeholder="redis, concurrency, rate-limiting, algorithms"
-                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3.5 py-2 text-xs text-mist-200 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3.5 py-2 text-xs text-mist-200 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none font-mono"
               />
             </div>
 
@@ -333,20 +427,45 @@ export default function ChallengeEditorModal({
               />
             </div>
 
-            {/* Test cases builder */}
-            {executionType === "testcases" ? (
+            {/* AI Evaluation Criteria (Rendered when 'both' or 'review_only' is selected) */}
+            {showAiCriteria && (
+              <div className="rounded-xl border border-violet-500/20 bg-violet-950/[0.08] p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-mono text-violet-300 font-semibold">
+                  <BrainCircuit className="h-4 w-4 text-violet-400" />
+                  <span>AI Evaluation Criteria & Rubric</span>
+                </div>
+                <p className="text-[10.5px] font-mono text-mist-400 leading-relaxed">
+                  Rules and architectural benchmarks the senior AI reviewer uses to assess code quality, Big-O complexity, and boundary hardening.
+                </p>
+                <textarea
+                  rows={3}
+                  value={evaluationCriteria}
+                  onChange={(e) => setEvaluationCriteria(e.target.value)}
+                  placeholder="e.g. Check for O(1) time complexity, mathematical token replenishment, boundary condition clamping, and clean object encapsulation..."
+                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] p-3 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none font-mono"
+                  required={executionType === "review_only"}
+                />
+              </div>
+            )}
+
+            {/* Test Cases Builder (Rendered when 'both' or 'testcases' is selected) */}
+            {showTestCases && (
               <div className="rounded-xl border border-white/[0.06] bg-[#070A10] p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono uppercase tracking-wider text-mist-400">
-                    Test Cases ({testCases.length})
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <Cpu className="h-4 w-4 text-emerald-400" />
+                    <span className="text-xs font-mono uppercase tracking-wider text-mist-300 font-semibold">
+                      Automated Test Cases ({testCases.length})
+                    </span>
+                  </div>
+
                   <button
                     type="button"
                     onClick={handleAddTestCase}
-                    className="inline-flex items-center gap-1 rounded border border-white/[0.08] bg-[#0C101A] px-2.5 py-1 text-xs font-mono text-mist-300 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/[0.08] bg-[#0C101A] px-2.5 py-1 text-xs font-mono text-mist-300 hover:text-white transition-colors"
                   >
                     <Plus className="h-3 w-3 stroke-[2]" />
-                    Add Case
+                    <span>Add Case</span>
                   </button>
                 </div>
 
@@ -370,7 +489,7 @@ export default function ChallengeEditorModal({
                               }
                               className="rounded border-white/20 text-violet-600 focus:ring-0"
                             />
-                            <span>Hidden test</span>
+                            <span>Hidden anti-cheat case</span>
                           </label>
                           {testCases.length > 1 && (
                             <button
@@ -390,7 +509,7 @@ export default function ChallengeEditorModal({
                             type="text"
                             value={tc.input}
                             onChange={(e) => handleTestCaseChange(idx, "input", e.target.value)}
-                            placeholder="Input: e.g. [2, 7, 11, 15], 9"
+                            placeholder="Input: e.g. 10, 2, 5"
                             className="w-full rounded border border-white/[0.06] bg-[#05070B] px-2.5 py-1 text-xs text-mist-200 focus:outline-none focus:border-violet-500"
                           />
                         </div>
@@ -401,7 +520,7 @@ export default function ChallengeEditorModal({
                             onChange={(e) =>
                               handleTestCaseChange(idx, "expectedOutput", e.target.value)
                             }
-                            placeholder="Expected output: e.g. [0, 1]"
+                            placeholder="Expected output: e.g. true"
                             className="w-full rounded border border-white/[0.06] bg-[#05070B] px-2.5 py-1 text-xs text-mist-200 focus:outline-none focus:border-violet-500"
                             required
                           />
@@ -411,26 +530,12 @@ export default function ChallengeEditorModal({
                   ))}
                 </div>
               </div>
-            ) : (
-              <div>
-                <label className="block text-xs font-mono text-mist-400 mb-1.5">
-                  AI Evaluation Criteria <span className="text-rose-400">*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  value={evaluationCriteria}
-                  onChange={(e) => setEvaluationCriteria(e.target.value)}
-                  placeholder="Rules for the AI architectural review..."
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] p-3 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none"
-                  required
-                />
-              </div>
             )}
 
             {/* Reference Solution */}
             <div>
               <label className="block text-xs font-mono text-mist-400 mb-1.5">
-                Staff Reference Solution (Confidential)
+                Staff Reference Solution (Confidential benchmark)
               </label>
               <textarea
                 rows={3}

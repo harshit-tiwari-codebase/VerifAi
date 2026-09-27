@@ -123,18 +123,28 @@ export default function ChallengeCard({
 
             <Badge
               className={`shrink-0 ${
-                isTestCase
+                challenge?.executionType === "both"
+                  ? "border-violet-500/30 bg-violet-500/10 text-violet-300"
+                  : isTestCase
                   ? "border-cyan-500/20 bg-cyan-500/[0.06] text-cyan-300"
-                  : "border-violet-500/20 bg-violet-500/[0.06] text-violet-300"
+                  : "border-sky-500/20 bg-sky-500/[0.06] text-sky-300"
               }`}
-              aria-label={`Execution type: ${isTestCase ? "Test cases" : "AI audit"}`}
+              aria-label={`Execution type: ${challenge?.executionType || "both"}`}
             >
-              {isTestCase ? (
+              {challenge?.executionType === "both" ? (
+                <BrainCircuit aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2] text-violet-400" />
+              ) : isTestCase ? (
                 <TestTube2 aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2]" />
               ) : (
                 <BrainCircuit aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2]" />
               )}
-              <span className="hidden sm:inline">{isTestCase ? "Test cases" : "AI audit"}</span>
+              <span className="hidden sm:inline">
+                {challenge?.executionType === "both"
+                  ? "Tests + AI Review"
+                  : isTestCase
+                  ? "Test Cases"
+                  : "AI Review"}
+              </span>
             </Badge>
           </div>
 
