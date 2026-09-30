@@ -47,14 +47,27 @@ router.post(
 // List challenges
 router.get("/", listChallengesValidator, validateRequest, optionalAuth, getChallenges);
 
-// Run tests for a challenge
-router.post("/:id/run", optionalAuth, runChallengeCode);
+const runLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 30,
+  message: { message: "Too many test runs, please slow down" },
+});
 
-// Submit solution for a challenge
-router.post("/:id/submit", optionalAuth, createSubmission);
+// Run tests for a challenge (interactive only, public tests only)
+router.post("/:id/run", verifyAccessToken, runLimiter, challengeIdValidator, validateRequest, runChallengeCode);
+
+// Submit solution for a challenge (thin alias to canonical submission)
+router.post(
+  "/:id/submit",
+  verifyAccessToken,
+  writeLimiter,
+  challengeIdValidator,
+  validateRequest,
+  createSubmission
+);
 
 // Get submissions for a challenge
-router.get("/:id/submissions", optionalAuth, getChallengeSubmissions);
+router.get("/:id/submissions", verifyAccessToken, challengeIdValidator, validateRequest, getChallengeSubmissions);
 
 // Get single challenge by ID
 router.get("/:id", challengeIdValidator, validateRequest, optionalAuth, getChallengeById);

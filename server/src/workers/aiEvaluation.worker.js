@@ -1,86 +1,141 @@
-const aiEvaluationQueue = require("../queues/aiEvaluation.queue");
 const Submission = require("../models/Submission");
 const Challenge = require("../models/Challenge");
 const User = require("../models/User");
-const { evaluateSubmission } = require("../utils/aiEvaluator");
+const { evaluateSubmissionWithAi } = require("../utils/aiEvaluator");
+const { calculateScore, BADGE_THRESHOLD } = require("../utils/scoring");
+const { sanitizeSubmission } = require("../utils/sanitizer");
 const { getIO } = require("../socket");
+const aiEvaluationQueueModule = require("../queues/aiEvaluation.queue");
 
-const SCORE_THRESHOLD = Number(process.env.BADGE_SCORE_THRESHOLD || 70);
+async function issueBadgeIdempotently(userId, challengeId, score) {
+  const updateResult = await User.updateOne(
+    {
+      _id: userId,
+      "badges.challengeId": { $ne: challengeId },
+    },
+    {
+      $push: {
+        badges: {
+          challengeId,
+          score,
+          earnedAt: new Date(),
+        },
+      },
+    }
+  );
+  return updateResult.modifiedCount > 0;
+}
 
-if (aiEvaluationQueue && typeof aiEvaluationQueue.process === "function") {
-  aiEvaluationQueue.process(async (job) => {
-    const { submissionId } = job.data;
-    const submission = await Submission.findById(submissionId);
-    if (!submission) throw new Error("Submission not found");
+async function processEvaluationJob({ submissionId }) {
+  const submission = await Submission.findById(submissionId);
+  if (!submission) throw new Error(`Submission ${submissionId} not found`);
 
-    try {
-      submission.status = "ai_reviewing";
+  try {
+    const challenge = await Challenge.findById(submission.challenge);
+    if (!challenge) {
+      submission.status = "failed";
+      submission.errorCode = "CHALLENGE_NOT_FOUND";
+      submission.errorMessage = "Challenge not found";
       await submission.save();
+      return submission;
+    }
 
-      const challenge = await Challenge.findById(submission.challengeId);
-      const criteria =
-        challenge?.evaluationCriteria ||
-        "General code quality, O(1) algorithmic efficiency, mathematical token calculation, and edge case resilience.";
-
-      const evaluation = await evaluateSubmission({
+    let aiResult;
+    try {
+      aiResult = await evaluateSubmissionWithAi({
         code: submission.code,
         language: submission.language,
-        challenge: challenge || {},
-        criteria,
-        judge0Result: submission.judge0Result,
+        challenge,
+        testSummary: {
+          passedCount: submission.executionResult?.passedCount || 0,
+          totalCount: submission.executionResult?.totalCount || 0,
+        },
       });
-
-      submission.aiEvaluation = evaluation;
-
-      if (evaluation.score >= SCORE_THRESHOLD) {
-        const alreadyHasBadge = await User.exists({
-          _id: submission.userId,
-          "badges.challengeId": submission.challengeId,
-        });
-
-        if (!alreadyHasBadge) {
-          await User.findByIdAndUpdate(submission.userId, {
-            $push: {
-              badges: {
-                challengeId: submission.challengeId,
-                score: evaluation.score,
-                earnedAt: new Date(),
-              },
-            },
-          });
-        }
-        submission.badgeIssued = true;
-      }
-
-      submission.status = "completed";
+    } catch (evalErr) {
+      submission.status = "ai_evaluation_failed";
+      submission.errorCode = evalErr.code || "AI_EVALUATION_FAILED";
+      submission.errorMessage = evalErr.message;
       await submission.save();
 
       const io = getIO();
       if (io) {
-        io.to(submission.userId.toString()).emit("submission:complete", {
-          submissionId: submission._id,
-          status: submission.status,
-          judge0Result: submission.judge0Result,
-          aiEvaluation: submission.aiEvaluation,
-          badgeIssued: submission.badgeIssued,
-        });
+        io.to(submission.user.toString()).emit(
+          "submission:complete",
+          sanitizeSubmission(submission, { id: submission.user })
+        );
       }
-    } catch (err) {
-      submission.status = "failed";
-      submission.errorMessage = err.message;
-      await submission.save();
-
-      const io = getIO();
-      if (io) {
-        io.to(submission.userId.toString()).emit("submission:complete", {
-          submissionId: submission._id,
-          status: "failed",
-          error: err.message,
-        });
-      }
-      throw err;
+      return submission;
     }
+
+    // Schema validation and score calculation
+    const scoreResult = calculateScore({
+      executionType: challenge.executionType,
+      testResults: submission.executionResult?.testResults || [],
+      aiEvaluation: aiResult,
+      threshold: BADGE_THRESHOLD,
+    });
+
+    submission.aiEvaluation = {
+      codeQuality: aiResult.codeQuality,
+      efficiency: aiResult.efficiency,
+      edgeCases: aiResult.edgeCases,
+      strengths: aiResult.strengths,
+      weaknesses: aiResult.weaknesses,
+      suggestions: aiResult.suggestions,
+      evaluatorVersion: aiResult.evaluatorVersion,
+      validated: true,
+    };
+
+    submission.finalScore = scoreResult.finalScore;
+    submission.badgeEligible = scoreResult.badgeEligible;
+    submission.status = "completed";
+
+    // Idempotent badge issuance
+    if (scoreResult.badgeEligible) {
+      await issueBadgeIdempotently(
+        submission.user,
+        submission.challenge,
+        submission.finalScore
+      );
+      submission.badgeIssued = true;
+    }
+
+    await submission.save();
+
+    const io = getIO();
+    if (io) {
+      io.to(submission.user.toString()).emit(
+        "submission:complete",
+        sanitizeSubmission(submission, { id: submission.user })
+      );
+    }
+    return submission;
+  } catch (err) {
+    submission.status = "failed";
+    submission.errorCode = err.code || "EVALUATION_ERROR";
+    submission.errorMessage = err.message;
+    await submission.save();
+
+    const io = getIO();
+    if (io) {
+      io.to(submission.user.toString()).emit(
+        "submission:complete",
+        sanitizeSubmission(submission, { id: submission.user })
+      );
+    }
+    throw err;
+  }
+}
+
+// Attach Bull worker if queue is active
+const bullQueue = aiEvaluationQueueModule.getQueue();
+if (bullQueue && typeof bullQueue.process === "function") {
+  bullQueue.process(async (job) => {
+    return processEvaluationJob(job.data);
   });
 }
 
-module.exports = aiEvaluationQueue;
+module.exports = {
+  processEvaluationJob,
+  issueBadgeIdempotently,
+};

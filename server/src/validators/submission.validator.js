@@ -2,16 +2,28 @@ const { body, param } = require("express-validator");
 
 const createSubmissionValidator = [
   body("challengeId")
-    .optional()
-    .isString()
     .notEmpty()
-    .withMessage("Invalid challengeId"),
-  body("code").notEmpty().withMessage("Code is required"),
-  body("language").optional().isString().withMessage("Language must be a string"),
+    .withMessage("challengeId is required")
+    .isMongoId()
+    .withMessage("challengeId must be a valid MongoDB ObjectId"),
+  body("code")
+    .isString()
+    .withMessage("Code must be a string")
+    .trim()
+    .notEmpty()
+    .withMessage("Code cannot be empty")
+    .isLength({ max: 20000 })
+    .withMessage("Code must not exceed 20000 characters"),
+  body("language")
+    .optional()
+    .isIn(["javascript", "python", "java", "cpp"])
+    .withMessage("Language must be one of: javascript, python, java, cpp"),
 ];
 
 const submissionIdValidator = [
-  param("id").notEmpty().withMessage("Invalid submission id"),
+  param("id")
+    .isMongoId()
+    .withMessage("Submission id must be a valid MongoDB ObjectId"),
 ];
 
 module.exports = { createSubmissionValidator, submissionIdValidator };

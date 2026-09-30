@@ -19,38 +19,14 @@ async function main() {
     description: c.description,
     starterCode: c.starterCode,
     evaluationCriteria: c.evaluationCriteria,
-    testCases: (c.testCases || []).map((tc) => ({
-      _id: String(tc._id),
-      id: String(tc._id),
-      input: tc.input,
-      expectedOutput: tc.expectedOutput,
-      actualOutput: tc.expectedOutput,
-      runtime: "1ms",
-      passed: true,
-      isHidden: !!tc.isHidden,
-    })),
-    aiReview: {
-      rubric: c.evaluationCriteria,
-      finalScore: 95,
-      passingThreshold: 70,
-      subscores: {
-        correctness: 100,
-        codeQuality: 94,
-        efficiency: 92,
-        edgeCases: 94,
-      },
-      verdict: "Production-Grade Solution",
-      badge: {
-        name: `${c.title} Architect`,
-        issueId: `VRF-${Math.floor(100000 + Math.random() * 900000)}`,
-        credentialUrl: `verifai.dev/verify/VRF-${Math.floor(100000 + Math.random() * 900000)}`,
-      },
-      reviewNotes: [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation.",
-      ],
-    },
+    testCases: (c.testCases || [])
+      .filter((tc) => !tc.isHidden)
+      .map((tc) => ({
+        _id: String(tc._id),
+        id: String(tc._id),
+        input: tc.input,
+        expectedOutput: tc.expectedOutput,
+      })),
   }));
 
   const defaultChallenge = formatted.find((c) => c.title.includes("Token Bucket")) || formatted[0];

@@ -26,6 +26,7 @@ import { getChallengeById } from "../features/challenges/api/challengeApi.js";
 import {
   executeChallengeTests,
   submitChallengeSolution,
+  pollSubmissionStatus,
 } from "../features/challenges/api/submissionApi.js";
 import VerifaiLogo from "../components/ui/VerifaiLogo.jsx";
 import "../utils/monacoConfig.js"; // configure local Monaco worker setup & theme
@@ -116,6 +117,7 @@ export default function ChallengeWorkspacePage() {
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
   const [isResultOpen, setIsResultOpen] = useState(false);
   const [submissionResult, setSubmissionResult] = useState(null);
+  const [submissionError, setSubmissionError] = useState(null);
 
   // Load challenge data if real backend has it, otherwise default to rich mock data
   useEffect(() => {
@@ -332,30 +334,54 @@ export default function ChallengeWorkspacePage() {
     if (isRunningTests || isVerificationOpen || isSubmitting) return;
 
     setIsSubmitting(true);
+    setSubmissionError(null);
+
+    const challengeId = challenge._id || challenge.id || slug;
 
     try {
-      const result = await submitChallengeSolution({
-        challengeId: challenge.id || slug,
+      // 1. Submit solution to canonical endpoint
+      const initRes = await submitChallengeSolution({
+        challengeId,
         code,
         language: "javascript",
         keystrokeCount,
         timeSpentSeconds: elapsedSeconds,
-        testCases: challenge.testCases || [],
-        challenge,
       });
 
-      setSubmissionResult(result);
+      // Show verification modal in queued state
+      setSubmissionResult({
+        _id: initRes.submissionId,
+        status: "queued",
+        challenge,
+      });
       setIsVerificationOpen(true);
+
+      // 2. Poll for terminal state
+      const completedSub = await pollSubmissionStatus(
+        initRes.submissionId,
+        (updated) => {
+          setSubmissionResult(updated);
+        }
+      );
+
+      setSubmissionResult(completedSub);
     } catch (err) {
       console.error("Submission failed:", err);
-      // Fallback open with default evaluation
+      const errMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Submission failed. Your code remains safe in the editor.";
+      setSubmissionError(errMsg);
+      setSubmissionResult({
+        status: "failed",
+        errorMessage: errMsg,
+      });
       setIsVerificationOpen(true);
     } finally {
       setIsSubmitting(false);
     }
   }, [
-    challenge.id,
-    challenge.testCases,
+    challenge,
     code,
     elapsedSeconds,
     isRunningTests,
@@ -366,9 +392,11 @@ export default function ChallengeWorkspacePage() {
   ]);
 
   // When verification pipeline finishes
-  const handleVerificationComplete = () => {
+  const handleVerificationComplete = (finalSub) => {
     setIsVerificationOpen(false);
-    setIsResultOpen(true);
+    if (finalSub && finalSub.status === "completed") {
+      setIsResultOpen(true);
+    }
   };
 
   // Keyboard shortcuts: ⌘+Enter to Run Tests, ⌘+Shift+Enter to Submit, ⌘+B to toggle sidebar
@@ -673,15 +701,18 @@ export default function ChallengeWorkspacePage() {
       {/* SUBMISSION VERIFICATION SEQUENCE MODAL */}
       <VerificationModal
         isOpen={isVerificationOpen}
-        submissionResult={submissionResult}
+        submission={submissionResult}
+        status={submissionResult?.status || "queued"}
+        error={submissionError}
         onComplete={handleVerificationComplete}
         onCancel={() => setIsVerificationOpen(false)}
+        onRetry={handleSubmitSolution}
       />
 
       {/* FINAL RESULT SCREEN MODAL */}
       <ResultScreenModal
         isOpen={isResultOpen}
-        aiReviewData={activeAiReview}
+        aiReviewData={submissionResult}
         onTryAgain={() => {
           setIsResultOpen(false);
           setIsConsoleOpen(false);

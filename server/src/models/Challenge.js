@@ -1,5 +1,14 @@
 const mongoose = require("mongoose");
 
+const operationSchema = new mongoose.Schema(
+  {
+    call: { type: String, required: true },
+    args: { type: [mongoose.Schema.Types.Mixed], default: [] },
+    expected: { type: mongoose.Schema.Types.Mixed },
+  },
+  { _id: false }
+);
+
 const testCaseSchema = new mongoose.Schema(
   {
     input: {
@@ -8,7 +17,28 @@ const testCaseSchema = new mongoose.Schema(
     },
     expectedOutput: {
       type: String,
-      required: true,
+      required: function () {
+        return !this.operations || this.operations.length === 0;
+      },
+    },
+    setup: {
+      constructorArgs: {
+        type: [mongoose.Schema.Types.Mixed],
+        default: undefined,
+      },
+    },
+    operations: {
+      type: [operationSchema],
+      default: undefined,
+    },
+    weight: {
+      type: Number,
+      default: 1,
+      min: 0,
+    },
+    isRequired: {
+      type: Boolean,
+      default: true,
     },
     isHidden: {
       type: Boolean,
@@ -51,6 +81,23 @@ const challengeSchema = new mongoose.Schema(
       enum: ["both", "testcases", "review_only"],
       default: "both",
       required: true,
+    },
+    executionAdapter: {
+      kind: {
+        type: String,
+        enum: ["function", "class-stateful", "class-stateless", "stdin-stdout"],
+        default: "function",
+        required: function () {
+          return this.executionType === "testcases" || this.executionType === "both";
+        },
+      },
+      entryPoint: { type: String, default: "Solution" },
+      constructorArgs: [String],
+      comparisonMode: {
+        type: String,
+        enum: ["exact", "numeric-tolerance", "unordered-array", "deep-equal-object"],
+        default: "exact",
+      },
     },
     tags: {
       type: [String],

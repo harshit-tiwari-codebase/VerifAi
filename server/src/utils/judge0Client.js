@@ -1,32 +1,78 @@
 const axios = require("axios");
 
-const JDOODLE_URL = "https://api.jdoodle.com/v1/execute";
+const JUDGE0_BASE_URL =
+  process.env.JUDGE0_API_URL || "https://judge0-ce.p.rapidapi.com";
+const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || process.env.JUDGE0_API_KEY;
+const RAPIDAPI_HOST =
+  process.env.RAPIDAPI_HOST || "judge0-ce.p.rapidapi.com";
 
-// language + versionIndex, JDoodle ke official docs ke hisaab se (reasonably recent, stable versions)
-const LANGUAGE_CONFIG = {
-  javascript: { language: "nodejs", versionIndex: "5" },   // NodeJS 20.9.0
-  python: { language: "python3", versionIndex: "5" },      // Python 3.11.5
-  python3: { language: "python3", versionIndex: "5" },
-  cpp: { language: "cpp", versionIndex: "5" },              // GCC 11.1.0
-  "c++": { language: "cpp", versionIndex: "5" },
-  java: { language: "java", versionIndex: "4" },            // JDK 17.0.1
-  c: { language: "c", versionIndex: "5" },                  // GCC 11.1.0
+const LANGUAGE_IDS = {
+  javascript: 93, // Node.js 18.15.0 (or 63 for 12.14.0)
+  python: 92, // Python 3.11.2
+  cpp: 54, // C++ (GCC 9.2.0)
+  java: 91, // Java (OpenJDK 17.0.6)
 };
 
-const runCode = async ({ code, language, stdin }) => {
-  const config = LANGUAGE_CONFIG[language.toLowerCase()];
-  if (!config) throw new Error(`Unsupported language: ${language}`);
+/**
+ * Common headers for Judge0 requests
+ */
+function getHeaders() {
+  const headers = { "Content-Type": "application/json" };
+  if (RAPIDAPI_KEY) {
+    headers["x-rapidapi-key"] = RAPIDAPI_KEY;
+    headers["x-rapidapi-host"] = RAPIDAPI_HOST;
+  }
+  return headers;
+}
 
-  const response = await axios.post(JDOODLE_URL, {
-    clientId: process.env.JDOODLE_CLIENT_ID,
-    clientSecret: process.env.JDOODLE_CLIENT_SECRET,
-    script: code,
-    stdin: stdin || "",
-    language: config.language,
-    versionIndex: config.versionIndex,
-  });
+/**
+ * Submit a batch of code executions to Judge0
+ */
+async function submitBatch(submissions) {
+  const url = `${JUDGE0_BASE_URL}/submissions/batch?base64_encoded=false`;
+  const response = await axios.post(
+    url,
+    { submissions },
+    {
+      headers: getHeaders(),
+      timeout: 10000,
+    }
+  );
+  return response.data; // Array of { token }
+}
 
-  return response.data; // { output, statusCode, memory, cpuTime, error? }
+/**
+ * Poll a batch of submission tokens until completion or timeout
+ */
+async function pollBatch(tokens, maxWaitMs = 15000) {
+  const url = `${JUDGE0_BASE_URL}/submissions/batch?tokens=${tokens.join(
+    ","
+  )}&base64_encoded=false&fields=token,status_id,status,stdout,stderr,compile_output,time,memory`;
+
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < maxWaitMs) {
+    const response = await axios.get(url, {
+      headers: getHeaders(),
+      timeout: 10000,
+    });
+
+    const results = response.data?.submissions || response.data || [];
+    // Status 1 (In Queue) or 2 (Processing) mean still pending
+    const allDone = results.every((r) => r.status_id > 2);
+    if (allDone) {
+      return results;
+    }
+    // Wait 500ms before next poll
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  throw new Error("Polling Judge0 batch timed out");
+}
+
+module.exports = {
+  submitBatch,
+  pollBatch,
+  LANGUAGE_IDS,
+  JUDGE0_BASE_URL,
 };
-
-module.exports = { runCode, LANGUAGE_CONFIG };

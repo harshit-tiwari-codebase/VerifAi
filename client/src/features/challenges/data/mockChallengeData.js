@@ -1,6 +1,6 @@
 /**
- * Pre-compiled Client Fallback Catalog for all 20 published challenges.
- * Guarantees zero downtime, offline responsiveness, and instant problem hydration.
+ * Pre-compiled Client Fallback Catalog for published challenges (Public Data Only).
+ * Hidden test cases, reference solutions, and authoritative scoring live on the server only.
  */
 
 export const ALL_CHALLENGES_CATALOG = [
@@ -26,75 +26,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308d873a60e2514db867",
         "id": "6ab5308d873a60e2514db867",
         "input": "{\"action\": \"set\", \"key\": \"a\", \"value\": 100}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308d873a60e2514db868",
         "id": "6ab5308d873a60e2514db868",
         "input": "{\"action\": \"get\", \"key\": \"a\"}",
-        "expectedOutput": "100",
-        "actualOutput": "100",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "100"
       },
       {
         "_id": "6ab5308d873a60e2514db869",
         "id": "6ab5308d873a60e2514db869",
         "input": "{\"action\": \"get\", \"key\": \"unknown\"}",
-        "expectedOutput": "-1",
-        "actualOutput": "-1",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308d873a60e2514db86a",
-        "id": "6ab5308d873a60e2514db86a",
-        "input": "{\"action\": \"set\", \"key\": \"b\", \"value\": 200}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308d873a60e2514db86b",
-        "id": "6ab5308d873a60e2514db86b",
-        "input": "{\"action\": \"get\", \"key\": \"b\"}",
-        "expectedOutput": "200",
-        "actualOutput": "200",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "-1"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Algorithmic Complexity: Strictly O(1) time for both get and set operations.\n• Doubly Linked List: Dummy head and tail nodes to eliminate edge-case pointer null checks.\n• TTL Expiration: Lazy invalidation upon access without thread leaks or unneeded timers.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Distributed LRU Cache with TTL Expiration Architect",
-        "issueId": "VRF-735097",
-        "credentialUrl": "verifai.dev/verify/VRF-966989"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308e4a6089fdfec33de4",
@@ -118,75 +64,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308d873a60e2514db85d",
         "id": "6ab5308d873a60e2514db85d",
         "input": "{\"tokens\": 5}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308d873a60e2514db85e",
         "id": "6ab5308d873a60e2514db85e",
         "input": "{\"tokens\": 10}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "false"
       },
       {
         "_id": "6ab5308d873a60e2514db85f",
         "id": "6ab5308d873a60e2514db85f",
         "input": "{\"tokens\": 1}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308d873a60e2514db860",
-        "id": "6ab5308d873a60e2514db860",
-        "input": "{\"tokens\": 20}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308d873a60e2514db861",
-        "id": "6ab5308d873a60e2514db861",
-        "input": "{\"tokens\": 2}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "true"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Algorithmic Efficiency: O(1) mathematical delta replenishment without setInterval or setTimeout.\n• Burst Tolerance: Handles instantaneous token bursts up to max capacity.\n• State Preservation: Failed requests must not deduct tokens or corrupt timestamp markers.\n• Clean API: Robust input validation and encapsulation.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Distributed Token Bucket Rate Limiter Architect",
-        "issueId": "VRF-602063",
-        "credentialUrl": "verifai.dev/verify/VRF-895342"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308e4a6089fdfec33de5",
@@ -210,75 +102,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308d873a60e2514db871",
         "id": "6ab5308d873a60e2514db871",
         "input": "{\"action\": \"encode\", \"num\": 125}",
-        "expectedOutput": "21",
-        "actualOutput": "21",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "21"
       },
       {
         "_id": "6ab5308d873a60e2514db872",
         "id": "6ab5308d873a60e2514db872",
         "input": "{\"action\": \"decode\", \"str\": \"21\"}",
-        "expectedOutput": "125",
-        "actualOutput": "125",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "125"
       },
       {
         "_id": "6ab5308d873a60e2514db873",
         "id": "6ab5308d873a60e2514db873",
         "input": "{\"action\": \"resolve\", \"slug\": \"nonexistent\"}",
-        "expectedOutput": "404",
-        "actualOutput": "404",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308d873a60e2514db874",
-        "id": "6ab5308d873a60e2514db874",
-        "input": "{\"action\": \"shorten\", \"url\": \"https://verifai.io/docs\"}",
-        "expectedOutput": "q0U",
-        "actualOutput": "q0U",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308d873a60e2514db875",
-        "id": "6ab5308d873a60e2514db875",
-        "input": "{\"action\": \"resolve\", \"slug\": \"q0U\"}",
-        "expectedOutput": "https://verifai.io/docs",
-        "actualOutput": "https://verifai.io/docs",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "404"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Bijective Base62 Algorithm: Perfect reversibility between numerical IDs and Base62 strings.\n• Collision Resistance: Guarantees unique short URLs without hash collisions.\n• Memory Complexity: Efficient bidirectional map storage with O(1) resolution.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Design a High-Throughput URL Shortener Architect",
-        "issueId": "VRF-313767",
-        "credentialUrl": "verifai.dev/verify/VRF-444159"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308e4a6089fdfec33de6",
@@ -302,65 +140,15 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308d873a60e2514db87b",
         "id": "6ab5308d873a60e2514db87b",
         "input": "{\"limit\": 2, \"tasksCount\": 4}",
-        "expectedOutput": "limit_2_tasks_4_completed",
-        "actualOutput": "limit_2_tasks_4_completed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "limit_2_tasks_4_completed"
       },
       {
         "_id": "6ab5308d873a60e2514db87c",
         "id": "6ab5308d873a60e2514db87c",
         "input": "{\"limit\": 1, \"tasksCount\": 3}",
-        "expectedOutput": "limit_1_tasks_3_completed",
-        "actualOutput": "limit_1_tasks_3_completed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308d873a60e2514db87d",
-        "id": "6ab5308d873a60e2514db87d",
-        "input": "{\"limit\": 5, \"tasksCount\": 10}",
-        "expectedOutput": "limit_5_tasks_10_completed",
-        "actualOutput": "limit_5_tasks_10_completed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308d873a60e2514db87e",
-        "id": "6ab5308d873a60e2514db87e",
-        "input": "{\"limit\": 3, \"tasksCount\": 6}",
-        "expectedOutput": "limit_3_tasks_6_completed",
-        "actualOutput": "limit_3_tasks_6_completed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "limit_1_tasks_3_completed"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Concurrency Enforcement: Guarantees active tasks never exceed specified limit.\n• Clean Async Lifecycle: Handles both resolution and rejection gracefully in finally blocks.\n• FIFO Guarantee: Maintains strictly ordered dispatching of queued jobs.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Concurrent Task Queue with Concurrency Limit Architect",
-        "issueId": "VRF-339015",
-        "credentialUrl": "verifai.dev/verify/VRF-773310"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33de7",
@@ -384,75 +172,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308d873a60e2514db883",
         "id": "6ab5308d873a60e2514db883",
         "input": "{\"action\": \"getState\"}",
-        "expectedOutput": "CLOSED",
-        "actualOutput": "CLOSED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "CLOSED"
       },
       {
         "_id": "6ab5308d873a60e2514db884",
         "id": "6ab5308d873a60e2514db884",
         "input": "{\"action\": \"recordFailure\"}",
-        "expectedOutput": "CLOSED",
-        "actualOutput": "CLOSED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "CLOSED"
       },
       {
         "_id": "6ab5308d873a60e2514db885",
         "id": "6ab5308d873a60e2514db885",
         "input": "{\"action\": \"recordSuccess\"}",
-        "expectedOutput": "CLOSED",
-        "actualOutput": "CLOSED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308d873a60e2514db886",
-        "id": "6ab5308d873a60e2514db886",
-        "input": "{\"action\": \"recordFailure\"}",
-        "expectedOutput": "CLOSED",
-        "actualOutput": "CLOSED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308d873a60e2514db887",
-        "id": "6ab5308d873a60e2514db887",
-        "input": "{\"action\": \"getState\"}",
-        "expectedOutput": "CLOSED",
-        "actualOutput": "CLOSED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "CLOSED"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Accurate Finite State Machine: Exact transitions between CLOSED, OPEN, and HALF_OPEN.\n• Threshold Detection: Accurate triggering upon reaching consecutive failure limits.\n• Cooldown Management: Non-blocking time-based transitions to trial state.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Circuit Breaker Pattern for Resilient Microservices Architect",
-        "issueId": "VRF-267394",
-        "credentialUrl": "verifai.dev/verify/VRF-273658"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33de8",
@@ -476,75 +210,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db88d",
         "id": "6ab5308e873a60e2514db88d",
         "input": "{\"token\": \"invalid_string\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "false"
       },
       {
         "_id": "6ab5308e873a60e2514db88e",
         "id": "6ab5308e873a60e2514db88e",
         "input": "{\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoyNTI0NjA4MDAwfQ.signature\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308e873a60e2514db88f",
         "id": "6ab5308e873a60e2514db88f",
         "input": "{\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEwMDAwfQ.sig\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db890",
-        "id": "6ab5308e873a60e2514db890",
-        "input": "{\"token\": \"part1.part2\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db891",
-        "id": "6ab5308e873a60e2514db891",
-        "input": "{\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwiZXhwIjoyNTI0NjA4MDAwfQ.sig\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "false"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• RFC Compliance: Correct handling of base64url padding and character substitutions.\n• Expiration Checking: Accurate Unix timestamp comparison in seconds.\n• Defensive Parsing: Resilient against invalid JSON or malformed segment counts.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Robust JWT Authentication & Expiry Validator Architect",
-        "issueId": "VRF-642211",
-        "credentialUrl": "verifai.dev/verify/VRF-996977"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33de9",
@@ -567,75 +247,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db897",
         "id": "6ab5308e873a60e2514db897",
         "input": "{\"action\": \"subscribeAndClean\", \"cleanup\": true}",
-        "expectedOutput": "0",
-        "actualOutput": "0",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "0"
       },
       {
         "_id": "6ab5308e873a60e2514db898",
         "id": "6ab5308e873a60e2514db898",
         "input": "{\"action\": \"subscribeAndClean\", \"cleanup\": false}",
-        "expectedOutput": "1",
-        "actualOutput": "1",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "1"
       },
       {
         "_id": "6ab5308e873a60e2514db899",
         "id": "6ab5308e873a60e2514db899",
         "input": "{\"event\": \"nonexistent\"}",
-        "expectedOutput": "0",
-        "actualOutput": "0",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db89a",
-        "id": "6ab5308e873a60e2514db89a",
-        "input": "{\"action\": \"subscribeAndClean\", \"cleanup\": true}",
-        "expectedOutput": "0",
-        "actualOutput": "0",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db89b",
-        "id": "6ab5308e873a60e2514db89b",
-        "input": "{\"action\": \"subscribeAndClean\", \"cleanup\": false}",
-        "expectedOutput": "1",
-        "actualOutput": "1",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "0"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Memory Leak Elimination: Automatic removal of empty sets from parent map when listeners reach 0.\n• Unsubscribe Closure: Returns deterministic cleanup function on subscription.\n• Set-based Storage: Prevents accidental duplicate registrations of the same function.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Fix Memory Leak in Event Bus Listener Registry Architect",
-        "issueId": "VRF-650586",
-        "credentialUrl": "verifai.dev/verify/VRF-693189"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33dea",
@@ -659,75 +285,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8a1",
         "id": "6ab5308e873a60e2514db8a1",
         "input": "{\"from\": \"PENDING\", \"to\": \"PAID\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308e873a60e2514db8a2",
         "id": "6ab5308e873a60e2514db8a2",
         "input": "{\"from\": \"CANCELLED\", \"to\": \"SHIPPED\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "false"
       },
       {
         "_id": "6ab5308e873a60e2514db8a3",
         "id": "6ab5308e873a60e2514db8a3",
         "input": "{\"from\": \"SHIPPED\", \"to\": \"DELIVERED\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8a4",
-        "id": "6ab5308e873a60e2514db8a4",
-        "input": "{\"from\": \"DELIVERED\", \"to\": \"PENDING\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8a5",
-        "id": "6ab5308e873a60e2514db8a5",
-        "input": "{\"from\": \"PAID\", \"to\": \"REFUNDED\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "true"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Deterministic Graph: Accurately reflects valid and invalid state machine edges.\n• Terminal State Protection: Locks terminal states (CANCELLED, REFUNDED) against further mutation.\n• Clean Descriptive Responses: Returns clear boolean or error status.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "E-Commerce Order State Machine & Invariants Architect",
-        "issueId": "VRF-893539",
-        "credentialUrl": "verifai.dev/verify/VRF-939949"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33deb",
@@ -751,75 +323,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8ab",
         "id": "6ab5308e873a60e2514db8ab",
         "input": "{\"type\": \"ADD_COLUMN\", \"nullable\": true}",
-        "expectedOutput": "safe",
-        "actualOutput": "safe",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "safe"
       },
       {
         "_id": "6ab5308e873a60e2514db8ac",
         "id": "6ab5308e873a60e2514db8ac",
         "input": "{\"type\": \"ADD_COLUMN\", \"nullable\": false}",
-        "expectedOutput": "unsafe",
-        "actualOutput": "unsafe",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "unsafe"
       },
       {
         "_id": "6ab5308e873a60e2514db8ad",
         "id": "6ab5308e873a60e2514db8ad",
         "input": "{\"type\": \"DROP_COLUMN\", \"column\": \"email\"}",
-        "expectedOutput": "unsafe",
-        "actualOutput": "unsafe",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8ae",
-        "id": "6ab5308e873a60e2514db8ae",
-        "input": "{\"type\": \"CREATE_INDEX\", \"concurrently\": true}",
-        "expectedOutput": "safe",
-        "actualOutput": "safe",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8af",
-        "id": "6ab5308e873a60e2514db8af",
-        "input": "{\"type\": \"CREATE_INDEX\", \"concurrently\": false}",
-        "expectedOutput": "unsafe",
-        "actualOutput": "unsafe",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "unsafe"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Zero-Downtime Principles: Enforces expand-and-contract patterns and non-blocking DDL.\n• Accurate Risk Analysis: Catches dangerous table-exclusive lock patterns.\n• Comprehensive Diagnostics: Provides explicit rationale when operations are rejected.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Zero-Downtime Database Migration Schema Validator Architect",
-        "issueId": "VRF-763195",
-        "credentialUrl": "verifai.dev/verify/VRF-248424"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33dec",
@@ -843,75 +361,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8b5",
         "id": "6ab5308e873a60e2514db8b5",
         "input": "{\"balance\": 100, \"version\": 1, \"amount\": 30, \"expectedVersion\": 1}",
-        "expectedOutput": "success",
-        "actualOutput": "success",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "success"
       },
       {
         "_id": "6ab5308e873a60e2514db8b6",
         "id": "6ab5308e873a60e2514db8b6",
         "input": "{\"balance\": 100, \"version\": 2, \"amount\": 30, \"expectedVersion\": 1}",
-        "expectedOutput": "VERSION_CONFLICT",
-        "actualOutput": "VERSION_CONFLICT",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "VERSION_CONFLICT"
       },
       {
         "_id": "6ab5308e873a60e2514db8b7",
         "id": "6ab5308e873a60e2514db8b7",
         "input": "{\"balance\": 20, \"version\": 1, \"amount\": 50, \"expectedVersion\": 1}",
-        "expectedOutput": "INSUFFICIENT_FUNDS",
-        "actualOutput": "INSUFFICIENT_FUNDS",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8b8",
-        "id": "6ab5308e873a60e2514db8b8",
-        "input": "{\"balance\": 50, \"version\": 5, \"amount\": 10, \"expectedVersion\": 5}",
-        "expectedOutput": "success",
-        "actualOutput": "success",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8b9",
-        "id": "6ab5308e873a60e2514db8b9",
-        "input": "{\"balance\": 50, \"version\": 6, \"amount\": 10, \"expectedVersion\": 5}",
-        "expectedOutput": "VERSION_CONFLICT",
-        "actualOutput": "VERSION_CONFLICT",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "INSUFFICIENT_FUNDS"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Optimistic Concurrency Invariants: Strict version incrementation upon successful mutation.\n• Race Condition Defense: Immediate rejection of writes based on stale version reads.\n• Boundary Protection: Verifies sufficient balance prior to debit.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Fix Race Condition in Optimistic Concurrency Wallet Architect",
-        "issueId": "VRF-991568",
-        "credentialUrl": "verifai.dev/verify/VRF-311456"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33ded",
@@ -935,75 +399,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8bf",
         "id": "6ab5308e873a60e2514db8bf",
         "input": "{\"key\": \"tx_key_1\", \"payload\": {\"amount\": 100}}",
-        "expectedOutput": "201",
-        "actualOutput": "201",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "201"
       },
       {
         "_id": "6ab5308e873a60e2514db8c0",
         "id": "6ab5308e873a60e2514db8c0",
         "input": "{\"key\": \"tx_key_1\", \"payload\": {\"amount\": 100}}",
-        "expectedOutput": "200",
-        "actualOutput": "200",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "200"
       },
       {
         "_id": "6ab5308e873a60e2514db8c1",
         "id": "6ab5308e873a60e2514db8c1",
         "input": "{\"payload\": {\"amount\": 100}}",
-        "expectedOutput": "400",
-        "actualOutput": "400",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8c2",
-        "id": "6ab5308e873a60e2514db8c2",
-        "input": "{\"key\": \"tx_key_2\", \"payload\": {\"amount\": 500}}",
-        "expectedOutput": "201",
-        "actualOutput": "201",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8c3",
-        "id": "6ab5308e873a60e2514db8c3",
-        "input": "{\"key\": \"tx_key_2\", \"payload\": {\"amount\": 500}}",
-        "expectedOutput": "200",
-        "actualOutput": "200",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "400"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• RFC & Industry Standard: Correct HTTP status codes (201 Created vs 200 OK replay vs 409 Conflict).\n• Atomic In-Flight Locking: Prevents double-processing when two identical requests hit concurrently.\n• Replay Integrity: Unaltered return of original cached payload.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "RESTful API Idempotency Key Middleware Engine Architect",
-        "issueId": "VRF-787825",
-        "credentialUrl": "verifai.dev/verify/VRF-735043"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33dee",
@@ -1027,75 +437,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8c9",
         "id": "6ab5308e873a60e2514db8c9",
         "input": "{\"userId\": \"alice\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308e873a60e2514db8ca",
         "id": "6ab5308e873a60e2514db8ca",
         "input": "{\"userId\": \"alice\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308e873a60e2514db8cb",
         "id": "6ab5308e873a60e2514db8cb",
         "input": "{\"userId\": \"bob\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8cc",
-        "id": "6ab5308e873a60e2514db8cc",
-        "input": "{\"userId\": \"alice\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8cd",
-        "id": "6ab5308e873a60e2514db8cd",
-        "input": "{\"userId\": \"bob\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "true"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Boundary Precision: Exact timestamp sliding window without interval rounding anomalies.\n• Memory Management: Active pruning of expired timestamps to avoid unbounded growth.\n• Per-User Partitioning: Isolated independent buckets per user/tenant.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Sliding Window Log Rate Limiter Architect",
-        "issueId": "VRF-444020",
-        "credentialUrl": "verifai.dev/verify/VRF-520543"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33def",
@@ -1119,55 +475,15 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8d3",
         "id": "6ab5308e873a60e2514db8d3",
         "input": "{\"key\": \"users_list\", \"concurrency\": 20}",
-        "expectedOutput": "single_upstream_fetch",
-        "actualOutput": "single_upstream_fetch",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "single_upstream_fetch"
       },
       {
         "_id": "6ab5308e873a60e2514db8d4",
         "id": "6ab5308e873a60e2514db8d4",
         "input": "{\"key\": \"pricing_table\", \"concurrency\": 50}",
-        "expectedOutput": "single_upstream_fetch",
-        "actualOutput": "single_upstream_fetch",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8d5",
-        "id": "6ab5308e873a60e2514db8d5",
-        "input": "{\"key\": \"inventory_status\", \"concurrency\": 100}",
-        "expectedOutput": "single_upstream_fetch",
-        "actualOutput": "single_upstream_fetch",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "single_upstream_fetch"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Thundering Herd Mitigation: Guaranteed single upstream call during burst cache misses.\n• Memory Cleanliness: Guaranteed cleanup of in-flight promises inside finally block.\n• Correct Caching: Persistent storage of resolved values for subsequent O(1) hits.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Fix Broken Async Deduplication Cache Architect",
-        "issueId": "VRF-673450",
-        "credentialUrl": "verifai.dev/verify/VRF-686941"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33df0",
@@ -1191,65 +507,15 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8d9",
         "id": "6ab5308e873a60e2514db8d9",
         "input": "{\"edges\": [[\"T1\", \"T2\"], [\"T2\", \"T3\"], [\"T3\", \"T1\"]]}",
-        "expectedOutput": "deadlock_detected",
-        "actualOutput": "deadlock_detected",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "deadlock_detected"
       },
       {
         "_id": "6ab5308e873a60e2514db8da",
         "id": "6ab5308e873a60e2514db8da",
         "input": "{\"edges\": [[\"T1\", \"T2\"], [\"T2\", \"T3\"]]}",
-        "expectedOutput": "no_deadlock",
-        "actualOutput": "no_deadlock",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8db",
-        "id": "6ab5308e873a60e2514db8db",
-        "input": "{\"edges\": [[\"A\", \"B\"], [\"B\", \"C\"], [\"C\", \"D\"], [\"D\", \"A\"]]}",
-        "expectedOutput": "deadlock_detected",
-        "actualOutput": "deadlock_detected",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8dc",
-        "id": "6ab5308e873a60e2514db8dc",
-        "input": "{\"edges\": [[\"X\", \"Y\"]]}",
-        "expectedOutput": "no_deadlock",
-        "actualOutput": "no_deadlock",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "no_deadlock"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Algorithmic Correctness: Cycle detection using 3-color graph traversal.\n• Linear Time Complexity: O(V + E) worst case performance.\n• Forest Traversal: Handles disconnected components across multiple transaction pools.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Deadlock Detection in Distributed Lock Manager Architect",
-        "issueId": "VRF-636140",
-        "credentialUrl": "verifai.dev/verify/VRF-884573"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33df1",
@@ -1273,75 +539,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8e1",
         "id": "6ab5308e873a60e2514db8e1",
         "input": "{\"key\": \"session_user_1\"}",
-        "expectedOutput": "node_C",
-        "actualOutput": "node_C",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "node_C"
       },
       {
         "_id": "6ab5308e873a60e2514db8e2",
         "id": "6ab5308e873a60e2514db8e2",
         "input": "{\"key\": \"session_user_2\"}",
-        "expectedOutput": "node_B",
-        "actualOutput": "node_B",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "node_B"
       },
       {
         "_id": "6ab5308e873a60e2514db8e3",
         "id": "6ab5308e873a60e2514db8e3",
         "input": "{\"key\": \"session_user_3\"}",
-        "expectedOutput": "node_A",
-        "actualOutput": "node_A",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8e4",
-        "id": "6ab5308e873a60e2514db8e4",
-        "input": "{\"key\": \"image_thumbnail_1\"}",
-        "expectedOutput": "node_B",
-        "actualOutput": "node_B",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8e5",
-        "id": "6ab5308e873a60e2514db8e5",
-        "input": "{\"key\": \"product_detail_99\"}",
-        "expectedOutput": "node_C",
-        "actualOutput": "node_C",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "node_A"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Ring Wrap-around: Correctly loops back to index 0 when key hash exceeds largest ring value.\n• Virtual Node Uniformity: Multi-point virtual replica distribution for load balancing.\n• Binary Search: O(log N) node lookup on sorted ring.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Consistent Hashing Ring with Virtual Nodes Architect",
-        "issueId": "VRF-950609",
-        "credentialUrl": "verifai.dev/verify/VRF-921123"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33df2",
@@ -1365,75 +577,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8eb",
         "id": "6ab5308e873a60e2514db8eb",
         "input": "{\"pattern\": \"sensors/+/temp\", \"topic\": \"sensors/living_room/temp\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "true"
       },
       {
         "_id": "6ab5308e873a60e2514db8ec",
         "id": "6ab5308e873a60e2514db8ec",
         "input": "{\"pattern\": \"sensors/+/temp\", \"topic\": \"sensors/living/room/temp\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "false"
       },
       {
         "_id": "6ab5308e873a60e2514db8ed",
         "id": "6ab5308e873a60e2514db8ed",
         "input": "{\"pattern\": \"orders/#\", \"topic\": \"orders/us/east/created\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8ee",
-        "id": "6ab5308e873a60e2514db8ee",
-        "input": "{\"pattern\": \"finance/stocks\", \"topic\": \"finance/bonds\"}",
-        "expectedOutput": "false",
-        "actualOutput": "false",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8ef",
-        "id": "6ab5308e873a60e2514db8ef",
-        "input": "{\"pattern\": \"#\", \"topic\": \"any/nested/path\"}",
-        "expectedOutput": "true",
-        "actualOutput": "true",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "true"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Strict MQTT Spec: Handles single-level '+' and trailing multi-level '#' wildcards.\n• Boundary Precision: Distinguishes exact token depths for single-level wildcards.\n• Segment Isolation: Tokenizes slash delimiters without false-positive substring matches.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Pub/Sub Message Broker with Topic Wildcards Architect",
-        "issueId": "VRF-827225",
-        "credentialUrl": "verifai.dev/verify/VRF-772621"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33df3",
@@ -1457,75 +615,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8f5",
         "id": "6ab5308e873a60e2514db8f5",
         "input": "{\"query\": \"{ user { id name } }\", \"maxDepth\": 3}",
-        "expectedOutput": "allowed",
-        "actualOutput": "allowed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "allowed"
       },
       {
         "_id": "6ab5308e873a60e2514db8f6",
         "id": "6ab5308e873a60e2514db8f6",
         "input": "{\"query\": \"{ user { posts { comments { author { id } } } } }\", \"maxDepth\": 3}",
-        "expectedOutput": "DEPTH_EXCEEDED",
-        "actualOutput": "DEPTH_EXCEEDED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "DEPTH_EXCEEDED"
       },
       {
         "_id": "6ab5308e873a60e2514db8f7",
         "id": "6ab5308e873a60e2514db8f7",
         "input": "{\"query\": \"{ items { id } }\", \"maxDepth\": 2}",
-        "expectedOutput": "allowed",
-        "actualOutput": "allowed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8f8",
-        "id": "6ab5308e873a60e2514db8f8",
-        "input": "{\"query\": \"{ a { b { c { d { e } } } } }\", \"maxDepth\": 4}",
-        "expectedOutput": "DEPTH_EXCEEDED",
-        "actualOutput": "DEPTH_EXCEEDED",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db8f9",
-        "id": "6ab5308e873a60e2514db8f9",
-        "input": "{\"query\": \"{ root }\", \"maxDepth\": 2}",
-        "expectedOutput": "allowed",
-        "actualOutput": "allowed",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "allowed"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Depth Calculation: Accurate tracking of nested bracket scopes.\n• DoS Defense: Strict threshold rejection preventing stack exhaustion.\n• String Scanning Efficiency: Linear O(N) single-pass tokenization.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "GraphQL Query Depth and Complexity Cost Analyzer Architect",
-        "issueId": "VRF-592076",
-        "credentialUrl": "verifai.dev/verify/VRF-462195"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab5308f4a6089fdfec33df4",
@@ -1549,75 +653,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308e873a60e2514db8ff",
         "id": "6ab5308e873a60e2514db8ff",
         "input": "{\"amounts\": [0.1, 0.2]}",
-        "expectedOutput": "0.30",
-        "actualOutput": "0.30",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "0.30"
       },
       {
         "_id": "6ab5308e873a60e2514db900",
         "id": "6ab5308e873a60e2514db900",
         "input": "{\"amounts\": [0.1, 0.2, 0.3]}",
-        "expectedOutput": "0.60",
-        "actualOutput": "0.60",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "0.60"
       },
       {
         "_id": "6ab5308e873a60e2514db901",
         "id": "6ab5308e873a60e2514db901",
         "input": "{\"amounts\": [19.99, 0.01, 5.5]}",
-        "expectedOutput": "25.50",
-        "actualOutput": "25.50",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308e873a60e2514db902",
-        "id": "6ab5308e873a60e2514db902",
-        "input": "{\"amounts\": [0.05, 0.05, 0.05]}",
-        "expectedOutput": "0.15",
-        "actualOutput": "0.15",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308e873a60e2514db903",
-        "id": "6ab5308e873a60e2514db903",
-        "input": "{\"amounts\": [100.0, 200.0]}",
-        "expectedOutput": "300.00",
-        "actualOutput": "300.00",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "25.50"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• IEEE 754 Remediation: Converts all continuous floats to discrete integer cents before summation.\n• Deterministic Two-Decimal Output: Strict two-place decimal string formatting.\n• Empty & Zero Case Handling: Handles empty arrays and zero values gracefully.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Fix Floating Point Precision Currency Rounding Engine Architect",
-        "issueId": "VRF-567732",
-        "credentialUrl": "verifai.dev/verify/VRF-742990"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab530904a6089fdfec33df5",
@@ -1641,65 +691,15 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308f873a60e2514db909",
         "id": "6ab5308f873a60e2514db909",
         "input": "{\"permits\": 2}",
-        "expectedOutput": "permits_synchronized",
-        "actualOutput": "permits_synchronized",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "permits_synchronized"
       },
       {
         "_id": "6ab5308f873a60e2514db90a",
         "id": "6ab5308f873a60e2514db90a",
         "input": "{\"permits\": 1}",
-        "expectedOutput": "permits_synchronized",
-        "actualOutput": "permits_synchronized",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308f873a60e2514db90b",
-        "id": "6ab5308f873a60e2514db90b",
-        "input": "{\"permits\": 5}",
-        "expectedOutput": "permits_synchronized",
-        "actualOutput": "permits_synchronized",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308f873a60e2514db90c",
-        "id": "6ab5308f873a60e2514db90c",
-        "input": "{\"permits\": 10}",
-        "expectedOutput": "permits_synchronized",
-        "actualOutput": "permits_synchronized",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "permits_synchronized"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Starvation Avoidance: Strict FIFO dispatching of waiting resolvers.\n• Permit Invariants: Permits never drop below 0 or exceed initialized maximums.\n• Clean Non-blocking Async Design: Zero thread spinning or busy-wait polling.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Priority Inversion Free Async Semaphore Architect",
-        "issueId": "VRF-494604",
-        "credentialUrl": "verifai.dev/verify/VRF-745295"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   },
   {
     "_id": "6ab530904a6089fdfec33df6",
@@ -1723,75 +723,21 @@ export const ALL_CHALLENGES_CATALOG = [
         "_id": "6ab5308f873a60e2514db911",
         "id": "6ab5308f873a60e2514db911",
         "input": "{\"datacenterId\": 1, \"workerId\": 1}",
-        "expectedOutput": "valid_id",
-        "actualOutput": "valid_id",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "valid_id"
       },
       {
         "_id": "6ab5308f873a60e2514db912",
         "id": "6ab5308f873a60e2514db912",
         "input": "{\"datacenterId\": 2, \"workerId\": 5}",
-        "expectedOutput": "valid_id",
-        "actualOutput": "valid_id",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
+        "expectedOutput": "valid_id"
       },
       {
         "_id": "6ab5308f873a60e2514db913",
         "id": "6ab5308f873a60e2514db913",
         "input": "{\"datacenterId\": 0, \"workerId\": 0}",
-        "expectedOutput": "valid_id",
-        "actualOutput": "valid_id",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": false
-      },
-      {
-        "_id": "6ab5308f873a60e2514db914",
-        "id": "6ab5308f873a60e2514db914",
-        "input": "{\"datacenterId\": 31, \"workerId\": 31}",
-        "expectedOutput": "valid_id",
-        "actualOutput": "valid_id",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
-      },
-      {
-        "_id": "6ab5308f873a60e2514db915",
-        "id": "6ab5308f873a60e2514db915",
-        "input": "{\"datacenterId\": 15, \"workerId\": 20}",
-        "expectedOutput": "valid_id",
-        "actualOutput": "valid_id",
-        "runtime": "1ms",
-        "passed": true,
-        "isHidden": true
+        "expectedOutput": "valid_id"
       }
-    ],
-    "aiReview": {
-      "rubric": "CRITERIA FOR 100/100 SCORE:\n• Bitwise Precision: Accurate 41-5-5-12 bit alignment using BigInt.\n• Monotonic Sorting: IDs generated later in time compare strictly greater than earlier IDs.\n• Clock Skew Defense: Safeguards against backward NTP clock synchronization.",
-      "finalScore": 95,
-      "passingThreshold": 70,
-      "subscores": {
-        "correctness": 100,
-        "codeQuality": 94,
-        "efficiency": 92,
-        "edgeCases": 94
-      },
-      "verdict": "Production-Grade Solution",
-      "badge": {
-        "name": "Distributed 64-Bit Snowflake ID Generator Architect",
-        "issueId": "VRF-310471",
-        "credentialUrl": "verifai.dev/verify/VRF-427826"
-      },
-      "reviewNotes": [
-        "Optimal algorithmic complexity confirmed without CPU overhead.",
-        "Deterministic bounds ensure high throughput under peak traffic.",
-        "Clean adherence to modular object design and parameter validation."
-      ]
-    }
+    ]
   }
 ];
 
@@ -1817,105 +763,44 @@ export const DEFAULT_CHALLENGE_DATA = {
       "_id": "6ab5308d873a60e2514db85d",
       "id": "6ab5308d873a60e2514db85d",
       "input": "{\"tokens\": 5}",
-      "expectedOutput": "true",
-      "actualOutput": "true",
-      "runtime": "1ms",
-      "passed": true,
-      "isHidden": false
+      "expectedOutput": "true"
     },
     {
       "_id": "6ab5308d873a60e2514db85e",
       "id": "6ab5308d873a60e2514db85e",
       "input": "{\"tokens\": 10}",
-      "expectedOutput": "false",
-      "actualOutput": "false",
-      "runtime": "1ms",
-      "passed": true,
-      "isHidden": false
+      "expectedOutput": "false"
     },
     {
       "_id": "6ab5308d873a60e2514db85f",
       "id": "6ab5308d873a60e2514db85f",
       "input": "{\"tokens\": 1}",
-      "expectedOutput": "true",
-      "actualOutput": "true",
-      "runtime": "1ms",
-      "passed": true,
-      "isHidden": false
-    },
-    {
-      "_id": "6ab5308d873a60e2514db860",
-      "id": "6ab5308d873a60e2514db860",
-      "input": "{\"tokens\": 20}",
-      "expectedOutput": "false",
-      "actualOutput": "false",
-      "runtime": "1ms",
-      "passed": true,
-      "isHidden": true
-    },
-    {
-      "_id": "6ab5308d873a60e2514db861",
-      "id": "6ab5308d873a60e2514db861",
-      "input": "{\"tokens\": 2}",
-      "expectedOutput": "true",
-      "actualOutput": "true",
-      "runtime": "1ms",
-      "passed": true,
-      "isHidden": true
+      "expectedOutput": "true"
     }
-  ],
-  "aiReview": {
-    "rubric": "CRITERIA FOR 100/100 SCORE:\n• Algorithmic Efficiency: O(1) mathematical delta replenishment without setInterval or setTimeout.\n• Burst Tolerance: Handles instantaneous token bursts up to max capacity.\n• State Preservation: Failed requests must not deduct tokens or corrupt timestamp markers.\n• Clean API: Robust input validation and encapsulation.",
-    "finalScore": 95,
-    "passingThreshold": 70,
-    "subscores": {
-      "correctness": 100,
-      "codeQuality": 94,
-      "efficiency": 92,
-      "edgeCases": 94
-    },
-    "verdict": "Production-Grade Solution",
-    "badge": {
-      "name": "Distributed Token Bucket Rate Limiter Architect",
-      "issueId": "VRF-602063",
-      "credentialUrl": "verifai.dev/verify/VRF-895342"
-    },
-    "reviewNotes": [
-      "Optimal algorithmic complexity confirmed without CPU overhead.",
-      "Deterministic bounds ensure high throughput under peak traffic.",
-      "Clean adherence to modular object design and parameter validation."
-    ]
-  }
+  ]
 };
 
-/**
- * Resolves a challenge by MongoDB _id, slug, or title keyword.
- */
 export function getFallbackChallenge(identifier) {
   if (!identifier) return DEFAULT_CHALLENGE_DATA;
   const idStr = String(identifier).toLowerCase().trim();
 
-  // 1. Direct ID match
   const byId = ALL_CHALLENGES_CATALOG.find(
     (c) => c._id.toLowerCase() === idStr || c.id.toLowerCase() === idStr
   );
   if (byId) return byId;
 
-  // 2. Normalized title match
   const byTitle = ALL_CHALLENGES_CATALOG.find(
-    (c) => c.title.toLowerCase() === idStr.replace(/[-_]/g, " ")
+    (c) => c.title.toLowerCase() === idStr.replace(/[-_]/g, ' ')
   );
   if (byTitle) return byTitle;
 
-  // 3. Keyword / Substring match
-  const cleanKeyword = idStr.replace(/[-_]/g, " ");
+  const cleanKeyword = idStr.replace(/[-_]/g, ' ');
   const bySub = ALL_CHALLENGES_CATALOG.find((c) =>
     c.title.toLowerCase().includes(cleanKeyword) || cleanKeyword.includes(c.title.toLowerCase())
   );
   if (bySub) return bySub;
 
-  // 4. Token-based overlap
-  const tokens = idStr.split(/[-_s]+/).filter((t) => t.length > 3);
+  const tokens = idStr.split(/[-_\s]+/).filter((t) => t.length > 3);
   if (tokens.length > 0) {
     const byTokens = ALL_CHALLENGES_CATALOG.find((c) => {
       const lower = c.title.toLowerCase();

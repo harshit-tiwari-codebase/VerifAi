@@ -4,11 +4,11 @@ const rateLimit = require("express-rate-limit");
 const {
   createSubmission,
   getSubmissionById,
+  getUserSubmissions,
   runChallengeCode,
   getChallengeSubmissions,
 } = require("../controllers/submission.controller");
 const { verifyAccessToken } = require("../middlewares/authMiddleware");
-const optionalAuth = require("../middlewares/optionalAuth");
 const validateRequest = require("../middlewares/validateRequest");
 const {
   createSubmissionValidator,
@@ -23,20 +23,20 @@ const submitLimiter = rateLimit({
   message: { message: "Too many requests, please try again later" },
 });
 
-// Run code tests interactively in sandbox (no auth strictly required for local/guest playground)
-router.post("/run", optionalAuth, runChallengeCode);
-
-// Full solution submission
+// Canonical submission creation — strictly requires authentication (§5)
 router.post(
   "/",
-  optionalAuth,
+  verifyAccessToken,
   submitLimiter,
   createSubmissionValidator,
   validateRequest,
   createSubmission
 );
 
-// Get submission by ID
+// Current user's submission history — strictly requires authentication (§5)
+router.get("/", verifyAccessToken, getUserSubmissions);
+
+// Single submission by ID — owner or mentor/admin only (§5)
 router.get(
   "/:id",
   verifyAccessToken,
@@ -45,7 +45,10 @@ router.get(
   getSubmissionById
 );
 
-// Get submissions for a challenge
-router.get("/challenge/:challengeId", optionalAuth, getChallengeSubmissions);
+// Interactive run endpoint alias — requires authentication (§5)
+router.post("/run", verifyAccessToken, runChallengeCode);
+
+// Challenge submissions history
+router.get("/challenge/:challengeId", verifyAccessToken, getChallengeSubmissions);
 
 module.exports = router;

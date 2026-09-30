@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  CheckCircle2,
   Award,
   Share2,
   ArrowRight,
   RotateCcw,
-  SlidersHorizontal,
-  ExternalLink,
   ShieldCheck,
   Check,
   X,
   Flame,
   BrainCircuit,
+  AlertCircle,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -26,9 +24,38 @@ export default function ResultScreenModal({
   const [animatedScore, setAnimatedScore] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const finalScore = aiReviewData?.finalScore ?? 92;
-  const passingThreshold = aiReviewData?.passingThreshold ?? 80;
+  const finalScore =
+    typeof aiReviewData?.finalScore === "number"
+      ? aiReviewData.finalScore
+      : typeof aiReviewData?.score === "number"
+      ? aiReviewData.score
+      : 0;
+
+  const passingThreshold = aiReviewData?.threshold ?? aiReviewData?.passingThreshold ?? 70;
+  const badgeIssued = !!(aiReviewData?.badgeIssued || (aiReviewData?.badgeEligible && finalScore >= passingThreshold));
   const isPassed = finalScore >= passingThreshold;
+
+  const subscores = aiReviewData?.subscores || {
+    correctness: aiReviewData?.correctness ?? 0,
+    codeQuality: aiReviewData?.aiEvaluation?.codeQuality ?? 0,
+    efficiency: aiReviewData?.aiEvaluation?.efficiency ?? 0,
+    edgeCases: aiReviewData?.aiEvaluation?.edgeCases ?? 0,
+  };
+
+  const strengths =
+    aiReviewData?.aiEvaluation?.strengths ||
+    aiReviewData?.strengths ||
+    [];
+
+  const suggestions =
+    aiReviewData?.aiEvaluation?.suggestions ||
+    aiReviewData?.suggestions ||
+    [];
+
+  const weaknesses =
+    aiReviewData?.aiEvaluation?.weaknesses ||
+    aiReviewData?.weaknesses ||
+    [];
 
   // Animated score counter + Confetti burst
   useEffect(() => {
@@ -37,8 +64,7 @@ export default function ResultScreenModal({
       return;
     }
 
-    // Single burst confetti in brand colors if passed
-    if (isPassed) {
+    if (badgeIssued) {
       try {
         confetti({
           particleCount: 50,
@@ -48,12 +74,11 @@ export default function ResultScreenModal({
           disableForReducedMotion: true,
         });
       } catch {
-        // Fallback gracefully
+        // Confetti unavailable
       }
     }
 
-    let start = 0;
-    const duration = 1200; // 1.2s
+    const duration = 1000;
     const startTime = performance.now();
 
     const updateCount = (currentTime) => {
@@ -69,7 +94,7 @@ export default function ResultScreenModal({
     };
 
     requestAnimationFrame(updateCount);
-  }, [isOpen, finalScore, isPassed]);
+  }, [isOpen, finalScore, badgeIssued]);
 
   if (!isOpen) return null;
 
@@ -83,6 +108,17 @@ export default function ResultScreenModal({
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
+
+  const issueId =
+    aiReviewData?.badge?.issueId ||
+    (aiReviewData?._id
+      ? `VRF-${aiReviewData._id.toString().slice(-6).toUpperCase()}`
+      : `VRF-SUB`);
+
+  const challengeTitle =
+    aiReviewData?.challenge?.title ||
+    aiReviewData?.title ||
+    "Challenge";
 
   return (
     <div
@@ -101,12 +137,14 @@ export default function ResultScreenModal({
 
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs uppercase tracking-wider text-mist-300 font-semibold">
-              EVALUATION VERDICT
+              SERVER EVALUATION VERDICT (v1)
             </span>
-            <span className="flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-mono text-[10.5px] text-amber-300">
-              <Flame className="h-3 w-3 text-amber-400 fill-amber-400" />
-              <span>3rd solve this week 🔥</span>
-            </span>
+            {badgeIssued && (
+              <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10.5px] text-emerald-300">
+                <Flame className="h-3 w-3 text-emerald-400 fill-emerald-400" />
+                <span>Verified Passed</span>
+              </span>
+            )}
           </div>
 
           <button
@@ -147,7 +185,7 @@ export default function ResultScreenModal({
                     className={`transition-all duration-300 ease-out ${
                       animatedScore >= passingThreshold
                         ? "text-emerald-400"
-                        : animatedScore >= 60
+                        : animatedScore >= 50
                         ? "text-amber-400"
                         : "text-rose-500"
                     }`}
@@ -167,12 +205,14 @@ export default function ResultScreenModal({
               <div className="mt-2 text-center">
                 <span
                   className={`inline-block px-2.5 py-0.5 rounded-full font-mono text-[11px] font-semibold border ${
-                    isPassed
+                    badgeIssued
                       ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                       : "border-amber-500/30 bg-amber-500/10 text-amber-300"
                   }`}
                 >
-                  {isPassed ? "PASSED VERIFICATION" : `SCORE ${finalScore} — YOU NEED ${passingThreshold}`}
+                  {badgeIssued
+                    ? "PASSED & BADGE ISSUED"
+                    : `SCORE ${finalScore} — THRESHOLD ${passingThreshold}`}
                 </span>
               </div>
             </div>
@@ -181,68 +221,68 @@ export default function ResultScreenModal({
             <div className="md:col-span-8 space-y-3 font-mono text-xs">
               <div className="space-y-1">
                 <div className="flex justify-between text-mist-400">
-                  <span>Correctness</span>
+                  <span>Correctness (70%)</span>
                   <span className="text-emerald-400 font-semibold">
-                    {aiReviewData?.subscores?.correctness ?? 96}%
+                    {Math.round(subscores.correctness ?? 0)}%
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
                   <div
                     className="h-full bg-emerald-400 rounded-full transition-all duration-1000"
-                    style={{ width: `${aiReviewData?.subscores?.correctness ?? 96}%` }}
+                    style={{ width: `${Math.min(100, Math.round(subscores.correctness ?? 0))}%` }}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <div className="flex justify-between text-mist-400">
-                  <span>Code Quality & Idioms</span>
+                  <span>Code Quality & Idioms (15%)</span>
                   <span className="text-violet-300 font-semibold">
-                    {aiReviewData?.subscores?.codeQuality ?? 92}%
+                    {Math.round(subscores.codeQuality ?? 0)}%
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
                   <div
                     className="h-full bg-violet-400 rounded-full transition-all duration-1000"
-                    style={{ width: `${aiReviewData?.subscores?.codeQuality ?? 92}%` }}
+                    style={{ width: `${Math.min(100, Math.round(subscores.codeQuality ?? 0))}%` }}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <div className="flex justify-between text-mist-400">
-                  <span>Algorithmic Efficiency (Time / Memory)</span>
+                  <span>Algorithmic Efficiency (10%)</span>
                   <span className="text-sky-400 font-semibold">
-                    {aiReviewData?.subscores?.efficiency ?? 94}%
+                    {Math.round(subscores.efficiency ?? 0)}%
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
                   <div
                     className="h-full bg-sky-400 rounded-full transition-all duration-1000"
-                    style={{ width: `${aiReviewData?.subscores?.efficiency ?? 94}%` }}
+                    style={{ width: `${Math.min(100, Math.round(subscores.efficiency ?? 0))}%` }}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <div className="flex justify-between text-mist-400">
-                  <span>Edge Cases & Boundary Hardening</span>
+                  <span>Edge Cases & Boundary (5%)</span>
                   <span className="text-amber-400 font-semibold">
-                    {aiReviewData?.subscores?.edgeCases ?? 86}%
+                    {Math.round(subscores.edgeCases ?? 0)}%
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
                   <div
                     className="h-full bg-amber-400 rounded-full transition-all duration-1000"
-                    style={{ width: `${aiReviewData?.subscores?.edgeCases ?? 86}%` }}
+                    style={{ width: `${Math.min(100, Math.round(subscores.edgeCases ?? 0))}%` }}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Badge Issued Card (Clean, focused, no excessive glow) */}
-          {isPassed ? (
+          {/* Badge Section */}
+          {badgeIssued ? (
             <div className="rounded-xl border border-violet-500/25 bg-[#0e1017] p-4 font-mono">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
@@ -255,10 +295,10 @@ export default function ResultScreenModal({
                       <span>Tamper-Proof Credential Issued</span>
                     </div>
                     <div className="text-sm font-semibold text-white mt-0.5 font-display">
-                      {aiReviewData?.badge?.name || "Token Bucket Architect"}
+                      {aiReviewData?.badge?.name || `${challengeTitle} Architect`}
                     </div>
                     <div className="text-[10.5px] text-mist-400">
-                      ID: {aiReviewData?.badge?.issueId || "VRF-2026-8942-TB"} · Verifiable by recruiters
+                      ID: {issueId} · Verifiable proof of skill
                     </div>
                   </div>
                 </div>
@@ -286,83 +326,92 @@ export default function ResultScreenModal({
           ) : (
             <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 font-mono text-xs text-amber-200">
               <div className="font-semibold text-amber-300 mb-1 flex items-center gap-1.5">
-                <BrainCircuit className="h-4 w-4" />
-                <span>Almost there! Focus on edge case boundary protection</span>
+                <AlertCircle className="h-4 w-4" />
+                <span>Badge Not Eligible</span>
               </div>
               <p className="text-mist-400 text-[11.5px] leading-relaxed">
-                Your time complexity and concurrency logic are strong. Double check clock jitter handling and non-integer inputs to push your score past 80.
+                A verified credential requires passing all test cases and achieving a composite score of at least {passingThreshold}.
               </p>
             </div>
           )}
 
           {/* AI Review Notes Cards */}
-          <div className="space-y-2">
-            <span className="text-[10.5px] font-mono font-semibold tracking-wider text-mist-500 uppercase block">
-              SENIOR AI REVIEW CRITIQUE
-            </span>
+          {(strengths.length > 0 || suggestions.length > 0 || weaknesses.length > 0) && (
+            <div className="space-y-3 font-mono text-xs">
+              <span className="text-[10.5px] font-semibold tracking-wider text-mist-500 uppercase block">
+                AI ARCHITECTURAL OBSERVATIONS
+              </span>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {(aiReviewData?.reviewNotes || []).map((note, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-xl border border-white/[0.06] bg-[#07080c] p-3.5 font-mono text-[11.5px] text-mist-300 leading-relaxed"
-                >
-                  <div className="flex items-start gap-2">
-                    <span className="text-violet-400 mt-0.5 shrink-0 font-bold">
-                      0{idx + 1}.
-                    </span>
-                    <span>{note}</span>
+              {strengths.length > 0 && (
+                <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1">
+                  <div className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <Check className="h-3.5 w-3.5" />
+                    <span>Strengths</span>
                   </div>
+                  <ul className="list-disc list-inside text-mist-300 text-[11.5px] space-y-1">
+                    {strengths.map((s, idx) => (
+                      <li key={idx}>{s}</li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
+              )}
+
+              {weaknesses.length > 0 && (
+                <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 space-y-1">
+                  <div className="text-amber-400 font-semibold flex items-center gap-1.5">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    <span>Areas for Improvement</span>
+                  </div>
+                  <ul className="list-disc list-inside text-mist-300 text-[11.5px] space-y-1">
+                    {weaknesses.map((w, idx) => (
+                      <li key={idx}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {suggestions.length > 0 && (
+                <div className="p-3.5 rounded-xl border border-sky-500/20 bg-sky-500/5 space-y-1">
+                  <div className="text-sky-400 font-semibold flex items-center gap-1.5">
+                    <BrainCircuit className="h-3.5 w-3.5" />
+                    <span>Architectural Suggestions</span>
+                  </div>
+                  <ul className="list-disc list-inside text-mist-300 text-[11.5px] space-y-1">
+                    {suggestions.map((s, idx) => (
+                      <li key={idx}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Action Buttons Footer */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-[#07090F] border-t border-white/[0.08] select-none text-xs font-mono">
-          <div className="flex items-center gap-2">
+        {/* Modal Footer */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.08] bg-[#07090F]">
+          <button
+            onClick={onTryAgain}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-mono text-mist-400 hover:text-white transition-colors"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Refactor Solution</span>
+          </button>
+
+          <div className="flex items-center gap-3">
             <button
               onClick={onBackToChallenges}
-              className="btn-frosted-glass px-3.5 py-1.5 rounded-lg text-mist-400 hover:text-white transition-colors"
+              className="px-4 py-2 rounded-lg text-xs font-mono text-mist-300 hover:text-white bg-white/[0.05] border border-white/[0.1] transition-colors"
             >
-              ← Back to Challenges
+              All Challenges
             </button>
-
-            <button
-              onClick={handleShare}
-              className="btn-frosted-glass flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-mist-400 hover:text-white transition-colors"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-              <span>{copiedLink ? "Link Copied!" : "Share Result"}</span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {!isPassed ? (
+            {onNextChallenge && (
               <button
-                onClick={onTryAgain}
-                className="btn-specular-primary flex items-center gap-1.5 px-4 py-2 rounded-lg text-white font-semibold transition-all shadow-lg active:scale-95"
+                onClick={onNextChallenge}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
-                <span>Try Again</span>
+                <span>Next Challenge</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </button>
-            ) : (
-              <>
-                <button
-                  onClick={onTryAgain}
-                  className="btn-frosted-glass px-3.5 py-2 rounded-lg text-mist-300 hover:text-white transition-colors"
-                >
-                  Refactor Code
-                </button>
-                <button
-                  onClick={onNextChallenge}
-                  className="btn-specular-primary flex items-center gap-1.5 px-4 py-2 rounded-lg text-white font-semibold transition-all shadow-lg active:scale-95"
-                >
-                  <span>Next Challenge</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </button>
-              </>
             )}
           </div>
         </div>

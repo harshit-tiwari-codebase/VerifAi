@@ -17,14 +17,45 @@ const io = new Server(server, {
   },
 });
 
+const jwt = require("jsonwebtoken");
+
 app.set("io", io);
 setIO(io);
+
+// Authenticate socket connections via verified token (§7)
+io.use((socket, next) => {
+  const token =
+    socket.handshake.auth?.token ||
+    (socket.handshake.headers?.authorization &&
+      socket.handshake.headers.authorization.split(" ")[1]);
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    socket.user = decoded;
+    return next();
+  } catch (err) {
+    return next(new Error("Authentication error: invalid token"));
+  }
+});
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
 
-  socket.on("join", (userId) => {
-    socket.join(userId);
+  if (socket.user?.id) {
+    socket.join(socket.user.id.toString());
+  }
+
+  // Prevent clients from joining another user's submission-status room (§7)
+  socket.on("join", (targetUserId) => {
+    if (socket.user?.id && String(targetUserId) === String(socket.user.id)) {
+      socket.join(socket.user.id.toString());
+    } else {
+      console.warn(`Unauthorized room join attempt for ${targetUserId} by ${socket.id}`);
+    }
   });
 
   socket.on("disconnect", () => {

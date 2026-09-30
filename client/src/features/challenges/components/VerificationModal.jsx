@@ -1,173 +1,96 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Check,
   Cpu,
   BrainCircuit,
-  ShieldCheck,
   Award,
-  Terminal,
-  FastForward,
-  Loader2,
+  Clock,
+  AlertTriangle,
   X,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 
 export default function VerificationModal({
   isOpen,
+  submission = null,
+  status = "queued",
+  error = null,
   onComplete,
   onCancel,
-  submissionResult = null,
+  onRetry,
 }) {
-  const [currentStageIdx, setCurrentStageIdx] = useState(0);
-  const [canSkip, setCanSkip] = useState(false);
-  const [streamedLogs, setStreamedLogs] = useState([]);
-  const [currentTypingText, setCurrentTypingText] = useState("");
-  const logContainerRef = useRef(null);
-
-  const testResults = submissionResult?.testResults || [];
-  const passedCount = testResults.filter((t) => t.passed).length || 4;
-  const totalCount = testResults.length || 4;
-  const totalTimeMs = submissionResult?.timeSpentSeconds ? submissionResult.timeSpentSeconds * 10 : 38;
-  const finalScore = submissionResult?.evaluation?.finalScore || submissionResult?.score || 92;
-
-  const dynamicStages = useMemo(() => [
-    {
-      id: "tests",
-      label: "Running test suite",
-      icon: Cpu,
-      logLines: [
-        "→ Initializing Judge0 Linux sandbox worker (v1.13 CE)...",
-        "→ Dispatching solution.js with isolated cgroups...",
-        `✓ ${passedCount}/${totalCount} test cases evaluated`,
-        `✓ Total runtime execution: ${Math.max(12, totalTimeMs)}ms`,
-        passedCount === totalCount
-          ? `✓ All test suites passed successfully`
-          : `! ${totalCount - passedCount} test case(s) failed`,
-      ],
-    },
-    {
-      id: "static",
-      label: "Static analysis",
-      icon: Terminal,
-      logLines: [
-        "→ Parsing Abstract Syntax Tree (AST)...",
-        "→ Linting scope variables & strict mode compliance...",
-        "→ Analyzing algorithmic complexity: O(1) time validated",
-        "→ Analyzing space complexity: O(1) auxiliary allocated",
-        "✓ Static analysis clean: 0 syntax errors",
-      ],
-    },
-    {
-      id: "ai",
-      label: "AI code review",
-      icon: BrainCircuit,
-      logLines: [
-        "→ Dispatching architectural context to Gemini 1.5 Pro...",
-        "→ Evaluating algorithmic invariants and token replenishment delta...",
-        "→ Auditing production ergonomics, variable naming, and encapsulation...",
-        "✓ Senior architectural review completed",
-      ],
-    },
-    {
-      id: "anticheat",
-      label: "Anti-cheat scan",
-      icon: ShieldCheck,
-      logLines: [
-        "→ Cross-referencing against solution corpus with Moss AST...",
-        "→ Verifying keystroke cadence and submission heuristics...",
-        "✓ Anti-cheat clearance verified (0.0% similarity)",
-      ],
-    },
-    {
-      id: "scoring",
-      label: "Scoring & Badge Minting",
-      icon: Award,
-      logLines: [
-        "→ Aggregating correctness, code quality, and efficiency weights...",
-        "→ Calculating final composite score...",
-        `✓ Verification verdict: ${finalScore}/100 points`,
-      ],
-    },
-  ], [passedCount, totalCount, totalTimeMs, finalScore]);
-
-  // Allow skip immediately or after 1.5s
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentStageIdx(0);
-      setCanSkip(false);
-      setStreamedLogs([]);
-      setCurrentTypingText("");
-      return;
-    }
-
-    const skipTimer = setTimeout(() => {
-      setCanSkip(true);
-    }, 1500);
-
-    return () => clearTimeout(skipTimer);
-  }, [isOpen]);
-
-  // Stage progression and typewriter log effect
-  useEffect(() => {
-    if (!isOpen) return;
-
-    let isMounted = true;
-    let stageTimeout;
-    let charInterval;
-
-    const stageDuration = 850;
-    const stage = dynamicStages[currentStageIdx];
-
-    if (stage) {
-      let lineIdx = 0;
-      let charIdx = 0;
-      const targetLines = stage.logLines;
-
-      const typeNextChar = () => {
-        if (!isMounted) return;
-        if (lineIdx >= targetLines.length) return;
-
-        const currentLine = targetLines[lineIdx];
-        if (charIdx < currentLine.length) {
-          setCurrentTypingText(currentLine.slice(0, charIdx + 1));
-          charIdx++;
-          charInterval = setTimeout(typeNextChar, 10);
-        } else {
-          setStreamedLogs((prev) => [...prev, currentLine]);
-          setCurrentTypingText("");
-          lineIdx++;
-          charIdx = 0;
-          charInterval = setTimeout(typeNextChar, 30);
-        }
-      };
-
-      typeNextChar();
-
-      stageTimeout = setTimeout(() => {
-        if (currentStageIdx < dynamicStages.length - 1) {
-          setCurrentStageIdx((prev) => prev + 1);
-        } else {
-          setTimeout(() => {
-            if (isMounted) onComplete();
-          }, 500);
-        }
-      }, stageDuration);
-    }
-
-    return () => {
-      isMounted = false;
-      clearTimeout(stageTimeout);
-      clearTimeout(charInterval);
-    };
-  }, [isOpen, currentStageIdx, onComplete, dynamicStages]);
-
-  // Auto-scroll log box
-  useEffect(() => {
-    if (logContainerRef.current) {
-      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-    }
-  }, [streamedLogs, currentTypingText]);
-
   if (!isOpen) return null;
+
+  const currentStatus = submission?.status || status;
+  const isFailed = [
+    "compilation_error",
+    "runtime_error",
+    "timeout",
+    "provider_unavailable",
+    "ai_evaluation_failed",
+    "failed",
+  ].includes(currentStatus) || !!error;
+
+  const isCompleted = currentStatus === "completed";
+
+  const passedCount = submission?.executionResult?.passedCount ?? 0;
+  const totalCount = submission?.executionResult?.totalCount ?? 0;
+  const finalScore = submission?.finalScore ?? null;
+  const badgeIssued = submission?.badgeIssued ?? false;
+
+  // Stages matching the real backend lifecycle (§8)
+  const stages = useMemo(
+    () => [
+      {
+        id: "queued",
+        label: "Queueing & Ingestion",
+        icon: Clock,
+        isActive: currentStatus === "queued",
+        isDone: ["executing", "evaluating", "completed"].includes(currentStatus),
+        details: "Dispatched to background execution queue",
+      },
+      {
+        id: "executing",
+        label: "Isolated Sandbox Execution",
+        icon: Cpu,
+        isActive: currentStatus === "executing",
+        isDone: ["evaluating", "completed"].includes(currentStatus),
+        details:
+          currentStatus === "executing"
+            ? "Running tests against server test suite..."
+            : totalCount > 0
+            ? `${passedCount}/${totalCount} tests passed`
+            : "Tests evaluated",
+      },
+      {
+        id: "evaluating",
+        label: "AI Architectural Review",
+        icon: BrainCircuit,
+        isActive: currentStatus === "evaluating",
+        isDone: currentStatus === "completed",
+        details:
+          currentStatus === "evaluating"
+            ? "Evaluating code quality, efficiency, and edge cases..."
+            : isCompleted
+            ? "Schema-validated review complete"
+            : "Awaiting test execution",
+      },
+      {
+        id: "completed",
+        label: "Scoring & Badge Verification",
+        icon: Award,
+        isActive: isCompleted,
+        isDone: isCompleted,
+        details: isCompleted
+          ? `Final Score: ${finalScore}/100 · ${
+              badgeIssued ? "Tamper-Proof Badge Issued" : "Badge Requirements Not Met"
+            }`
+          : "Finalizing scorecard",
+      },
+    ],
+    [currentStatus, totalCount, passedCount, isCompleted, finalScore, badgeIssued]
+  );
 
   return (
     <div
@@ -176,161 +99,157 @@ export default function VerificationModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md animate-fade-in"
     >
       <div className="relative flex flex-col w-full max-w-2xl bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden">
-        {/* Top window chrome */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.08] bg-[#07090F] select-none">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.08] bg-[#07090F]">
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+            <span className="ml-2 font-mono text-xs text-mist-400 font-semibold tracking-wider uppercase">
+              VERIFAI VERIFICATION PIPELINE
+            </span>
           </div>
 
-          <div className="font-mono text-xs uppercase tracking-wider text-mist-300 font-semibold">
-            VERIFICATION PIPELINE
-          </div>
-
-          {canSkip ? (
-            <button
-              onClick={onComplete}
-              className="flex items-center gap-1 text-[11px] font-mono text-violet-400 hover:text-violet-300 transition-colors"
-            >
-              <FastForward className="h-3 w-3" />
-              <span>Skip to results</span>
-            </button>
-          ) : (
-            <div className="w-16" />
-          )}
+          <button
+            onClick={onCancel}
+            className="p-1 rounded text-mist-500 hover:text-mist-200 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        {/* Content body */}
+        {/* Body */}
         <div className="p-6 space-y-6">
-          {/* Pipeline stage cards */}
-          <div className="space-y-2.5">
-            {dynamicStages.map((stage, idx) => {
-              const isPast = idx < currentStageIdx;
-              const isCurrent = idx === currentStageIdx;
-              const Icon = stage.icon;
-
-              return (
-                <div
-                  key={stage.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
-                    isCurrent
-                      ? "border-violet-500/50 bg-violet-950/20 shadow-[0_0_25px_rgba(147,51,234,0.15)] ring-1 ring-violet-500/30"
-                      : isPast
-                      ? "border-emerald-500/25 bg-[#0e1017]"
-                      : "border-white/[0.04] bg-[#07080c]/60 opacity-40"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg border ${
-                        isCurrent
-                          ? "border-violet-400/40 bg-violet-500/20 text-violet-300"
-                          : isPast
-                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                          : "border-white/[0.06] bg-[#07080c] text-mist-600"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </div>
-
-                    <div>
-                      <span
-                        className={`text-xs font-mono font-medium tracking-wide ${
-                          isCurrent
-                            ? "text-white font-semibold"
-                            : isPast
-                            ? "text-mist-200"
-                            : "text-mist-600"
+          {/* Failure banner if terminal failure */}
+          {isFailed ? (
+            <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-200 space-y-2">
+              <div className="flex items-center gap-2 font-semibold text-rose-300">
+                <AlertTriangle className="h-5 w-5" />
+                <span>
+                  {currentStatus === "compilation_error"
+                    ? "Compilation / Syntax Error"
+                    : currentStatus === "runtime_error"
+                    ? "Runtime Execution Error"
+                    : currentStatus === "timeout"
+                    ? "Execution Timeout (Time Limit Exceeded)"
+                    : currentStatus === "provider_unavailable"
+                    ? "Sandbox Provider Unavailable"
+                    : currentStatus === "ai_evaluation_failed"
+                    ? "AI Architectural Review Failed"
+                    : "Submission Evaluation Failed"}
+                </span>
+              </div>
+              <p className="font-mono text-xs text-rose-300/90 whitespace-pre-wrap leading-relaxed">
+                {submission?.errorMessage ||
+                  submission?.executionResult?.compileOutput ||
+                  error ||
+                  "An infrastructure or execution error prevented this submission from being verified. No score or credential was issued."}
+              </p>
+            </div>
+          ) : (
+            /* Progress Stages driven by real lifecycle */
+            <div className="space-y-3">
+              {stages.map((st) => {
+                const IconComponent = st.icon;
+                return (
+                  <div
+                    key={st.id}
+                    className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                      st.isDone
+                        ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-300"
+                        : st.isActive
+                        ? "border-violet-500/40 bg-violet-500/10 text-violet-200 shadow-sm"
+                        : "border-white/[0.04] bg-[#07080c] text-mist-500"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`h-9 w-9 rounded-lg flex items-center justify-center ${
+                          st.isDone
+                            ? "bg-emerald-500/20 text-emerald-400"
+                            : st.isActive
+                            ? "bg-violet-500/20 text-violet-300"
+                            : "bg-white/[0.04] text-mist-600"
                         }`}
                       >
-                        {stage.label}
-                      </span>
-                      {isCurrent && (
-                        <p className="text-[10.5px] font-mono text-violet-300/80 animate-pulse">
-                          Processing real-time telemetry…
-                        </p>
+                        {st.isDone ? (
+                          <Check className="h-4 w-4" />
+                        ) : st.isActive ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <IconComponent className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold font-sans">
+                          {st.label}
+                        </div>
+                        <div className="text-xs font-mono text-mist-400">
+                          {st.details}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-xs font-mono">
+                      {st.isDone ? (
+                        <span className="text-emerald-400 font-semibold">Done</span>
+                      ) : st.isActive ? (
+                        <span className="text-violet-400 font-semibold animate-pulse">
+                          In Progress...
+                        </span>
+                      ) : (
+                        <span className="text-mist-600">Pending</span>
                       )}
                     </div>
                   </div>
-
-                  {/* Status indicator */}
-                  <div>
-                    {isCurrent ? (
-                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-violet-500/30 bg-violet-500/10 text-[10.5px] font-mono text-violet-300">
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                        <span>ACTIVE</span>
-                      </div>
-                    ) : isPast ? (
-                      <div className="flex items-center gap-1 px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-[10.5px] font-mono text-emerald-400">
-                        <Check className="h-3 w-3 stroke-[2.5]" />
-                        <span>VERIFIED</span>
-                      </div>
-                    ) : (
-                      <span className="text-[10px] font-mono text-mist-700">QUEUED</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Real-time terminal log stream */}
-          <div className="rounded-xl border border-white/[0.08] bg-[#07080c] p-3.5 space-y-1 font-mono text-[11px] leading-relaxed">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.06] text-mist-500 text-[10px] uppercase tracking-wider">
-              <span className="flex items-center gap-1.5">
-                <Terminal className="h-3 w-3 text-violet-400" />
-                Live Engine Stream
-              </span>
-              <span className="text-emerald-400 flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Connected
-              </span>
+                );
+              })}
             </div>
+          )}
 
-            <div
-              ref={logContainerRef}
-              className="h-28 overflow-y-auto custom-scrollbar space-y-1 text-mist-300"
-            >
-              {streamedLogs.map((log, i) => (
-                <div
-                  key={i}
-                  className={
-                    log.startsWith("✓")
-                      ? "text-emerald-400 font-medium"
-                      : log.startsWith("→")
-                      ? "text-mist-400"
-                      : log.startsWith("!")
-                      ? "text-rose-400"
-                      : "text-mist-300"
-                  }
+          {/* Footer Actions */}
+          <div className="flex items-center justify-between pt-2 border-t border-white/[0.08]">
+            <span className="text-[11px] font-mono text-mist-500">
+              State: {currentStatus}
+            </span>
+
+            <div className="flex items-center gap-3">
+              {isFailed ? (
+                <>
+                  <button
+                    onClick={onCancel}
+                    className="px-4 py-2 rounded-lg text-xs font-medium text-mist-300 hover:text-white bg-white/[0.05] border border-white/[0.1] transition-colors"
+                  >
+                    Return to Editor
+                  </button>
+                  {onRetry && (
+                    <button
+                      onClick={onRetry}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-violet-600 hover:bg-violet-500 text-white transition-colors"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      <span>Retry Submission</span>
+                    </button>
+                  )}
+                </>
+              ) : isCompleted ? (
+                <button
+                  onClick={() => onComplete && onComplete(submission)}
+                  className="px-5 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center gap-2"
                 >
-                  {log}
-                </div>
-              ))}
-              {currentTypingText && (
-                <div className="text-mist-200">
-                  {currentTypingText}
-                  <span className="inline-block w-1.5 h-3 bg-violet-400 ml-0.5 animate-pulse" />
-                </div>
+                  <Award className="h-4 w-4" />
+                  <span>View Verified Scorecard</span>
+                </button>
+              ) : (
+                <button
+                  onClick={onCancel}
+                  className="px-4 py-2 rounded-lg text-xs font-medium text-mist-400 hover:text-mist-200 transition-colors"
+                >
+                  Close & Background
+                </button>
               )}
             </div>
           </div>
-        </div>
-
-        {/* Modal footer */}
-        <div className="px-6 py-3 bg-[#07090F] border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
-          <span className="text-mist-500 text-[11px]">
-            Sandboxed in isolated Linux cgroup · VerifAI v2.4
-          </span>
-          {canSkip && (
-            <button
-              onClick={onComplete}
-              className="px-3 py-1 rounded-lg bg-white/[0.06] border border-white/[0.08] text-mist-200 hover:text-white transition-colors text-[11px]"
-            >
-              Skip to results →
-            </button>
-          )}
         </div>
       </div>
     </div>
