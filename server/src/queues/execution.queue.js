@@ -12,9 +12,12 @@ if (REDIS_URL && REDIS_URL.trim().length > 0) {
       },
     });
 
-    executionQueue.on("ready", () => {
+    executionQueue.isReady().then(() => {
       isReady = true;
       console.log("Execution queue connected to Redis and ready");
+    }).catch((err) => {
+      isReady = false;
+      console.warn("Execution queue Redis connection error:", err.message);
     });
 
     executionQueue.on("error", (err) => {

@@ -12,9 +12,12 @@ if (REDIS_URL && REDIS_URL.trim().length > 0) {
       },
     });
 
-    aiEvaluationQueue.on("ready", () => {
+    aiEvaluationQueue.isReady().then(() => {
       isReady = true;
       console.log("AI evaluation queue connected to Redis and ready");
+    }).catch((err) => {
+      isReady = false;
+      console.warn("AI evaluation queue Redis connection error:", err.message);
     });
 
     aiEvaluationQueue.on("error", (err) => {

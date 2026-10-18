@@ -48,7 +48,12 @@ axiosInstance.interceptors.response.use(
     const status = error.response?.status;
     const isAuthRoute = originalRequest?.url?.includes("/auth/");
 
-    if (status === 401 && !originalRequest._retry && !isAuthRoute) {
+    const isTokenExpired =
+      (status === 401 || (status === 403 && error.response?.data?.message?.toLowerCase().includes("token"))) &&
+      !originalRequest._retry &&
+      !isAuthRoute;
+
+    if (isTokenExpired) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           pendingQueue.push({ resolve, reject });

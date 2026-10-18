@@ -2,9 +2,9 @@ const axios = require("axios");
 const { validateAiEvaluation } = require("./scoring");
 
 const GEMINI_MODELS = [
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
 ];
 
 function stripFences(str) {
@@ -161,7 +161,7 @@ async function evaluateSubmissionWithAi({
             "x-goog-api-key": apiKey,
             "Content-Type": "application/json",
           },
-          timeout: 10000,
+          timeout: 20000,
         }
       );
 
@@ -187,11 +187,11 @@ async function evaluateSubmissionWithAi({
         throw err;
       }
 
-      const evaluatorVersion = modelUrl.includes("gemini-2.0")
-        ? "gemini-2.0-flash"
-        : modelUrl.includes("gemini-1.5-pro")
-        ? "gemini-1.5-pro"
-        : "gemini-1.5-flash";
+      const evaluatorVersion = modelUrl.includes("gemini-3.8")
+        ? "gemini-3.8-flash"
+        : modelUrl.includes("gemini-3.5")
+        ? "gemini-3.5-flash-lite"
+        : "gemini-flash-latest";
 
       return {
         codeQuality: Number(parsed.codeQuality),
@@ -210,6 +210,13 @@ async function evaluateSubmissionWithAi({
       }
       console.warn(`Gemini evaluation via ${modelUrl} failed: ${err.message}`);
     }
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(
+      `Falling back to static code analyzer due to Gemini failure in development: ${lastError?.message}`
+    );
+    return evaluateStaticAnalysis({ code, language, challenge, testSummary });
   }
 
   const failureErr = new Error(

@@ -16,7 +16,7 @@ const verifyAccessToken = (req, res, next) => {
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: "Token invalid or expired" });
+      return res.status(401).json({ message: "Token invalid or expired" });
     }
     req.user = decoded; // { id, role }
     next();

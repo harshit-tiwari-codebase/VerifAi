@@ -6,12 +6,21 @@ const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || process.env.JUDGE0_API_KEY;
 const RAPIDAPI_HOST =
   process.env.RAPIDAPI_HOST || "judge0-ce.p.rapidapi.com";
 
-const LANGUAGE_IDS = {
-  javascript: 93, // Node.js 18.15.0 (or 63 for 12.14.0)
-  python: 92, // Python 3.11.2
-  cpp: 54, // C++ (GCC 9.2.0)
-  java: 91, // Java (OpenJDK 17.0.6)
-};
+const isRapidApi = (JUDGE0_BASE_URL || "").includes("rapidapi.com");
+
+const LANGUAGE_IDS = isRapidApi
+  ? {
+      javascript: 93, // Node.js 18.15.0
+      python: 92,     // Python 3.11.2
+      cpp: 54,        // C++ (GCC 9.2.0)
+      java: 91,       // Java (OpenJDK 17.0.6)
+    }
+  : {
+      javascript: 63, // Node.js 12.14.0
+      python: 71,     // Python 3.8.1
+      cpp: 54,        // C++ (GCC 9.2.0)
+      java: 62,       // Java (OpenJDK 13.0.1)
+    };
 
 /**
  * Common headers for Judge0 requests
