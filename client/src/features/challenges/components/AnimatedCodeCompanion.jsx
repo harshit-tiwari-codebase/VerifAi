@@ -5,10 +5,13 @@
  */
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 
-const PX = 5; // size of one "pixel"
+const PX = 3; // size of one "pixel" (smaller = smaller boy)
 const W = 32;
 const H = 30;
 const STORAGE_KEY = "verifai_minimal_boy_pos";
+const HIDDEN_KEY = "verifai_minimal_boy_hidden";
+const ICON_W = 12; // mini "peek" icon grid (shown when hidden)
+const ICON_H = 8;
 
 const C = {
   line: "#14151f",
@@ -72,9 +75,24 @@ export default function AnimatedCodeCompanion({ keystrokeCount = 0 }) {
         return clampPos(saved);
       }
     } catch (_) {}
-    return clampPos({ x: window.innerWidth - 220, y: window.innerHeight - 190 });
+    return clampPos({ x: window.innerWidth - 130, y: window.innerHeight - 120 });
   });
   const drag = useRef(null);
+
+  // Click the boy to hide him, click the tiny icon to bring him back
+  const [hidden, setHidden] = useState(() => {
+    try {
+      return localStorage.getItem(HIDDEN_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  });
+  const setHiddenSaved = (v) => {
+    setHidden(v);
+    try {
+      localStorage.setItem(HIDDEN_KEY, v ? "1" : "0");
+    } catch (_) {}
+  };
 
   useEffect(() => {
     const onResize = () => setPos((p) => clampPos(p));
@@ -85,10 +103,13 @@ export default function AnimatedCodeCompanion({ keystrokeCount = 0 }) {
   const onPointerDown = (e) => {
     if (e.button !== 0) return;
     e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = { mx: e.clientX, my: e.clientY, sx: pos.x, sy: pos.y };
+    drag.current = { mx: e.clientX, my: e.clientY, sx: pos.x, sy: pos.y, moved: false };
   };
   const onPointerMove = (e) => {
     if (!drag.current) return;
+    if (Math.abs(e.clientX - drag.current.mx) > 4 || Math.abs(e.clientY - drag.current.my) > 4) {
+      drag.current.moved = true;
+    }
     setPos(
       clampPos({
         x: drag.current.sx + e.clientX - drag.current.mx,
@@ -98,7 +119,12 @@ export default function AnimatedCodeCompanion({ keystrokeCount = 0 }) {
   };
   const onPointerUp = () => {
     if (!drag.current) return;
+    const wasClick = !drag.current.moved;
     drag.current = null;
+    if (wasClick) {
+      setHiddenSaved(true);
+      return;
+    }
     setPos((p) => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
@@ -106,6 +132,44 @@ export default function AnimatedCodeCompanion({ keystrokeCount = 0 }) {
       return p;
     });
   };
+
+  if (hidden) {
+    return (
+      <button
+        type="button"
+        aria-label="Show coding boy"
+        onClick={() => setHiddenSaved(false)}
+        style={{
+          position: "fixed",
+          left: pos.x + (W * PX - ICON_W * PX) / 2,
+          top: pos.y + H * PX - ICON_H * PX,
+          zIndex: 60,
+          padding: 0,
+          border: 0,
+          background: "transparent",
+          cursor: "pointer",
+          lineHeight: 0,
+        }}
+      >
+        <svg
+          width={ICON_W * PX}
+          height={ICON_H * PX}
+          viewBox={`0 0 ${ICON_W} ${ICON_H}`}
+          shapeRendering="crispEdges"
+          style={{ display: "block" }}
+        >
+          <R x={4} y={0} w={4} h={1} c={C.hair} />
+          <R x={2} y={1} w={8} h={2} c={C.hair} />
+          <R x={2} y={3} w={8} h={5} c={C.skin} />
+          <R x={0} y={3} w={2} h={4} c={C.phone} />
+          <R x={10} y={3} w={2} h={4} c={C.phone} />
+          <R x={3} y={4} w={2} h={2} c={C.line} />
+          <R x={7} y={4} w={2} h={2} c={C.line} />
+          <R x={5} y={4} w={2} h={1} c={C.line} />
+        </svg>
+      </button>
+    );
+  }
 
   return (
     <div
