@@ -3,8 +3,8 @@ const { validateAiEvaluation } = require("./scoring");
 
 const GEMINI_MODELS = [
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
 ];
 
 function stripFences(str) {

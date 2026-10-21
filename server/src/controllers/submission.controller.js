@@ -162,11 +162,27 @@ const runChallengeCode = async (req, res, next) => {
     const targetId = req.params.id || req.body.challengeId;
     const { code, language = "javascript", customInput } = req.body;
 
-    if (!targetId || !mongoose.Types.ObjectId.isValid(targetId)) {
+    if (!targetId) {
       return res.status(400).json({ message: "Invalid challenge ID" });
     }
 
-    const challenge = await Challenge.findById(targetId);
+    let challenge = null;
+    if (mongoose.Types.ObjectId.isValid(targetId)) {
+      challenge = await Challenge.findById(targetId);
+    }
+    if (!challenge) {
+      const normalizedTitle = targetId.replace(/[-_]/g, " ").trim();
+      challenge = await Challenge.findOne({
+        title: { $regex: new RegExp(`^${normalizedTitle}$`, "i") },
+      });
+    }
+    if (!challenge) {
+      const partial = targetId.replace(/[-_]/g, ".*");
+      challenge = await Challenge.findOne({
+        title: { $regex: new RegExp(partial, "i") },
+      });
+    }
+
     if (!challenge) {
       return res.status(404).json({ message: "Challenge not found" });
     }

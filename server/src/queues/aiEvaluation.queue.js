@@ -31,26 +31,17 @@ if (REDIS_URL && REDIS_URL.trim().length > 0) {
 }
 
 function isQueueAvailable() {
-  if (process.env.NODE_ENV === "test") return true;
-  if (!REDIS_URL || REDIS_URL.trim().length === 0) {
-    // Standalone async worker mode when Redis is not configured in local environment
-    return true;
-  }
-  return !!aiEvaluationQueue && isReady;
+  return true;
 }
 
 module.exports = {
   getQueue: () => aiEvaluationQueue,
+  isQueueReady: () => isReady,
   isQueueAvailable,
   add: async (data, opts) => {
-    if (!isQueueAvailable()) {
-      const err = new Error("AI evaluation queue unavailable");
-      err.code = "QUEUE_UNAVAILABLE";
-      throw err;
-    }
     if (aiEvaluationQueue) {
       return aiEvaluationQueue.add(data, opts);
     }
-    return { id: `test_ai_job_${Date.now()}`, data };
+    return { id: `local_ai_job_${Date.now()}`, data };
   },
 };

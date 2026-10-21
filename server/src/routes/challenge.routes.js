@@ -54,7 +54,7 @@ const runLimiter = rateLimit({
 });
 
 // Run tests for a challenge (interactive only, public tests only)
-router.post("/:id/run", verifyAccessToken, runLimiter, challengeIdValidator, validateRequest, runChallengeCode);
+router.post("/:id/run", optionalAuth, runLimiter, challengeIdValidator, validateRequest, runChallengeCode);
 
 // Submit solution for a challenge (thin alias to canonical submission)
 router.post(

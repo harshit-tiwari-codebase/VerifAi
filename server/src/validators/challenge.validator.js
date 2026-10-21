@@ -147,8 +147,9 @@ const listChallengesValidator = [
 
 const challengeIdValidator = [
   param("id")
-    .isMongoId()
-    .withMessage("Invalid challenge ID"),
+    .trim()
+    .notEmpty()
+    .withMessage("Challenge ID or slug is required"),
 ];
 
 module.exports = {

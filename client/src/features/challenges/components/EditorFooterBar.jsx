@@ -1,5 +1,5 @@
 import React from "react";
-import { Play, Send, Loader2 } from "lucide-react";
+import { Play, Send, Loader2, Terminal } from "lucide-react";
 
 export default function EditorFooterBar({
   cursorPosition,
@@ -8,10 +8,13 @@ export default function EditorFooterBar({
   lastSavedText,
   onRunTests,
   onSubmit,
+  isConsoleOpen,
+  onToggleConsole,
+  onOpenTerminal,
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 bg-[#0c0d12] border-t border-white/[0.08] select-none text-xs font-mono">
-      {/* Left: autosave indicator, cursor line/col, language badge */}
+      {/* Left: autosave indicator, cursor line/col, language badge, terminal button */}
       <div className="flex items-center gap-3.5 text-mist-400">
         {/* Autosave status with subtle pulse dot */}
         <div className="flex items-center gap-1.5" title="Cloud synchronizer">
@@ -39,6 +42,23 @@ export default function EditorFooterBar({
           </span>
           <span>Node.js v20</span>
         </div>
+
+        <span className="text-white/10">|</span>
+
+        {/* Quick Terminal toggle button */}
+        <button
+          type="button"
+          onClick={onOpenTerminal || onToggleConsole}
+          className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+            isConsoleOpen
+              ? "bg-violet-500/20 text-violet-300 border border-violet-500/40"
+              : "text-mist-400 hover:text-white hover:bg-white/[0.06]"
+          }`}
+          title="Toggle Terminal & Output Console (⌘+`)"
+        >
+          <Terminal className="h-3 w-3 text-violet-400" />
+          <span>Terminal</span>
+        </button>
       </div>
 
       {/* Right: "Run Tests" secondary button and "Submit Solution" primary button */}
@@ -49,7 +69,7 @@ export default function EditorFooterBar({
           onClick={onRunTests}
           disabled={isRunningTests || isSubmitting}
           className="btn-frosted-glass flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-mist-200 hover:text-white font-mono text-xs transition-all disabled:opacity-50 cursor-pointer"
-          title="Run test suite against Judge0 sandbox (⌘+Enter / Ctrl+Enter)"
+          title="Run test suite against sandbox (⌘+Enter / Ctrl+Enter)"
         >
           {isRunningTests ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />

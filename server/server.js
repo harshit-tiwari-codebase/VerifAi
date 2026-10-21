@@ -72,3 +72,5 @@ connectDB().then(() => {
     console.log(`VerifAI server listening on port ${PORT}`);
   });
 });
+// restart
+ 

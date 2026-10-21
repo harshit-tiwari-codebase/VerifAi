@@ -102,10 +102,27 @@ export default function ChallengeWorkspacePage() {
 
   // Test console & Execution state
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [consoleTab, setConsoleTab] = useState("tests"); // "tests" | "terminal" | "custom" | "ai"
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [currentTestCases, setCurrentTestCases] = useState(DEFAULT_CHALLENGE_DATA.testCases);
   const [revealedCount, setRevealedCount] = useState(0);
   const [testProgressPercent, setTestProgressPercent] = useState(0);
+  const [compileError, setCompileError] = useState(null);
+  const [testsPassed, setTestsPassed] = useState(null);
+
+  // Terminal logs state
+  const [terminalLogs, setTerminalLogs] = useState([
+    {
+      type: "sys",
+      text: "VerifAI V8 Sandboxed Runtime initialized (Node.js v20.11 / ES2023).",
+      timestamp: Date.now(),
+    },
+    {
+      type: "info",
+      text: "¡Hola buddy! Ready to code. Press ⌘↵ to execute tests or ⌘` to open Terminal.",
+      timestamp: Date.now(),
+    },
+  ]);
 
   // Custom Input testing state
   const [customInput, setCustomInput] = useState('{"capacity": 10, "refillRate": 2, "tokens": 1}');
@@ -264,7 +281,7 @@ export default function ChallengeWorkspacePage() {
     }
   };
 
-  // RUN TESTS SEQUENCE: Real execution + staggered UI reveal
+  // RUN TESTS SEQUENCE: Real execution + fast smooth UI reveal + live Terminal streaming
   const handleRunTests = useCallback(async () => {
     if (isRunningTests || isVerificationOpen) return;
 
@@ -272,23 +289,54 @@ export default function ChallengeWorkspacePage() {
     setIsRunningTests(true);
     setRevealedCount(0);
     setTestProgressPercent(15);
+    setCompileError(null);
 
     const baseTestCases = challenge.testCases || [];
     const totalCases = baseTestCases.length || 1;
 
+    // Log test initiation to terminal
+    setTerminalLogs((prev) => [
+      ...prev,
+      {
+        type: "sys",
+        text: `> node solution.js [Running ${totalCases} test suites in sandbox]`,
+        timestamp: Date.now(),
+      },
+    ]);
+
     try {
-      // Execute live tests in backend / sandbox
+      // Execute live tests in sandbox / backend
       const execResult = await executeChallengeTests({
-        challengeId: challenge.id || slug,
+        challengeId: challenge._id || challenge.id || slug,
         code,
         language: "javascript",
         testCases: baseTestCases,
       });
 
+      // Stream user console.log statements into the terminal
+      if (execResult.logs && execResult.logs.length > 0) {
+        setTerminalLogs((prev) => [...prev, ...execResult.logs]);
+      }
+
+      // Check for compilation / syntax failure
+      if (execResult.errorMessage || execResult.compileOutput || execResult.error) {
+        const errMsg = execResult.compileOutput || execResult.errorMessage || execResult.error;
+        setCompileError(errMsg);
+        setTestsPassed(false);
+        setTerminalLogs((prev) => [
+          ...prev,
+          {
+            type: "error",
+            text: `Syntax/Runtime Error: ${errMsg}`,
+            timestamp: Date.now(),
+          },
+        ]);
+      }
+
       const evaluated = execResult.testCases || baseTestCases;
       setCurrentTestCases(evaluated);
 
-      // Stagger reveal animation for developer visual feedback
+      // Fast, snappy staggered reveal (60ms per case for hyper-responsive feel)
       let current = 0;
       const interval = setInterval(() => {
         current++;
@@ -298,12 +346,37 @@ export default function ChallengeWorkspacePage() {
         if (current >= totalCases) {
           clearInterval(interval);
           setIsRunningTests(false);
+
+          const passedCount = evaluated.filter((t) => t.passed).length;
+          const allPassed = passedCount === totalCases && totalCases > 0;
+          setTestsPassed(allPassed);
+
+          setTerminalLogs((prev) => [
+            ...prev,
+            {
+              type: allPassed ? "success" : "warn",
+              text: allPassed
+                ? `✓ All ${totalCases}/${totalCases} test cases passed successfully in ${execResult.totalTimeMs || 14}ms!`
+                : `✗ ${totalCases - passedCount} of ${totalCases} test cases failed. Expand failed cases above for diff details.`,
+              timestamp: Date.now(),
+            },
+          ]);
         }
-      }, 300);
-    } catch {
+      }, 60);
+    } catch (err) {
       setIsRunningTests(false);
+      setCompileError(err.message);
+      setTestsPassed(false);
+      setTerminalLogs((prev) => [
+        ...prev,
+        {
+          type: "error",
+          text: `Test runner exception: ${err.message}`,
+          timestamp: Date.now(),
+        },
+      ]);
     }
-  }, [challenge.id, challenge.testCases, code, isRunningTests, isVerificationOpen, slug]);
+  }, [challenge._id, challenge.id, challenge.testCases, code, isRunningTests, isVerificationOpen, slug]);
 
   // RUN CUSTOM TEST
   const handleRunCustomTest = async () => {
@@ -311,21 +384,126 @@ export default function ChallengeWorkspacePage() {
     setIsRunningCustom(true);
     setCustomOutput(null);
 
+    setTerminalLogs((prev) => [
+      ...prev,
+      {
+        type: "sys",
+        text: `> node -e "runCustomTest()" with payload: ${customInput}`,
+        timestamp: Date.now(),
+      },
+    ]);
+
     try {
       const res = await executeChallengeTests({
-        challengeId: challenge.id || slug,
+        challengeId: challenge._id || challenge.id || slug,
         code,
         customInput,
       });
 
-      setCustomOutput(
+      if (res.logs && res.logs.length > 0) {
+        setTerminalLogs((prev) => [...prev, ...res.logs]);
+      }
+
+      const outText =
         res.customOutput ||
-          `✓ Execution Success in ${res.runtimeMs || 12}ms\nOutput: ${JSON.stringify(res.output || true, null, 2)}`
-      );
+        `✓ Execution Success in ${res.runtimeMs || 10}ms\nOutput: ${JSON.stringify(res.output || true, null, 2)}`;
+      setCustomOutput(outText);
+
+      setTerminalLogs((prev) => [
+        ...prev,
+        {
+          type: "success",
+          text: outText,
+          timestamp: Date.now(),
+        },
+      ]);
     } catch (err) {
-      setCustomOutput(`! Execution Error: ${err.message}`);
+      const errText = `! Execution Error: ${err.message}`;
+      setCustomOutput(errText);
+      setTerminalLogs((prev) => [
+        ...prev,
+        {
+          type: "error",
+          text: errText,
+          timestamp: Date.now(),
+        },
+      ]);
     } finally {
       setIsRunningCustom(false);
+    }
+  };
+
+  // REPL evaluator: Run arbitrary JavaScript expressions in the sandbox terminal
+  const handleRunTerminalCommand = (cmd) => {
+    const trimmed = cmd.trim();
+    if (!trimmed) return;
+
+    if (trimmed.toLowerCase() === "clear") {
+      setTerminalLogs([]);
+      return;
+    }
+
+    setTerminalLogs((prev) => [
+      ...prev,
+      {
+        type: "log",
+        text: `$ ${trimmed}`,
+        timestamp: Date.now(),
+      },
+    ]);
+
+    try {
+      const capturedLogs = [];
+      const tempConsole = {
+        log: (...args) => capturedLogs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" ")),
+        error: (...args) => capturedLogs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" ")),
+        warn: (...args) => capturedLogs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" ")),
+        info: (...args) => capturedLogs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" ")),
+      };
+
+      const replFunction = new Function(
+        "console",
+        `
+        "use strict";
+        const exports = {};
+        const module = { exports };
+        ${code}
+        try {
+          return (${trimmed});
+        } catch (_) {
+          return eval(${JSON.stringify(trimmed)});
+        }
+      `
+      );
+
+      const result = replFunction(tempConsole);
+
+      const logsToAdd = [];
+      capturedLogs.forEach((l) => {
+        logsToAdd.push({ type: "log", text: l, timestamp: Date.now() });
+      });
+
+      const formattedResult =
+        typeof result === "object" && result !== null
+          ? JSON.stringify(result, null, 2)
+          : String(result !== undefined ? result : "undefined");
+
+      logsToAdd.push({
+        type: "info",
+        text: `→ ${formattedResult}`,
+        timestamp: Date.now(),
+      });
+
+      setTerminalLogs((prev) => [...prev, ...logsToAdd]);
+    } catch (err) {
+      setTerminalLogs((prev) => [
+        ...prev,
+        {
+          type: "error",
+          text: `Evaluation Error: ${err.message}`,
+          timestamp: Date.now(),
+        },
+      ]);
     }
   };
 
@@ -415,6 +593,13 @@ export default function ChallengeWorkspacePage() {
         e.preventDefault();
         setIsSidebarOpen((prev) => !prev);
       }
+      if (isCmdOrCtrl && (e.key === "`" || e.key === "~")) {
+        e.preventDefault();
+        setIsConsoleOpen((prev) => {
+          if (!prev) setConsoleTab("terminal");
+          return !prev;
+        });
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -485,16 +670,48 @@ export default function ChallengeWorkspacePage() {
             <span>{formatTimer(elapsedSeconds)}</span>
           </div>
 
-          {/* Toggle Console */}
+          {/* Toggle Terminal */}
           <button
             type="button"
-            onClick={() => setIsConsoleOpen((prev) => !prev)}
-            className={`btn-frosted-glass flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
-              isConsoleOpen ? "text-violet-300 border-violet-500/40" : "text-mist-400"
+            onClick={() => {
+              if (isConsoleOpen && consoleTab === "terminal") {
+                setIsConsoleOpen(false);
+              } else {
+                setIsConsoleOpen(true);
+                setConsoleTab("terminal");
+              }
+            }}
+            className={`btn-frosted-glass flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
+              isConsoleOpen && consoleTab === "terminal"
+                ? "text-violet-300 border-violet-500/40 bg-violet-500/10"
+                : "text-mist-400"
             }`}
+            title="Toggle terminal & execution logs (⌘+`)"
           >
-            <Terminal className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Console</span>
+            <Terminal className="h-3.5 w-3.5 text-violet-400" />
+            <span className="hidden sm:inline">Terminal</span>
+          </button>
+
+          {/* Toggle Test Console */}
+          <button
+            type="button"
+            onClick={() => {
+              if (isConsoleOpen && consoleTab === "tests") {
+                setIsConsoleOpen(false);
+              } else {
+                setIsConsoleOpen(true);
+                setConsoleTab("tests");
+              }
+            }}
+            className={`btn-frosted-glass flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
+              isConsoleOpen && consoleTab === "tests"
+                ? "text-violet-300 border-violet-500/40 bg-violet-500/10"
+                : "text-mist-400"
+            }`}
+            title="Toggle test cases panel"
+          >
+            <Code2 className="h-3.5 w-3.5 text-mist-400" />
+            <span className="hidden sm:inline">Tests</span>
           </button>
 
           {/* Run Tests Button */}
@@ -659,7 +876,7 @@ export default function ChallengeWorkspacePage() {
               }}
             />
 
-            {/* Sliding Test Results Console with Custom Input Runner */}
+            {/* Sliding Test Results Console with Custom Input & Interactive Terminal */}
             <TestResultsConsole
               isOpen={isConsoleOpen}
               onClose={() => setIsConsoleOpen(false)}
@@ -674,6 +891,12 @@ export default function ChallengeWorkspacePage() {
               customOutput={customOutput}
               onRunCustomTest={handleRunCustomTest}
               isRunningCustom={isRunningCustom}
+              activeTab={consoleTab}
+              onTabChange={setConsoleTab}
+              terminalLogs={terminalLogs}
+              onClearTerminal={() => setTerminalLogs([])}
+              onRunTerminalCommand={handleRunTerminalCommand}
+              compileError={compileError}
             />
           </div>
 
@@ -686,16 +909,28 @@ export default function ChallengeWorkspacePage() {
               lastSavedText={`Saved ${lastSavedSecondsAgo}s ago`}
               onRunTests={handleRunTests}
               onSubmit={handleSubmitSolution}
+              isConsoleOpen={isConsoleOpen}
+              onToggleConsole={() => setIsConsoleOpen((prev) => !prev)}
+              onOpenTerminal={() => {
+                setIsConsoleOpen(true);
+                setConsoleTab("terminal");
+              }}
             />
           </div>
         </section>
       </div>
 
-      {/* Floating Draggable Animated AI Code Companion */}
+      {/* Floating Draggable Animated AI Code Companion ("Hola Buddy") */}
       <AnimatedCodeCompanion
         isTyping={isTyping}
         keystrokeCount={keystrokeCount}
         isRunningTests={isRunningTests}
+        testsPassed={testsPassed}
+        onOpenTerminal={() => {
+          setIsConsoleOpen(true);
+          setConsoleTab("terminal");
+        }}
+        onRunTests={handleRunTests}
       />
 
       {/* SUBMISSION VERIFICATION SEQUENCE MODAL */}

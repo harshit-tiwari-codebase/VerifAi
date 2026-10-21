@@ -4,10 +4,10 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 
 const authRoutes = require("./routes/auth.routes"); 
-const challengeRoutes = require("./routes/challenge.routes")
-// const challengeRoutes = require("./routes/challengeRoutes");
-const { notFound, errorHandler } = require("../src/middlewares/errorMiddleware");
+const challengeRoutes = require("./routes/challenge.routes");
 const submissionRoutes = require("./routes/submission.routes");
+const { healthRouter } = require("./routes/health.routes");
+const { notFound, errorHandler } = require("../src/middlewares/errorMiddleware");
 
 const app = express();
 
@@ -25,15 +25,14 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Health check
+// Health check and diagnostics
 app.get("/", (req, res) => res.send("VerifAI API is running"));
+app.use("/api/health", healthRouter);
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/challenge", challengeRoutes);
-
-
 app.use("/api/submissions", submissionRoutes);
 
 // Error handling (must be last)

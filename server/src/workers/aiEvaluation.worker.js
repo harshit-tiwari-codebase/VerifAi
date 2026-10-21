@@ -128,12 +128,20 @@ async function processEvaluationJob({ submissionId }) {
 }
 
 // Attach Bull worker if queue is active
-const bullQueue = aiEvaluationQueueModule.getQueue();
-if (bullQueue && typeof bullQueue.process === "function") {
-  bullQueue.process(async (job) => {
-    return processEvaluationJob(job.data);
-  });
+function attachBullAiWorker() {
+  const bullQueue = aiEvaluationQueueModule.getQueue();
+  if (bullQueue && typeof bullQueue.process === "function") {
+    try {
+      bullQueue.process(async (job) => {
+        return processEvaluationJob(job.data);
+      });
+      console.log("Attached AI evaluation Bull queue worker process");
+    } catch (e) {
+      console.warn("Could not attach AI evaluation Bull queue worker:", e.message);
+    }
+  }
 }
+attachBullAiWorker();
 
 module.exports = {
   processEvaluationJob,

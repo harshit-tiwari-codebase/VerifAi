@@ -144,13 +144,21 @@ async function executeSubmissionAgainstChallenge({
       const tokens = batchResponse.map((r) => r.token);
       batchResults = await pollBatch(tokens);
     } catch (err) {
-      return {
-        status: "provider_unavailable",
-        errorCode: "PROVIDER_UNAVAILABLE",
-        errorMessage: `Execution provider unreachable: ${err.message}`,
-        testResults: [],
-        compileOutput: "",
-      };
+      console.warn(`[codeExecutor] Judge0 provider unavailable (${err.message}). Falling back to local execution engine...`);
+      // Fallback cleanly to isolated process execution so submissions and test runs never break when Judge0 is offline
+      try {
+        batchResults = await Promise.all(
+          submissions.map((s) => executeInChildProcess(s.source_code, s.stdin, 4000))
+        );
+      } catch (fallbackErr) {
+        return {
+          status: "provider_unavailable",
+          errorCode: "PROVIDER_UNAVAILABLE",
+          errorMessage: `Execution provider unreachable: ${err.message}`,
+          testResults: [],
+          compileOutput: "",
+        };
+      }
     }
   } else {
     // Run via isolated OS Node child processes with process boundary, timeout, and maxBuffer limits
