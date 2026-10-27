@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
-  Loader2,
   RefreshCw,
   Info,
   ArrowRight,
@@ -134,20 +133,20 @@ export default function RegisterPage() {
         {showSuccess ? (
           <div className="space-y-4 text-center py-2">
             {/* Animated Email Success Graphic */}
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-violet-500/40 bg-violet-500/10 text-violet-400 shadow-[0_0_30px_rgba(124,58,237,0.3)]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#8B5CF6]/40 bg-[#211635] text-[#A78BFA] shadow-[0_0_24px_rgba(139,92,246,0.25)]">
               <Mail className="h-7 w-7" />
             </div>
 
             <div>
-              <span className="font-mono text-[11px] uppercase tracking-widest text-emerald-400 font-semibold">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-[#34D399] font-semibold">
                 Verification Required
               </span>
-              <h2 className="text-xl font-bold font-display text-white mt-1">
+              <h2 className="text-xl font-bold font-display text-[#FAFAFA] mt-1">
                 Check your inbox
               </h2>
-              <p className="mt-1.5 text-xs text-mist-300 leading-relaxed max-w-sm mx-auto">
+              <p className="mt-1.5 text-xs text-[#A1A1AA] leading-relaxed max-w-sm mx-auto">
                 We sent a verification link to{" "}
-                <span className="text-white font-medium underline underline-offset-2">
+                <span className="text-[#FAFAFA] font-medium underline underline-offset-2">
                   {registeredEmail}
                 </span>
                 . Click the link to activate your account.
@@ -155,7 +154,7 @@ export default function RegisterPage() {
             </div>
 
             {resendMessage && (
-              <div className="p-2.5 rounded-xl border border-violet-500/30 bg-violet-500/10 font-mono text-xs text-violet-300">
+              <div className="p-2.5 rounded-[10px] border border-[#8B5CF6]/30 bg-[#211635] font-mono text-xs text-[#C4B5FD]">
                 {resendMessage}
               </div>
             )}
@@ -178,7 +177,7 @@ export default function RegisterPage() {
                 to="/login"
                 variant="ghost"
                 size="sm"
-                className="w-full sm:w-auto justify-center border-ink-600"
+                className="w-full sm:w-auto justify-center"
               >
                 Go to Sign In
                 <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
@@ -187,22 +186,22 @@ export default function RegisterPage() {
           </div>
         ) : (
           <>
-            {/* Header matching the reference screenshot */}
+            {/* Header */}
             <div className="text-center mb-4">
-              <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#FAFAFA]">
                 Create an account
               </h1>
-              <p className="mt-0.5 text-xs sm:text-sm text-mist-400">
-                Sign up to start verifying your skills
+              <p className="mt-0.5 text-xs sm:text-sm text-[#A1A1AA]">
+                Sign up to start verifying your engineering craft
               </p>
             </div>
 
             {/* Registration Form */}
-            <form onSubmit={handleSubmit} className="space-y-2.5" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-3" noValidate>
               {/* Name Input */}
               <div className="space-y-0.5">
                 <div className="relative flex items-center">
-                  <div className="pointer-events-none absolute left-3.5 text-mist-500">
+                  <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
                     <User className="h-4 w-4" />
                   </div>
                   <input
@@ -214,22 +213,22 @@ export default function RegisterPage() {
                     placeholder="Full Name"
                     value={form.name}
                     onChange={(e) => updateField("name", e.target.value)}
-                    className={`w-full rounded-xl border bg-[#12141d]/90 text-sm text-mist-100 placeholder:text-mist-500 outline-none transition-all py-2.5 pl-10 pr-3.5 ${
+                    className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
                       fieldErrors.name
-                        ? "border-red-500/60 focus:border-red-400 focus:ring-2 focus:ring-red-500/20"
-                        : "border-ink-600/90 hover:border-ink-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                        ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
+                        : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
                     }`}
                   />
                 </div>
                 {fieldErrors.name && (
-                  <p className="text-[10px] text-red-400 pl-1 font-mono">{fieldErrors.name}</p>
+                  <p className="text-[10px] text-[#F87171] pl-1 font-mono">{fieldErrors.name}</p>
                 )}
               </div>
 
               {/* Email Input */}
               <div className="space-y-0.5">
                 <div className="relative flex items-center">
-                  <div className="pointer-events-none absolute left-3.5 text-mist-500">
+                  <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
                     <Mail className="h-4 w-4" />
                   </div>
                   <input
@@ -239,25 +238,25 @@ export default function RegisterPage() {
                     inputMode="email"
                     autoComplete="email"
                     required
-                    placeholder="Email"
+                    placeholder="developer@company.com"
                     value={form.email}
                     onChange={(e) => updateField("email", e.target.value)}
-                    className={`w-full rounded-xl border bg-[#12141d]/90 text-sm text-mist-100 placeholder:text-mist-500 outline-none transition-all py-2.5 pl-10 pr-3.5 ${
+                    className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
                       fieldErrors.email
-                        ? "border-red-500/60 focus:border-red-400 focus:ring-2 focus:ring-red-500/20"
-                        : "border-ink-600/90 hover:border-ink-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                        ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
+                        : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
                     }`}
                   />
                 </div>
                 {fieldErrors.email && (
-                  <p className="text-[10px] text-red-400 pl-1 font-mono">{fieldErrors.email}</p>
+                  <p className="text-[10px] text-[#F87171] pl-1 font-mono">{fieldErrors.email}</p>
                 )}
               </div>
 
               {/* Password Input */}
               <div className="space-y-0.5">
                 <div className="relative flex items-center">
-                  <div className="pointer-events-none absolute left-3.5 text-mist-500">
+                  <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
                     <Lock className="h-4 w-4" />
                   </div>
                   <input
@@ -266,32 +265,32 @@ export default function RegisterPage() {
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
                     required
-                    placeholder="Password"
+                    placeholder="Password (min. 8 characters)"
                     value={form.password}
                     onChange={(e) => updateField("password", e.target.value)}
-                    className={`w-full rounded-xl border bg-[#12141d]/90 text-sm text-mist-100 placeholder:text-mist-500 outline-none transition-all py-2.5 pl-10 pr-10 ${
+                    className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-10 ${
                       fieldErrors.password
-                        ? "border-red-500/60 focus:border-red-400 focus:ring-2 focus:ring-red-500/20"
-                        : "border-ink-600/90 hover:border-ink-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                        ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
+                        : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 p-1 rounded-md text-mist-500 hover:text-mist-200 transition-colors"
+                    className="absolute right-3 p-1 rounded-md text-[#71717A] hover:text-[#A1A1AA] transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                   </button>
                 </div>
                 {fieldErrors.password && (
-                  <p className="text-[10px] text-red-400 pl-1 font-mono">{fieldErrors.password}</p>
+                  <p className="text-[10px] text-[#F87171] pl-1 font-mono">{fieldErrors.password}</p>
                 )}
               </div>
 
               {/* Terms Checkbox */}
               <div>
-                <label className="flex items-start gap-2 cursor-pointer select-none text-[11px] text-mist-400 hover:text-mist-300">
+                <label className="flex items-start gap-2 cursor-pointer select-none text-[11px] text-[#A1A1AA] hover:text-[#FAFAFA]">
                   <input
                     type="checkbox"
                     checked={agreeTerms}
@@ -299,31 +298,31 @@ export default function RegisterPage() {
                       setAgreeTerms(e.target.checked);
                       if (fieldErrors.terms) setFieldErrors({ ...fieldErrors, terms: "" });
                     }}
-                    className="mt-0.5 h-3.5 w-3.5 rounded border-ink-600 bg-[#12141d] accent-violet-600 cursor-pointer"
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-[#27272A] bg-[#111116] accent-[#8B5CF6] cursor-pointer"
                   />
                   <span className="leading-tight">
                     I agree to the{" "}
-                    <span className="text-violet-400 hover:underline">Terms of Service</span> and{" "}
-                    <span className="text-violet-400 hover:underline">Privacy Policy</span>.
+                    <span className="text-[#A78BFA] hover:underline">Terms of Service</span> and{" "}
+                    <span className="text-[#A78BFA] hover:underline">Privacy Policy</span>.
                   </span>
                 </label>
                 {fieldErrors.terms && (
-                  <p className="text-[10px] text-red-400 pl-1 pt-0.5 font-mono">{fieldErrors.terms}</p>
+                  <p className="text-[10px] text-[#F87171] pl-1 pt-0.5 font-mono">{fieldErrors.terms}</p>
                 )}
               </div>
 
               {/* Error Banner */}
               {authError && (
-                <div className="p-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-xs font-mono flex items-start gap-2">
-                  <AlertCircle className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />
+                <div className="p-2.5 rounded-[10px] border border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171] text-xs font-mono flex items-start gap-2">
+                  <AlertCircle className="h-3.5 w-3.5 text-[#F87171] shrink-0 mt-0.5" />
                   <p className="flex-1">{authError}</p>
                 </div>
               )}
 
               {/* Social notice feedback if clicked */}
               {socialNotice && (
-                <div className="p-2 rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-200 text-xs flex items-center gap-2">
-                  <Info className="h-3.5 w-3.5 text-violet-400 shrink-0" />
+                <div className="p-2 rounded-[10px] border border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD] text-xs flex items-center gap-2">
+                  <Info className="h-3.5 w-3.5 text-[#A78BFA] shrink-0" />
                   <p className="flex-1">{socialNotice}</p>
                 </div>
               )}
@@ -335,16 +334,16 @@ export default function RegisterPage() {
                 size="md"
                 disabled={submitting}
                 loading={submitting}
-                className="w-full !py-2.5 !rounded-xl"
+                className="w-full !py-2.5"
               >
                 Create Account
               </Button>
 
               {/* Divider "Or" */}
               <div className="relative flex items-center justify-center my-2.5 py-0.5">
-                <div className="border-t border-ink-600/80 w-full" />
-                <span className="bg-[#04030a] px-2.5 text-xs text-mist-500 font-sans absolute">
-                  Or
+                <div className="border-t border-[#27272A] w-full" />
+                <span className="bg-[#18181F] px-2.5 text-xs text-[#71717A] font-sans absolute">
+                  Or continue with
                 </span>
               </div>
 
@@ -355,7 +354,7 @@ export default function RegisterPage() {
                   type="button"
                   variant="secondary"
                   onClick={() => handleSocialSignUp("Google")}
-                  className="w-full !py-2 !rounded-xl !bg-[#12141d]/90 hover:!bg-[#181a26] text-xs sm:text-sm !font-medium"
+                  className="w-full !py-2 !rounded-[10px] text-xs sm:text-sm !font-medium"
                 >
                   <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                     <path
@@ -383,7 +382,7 @@ export default function RegisterPage() {
                   type="button"
                   variant="secondary"
                   onClick={() => handleSocialSignUp("Facebook")}
-                  className="w-full !py-2 !rounded-xl !bg-[#12141d]/90 hover:!bg-[#181a26] text-xs sm:text-sm !font-medium"
+                  className="w-full !py-2 !rounded-[10px] text-xs sm:text-sm !font-medium"
                 >
                   <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="#1877F2">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -393,11 +392,11 @@ export default function RegisterPage() {
               </div>
 
               {/* Login prompt */}
-              <div className="pt-2 text-center text-xs text-mist-400">
+              <div className="pt-2 text-center text-xs text-[#A1A1AA]">
                 <span>Already have an account? </span>
                 <Link
                   to="/login"
-                  className="text-violet-400 hover:text-violet-300 font-semibold underline-offset-2 hover:underline transition-colors"
+                  className="text-[#A78BFA] hover:text-[#C4B5FD] font-semibold underline-offset-2 hover:underline transition-colors"
                 >
                   Log In
                 </Link>

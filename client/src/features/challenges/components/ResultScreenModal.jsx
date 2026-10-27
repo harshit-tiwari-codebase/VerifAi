@@ -75,7 +75,7 @@ export default function ResultScreenModal({
           particleCount: 50,
           spread: 55,
           origin: { y: 0.6 },
-          colors: ["#9333EA", "#C084FC", "#38BDF8", "#34D399", "#F59E0B"],
+          colors: ["#8B5CF6", "#7C3AED", "#A78BFA", "#34D399", "#FBBF24"],
           disableForReducedMotion: true,
         });
       } catch {
@@ -129,24 +129,24 @@ export default function ResultScreenModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto"
     >
-      <div className="relative flex flex-col w-full max-w-3xl bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden my-auto">
+      <div className="relative flex flex-col w-full max-w-3xl bg-[#18181F] border border-[#27272A] rounded-[14px] shadow-[0_0_24px_rgba(139,92,246,0.16)] overflow-hidden my-auto">
         {/* Window Chrome */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.08] bg-[#07090F] select-none">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#27272A] bg-[#14141B] select-none">
           <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs uppercase tracking-wider text-mist-300 font-semibold">
-              SERVER EVALUATION VERDICT (v1)
+            <span className="font-mono text-xs uppercase tracking-wider text-[#A1A1AA] font-semibold">
+              SERVER EVALUATION VERDICT
             </span>
             {badgeIssued && (
-              <span className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10.5px] text-emerald-300">
-                <Flame className="h-3 w-3 text-emerald-400 fill-emerald-400" />
+              <span className="flex items-center gap-1 rounded-full border border-[#34D399]/30 bg-[#34D399]/10 px-2 py-0.5 font-mono text-[10.5px] text-[#34D399]">
+                <Flame className="h-3 w-3 text-[#34D399] fill-[#34D399]" />
                 <span>Verified Passed</span>
               </span>
             )}
@@ -154,7 +154,7 @@ export default function ResultScreenModal({
 
           <button
             onClick={onBackToChallenges}
-            className="p-1 rounded text-mist-500 hover:text-mist-200 transition-colors"
+            className="p-1 rounded text-[#71717A] hover:text-[#FAFAFA] transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -163,7 +163,7 @@ export default function ResultScreenModal({
         {/* Modal Body */}
         <div className="p-6 sm:p-7 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
           {/* Top Score Banner: Circle ring + Sub-scores */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-5 rounded-2xl border border-white/[0.08] bg-[#0c0d12]">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-5 rounded-[12px] border border-[#27272A] bg-[#14141B]">
             {/* Circular Ring (Score) */}
             <div className="md:col-span-4 flex flex-col items-center justify-center">
               <div className="relative flex items-center justify-center">
@@ -175,7 +175,7 @@ export default function ResultScreenModal({
                     stroke="currentColor"
                     strokeWidth="8"
                     fill="transparent"
-                    className="text-white/[0.06]"
+                    className="text-[#27272A]"
                   />
                   <circle
                     cx="72"
@@ -189,19 +189,19 @@ export default function ResultScreenModal({
                     strokeLinecap="round"
                     className={`transition-all duration-300 ease-out ${
                       animatedScore >= passingThreshold
-                        ? "text-emerald-400"
+                        ? "text-[#34D399]"
                         : animatedScore >= 50
-                        ? "text-amber-400"
-                        : "text-rose-500"
+                        ? "text-[#FBBF24]"
+                        : "text-[#F87171]"
                     }`}
                   />
                 </svg>
 
                 <div className="absolute flex flex-col items-center justify-center text-center">
-                  <span className="text-3xl font-bold font-mono text-mist-100 font-display">
+                  <span className="text-3xl font-bold font-mono text-[#FAFAFA] font-display">
                     {animatedScore}
                   </span>
-                  <span className="text-[10px] font-mono text-mist-500 tracking-wider">
+                  <span className="text-[10px] font-mono text-[#71717A] tracking-wider">
                     / 100 POINTS
                   </span>
                 </div>
@@ -211,8 +211,8 @@ export default function ResultScreenModal({
                 <span
                   className={`inline-block px-2.5 py-0.5 rounded-full font-mono text-[11px] font-semibold border ${
                     badgeIssued
-                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                      : "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                      ? "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]"
+                      : "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]"
                   }`}
                 >
                   {badgeIssued
@@ -225,60 +225,60 @@ export default function ResultScreenModal({
             {/* Sub-score Progress Bars */}
             <div className="md:col-span-8 space-y-3 font-mono text-xs">
               <div className="space-y-1">
-                <div className="flex justify-between text-mist-400">
+                <div className="flex justify-between text-[#A1A1AA]">
                   <span>Correctness (70%)</span>
-                  <span className="text-emerald-400 font-semibold">
+                  <span className="text-[#34D399] font-semibold">
                     {Math.round(subscores.correctness ?? 0)}%
                   </span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
+                <div className="h-2 w-full rounded-full bg-[#20202A] overflow-hidden border border-[#27272A]">
                   <div
-                    className="h-full bg-emerald-400 rounded-full transition-all duration-1000"
+                    className="h-full bg-[#34D399] rounded-full transition-all duration-1000"
                     style={{ width: `${Math.min(100, Math.round(subscores.correctness ?? 0))}%` }}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-mist-400">
+                <div className="flex justify-between text-[#A1A1AA]">
                   <span>Code Quality & Idioms (15%)</span>
-                  <span className="text-violet-300 font-semibold">
+                  <span className="text-[#A78BFA] font-semibold">
                     {Math.round(subscores.codeQuality ?? 0)}%
                   </span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
+                <div className="h-2 w-full rounded-full bg-[#20202A] overflow-hidden border border-[#27272A]">
                   <div
-                    className="h-full bg-violet-400 rounded-full transition-all duration-1000"
+                    className="h-full bg-[#8B5CF6] rounded-full transition-all duration-1000"
                     style={{ width: `${Math.min(100, Math.round(subscores.codeQuality ?? 0))}%` }}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-mist-400">
+                <div className="flex justify-between text-[#A1A1AA]">
                   <span>Algorithmic Efficiency (10%)</span>
-                  <span className="text-sky-400 font-semibold">
+                  <span className="text-[#60A5FA] font-semibold">
                     {Math.round(subscores.efficiency ?? 0)}%
                   </span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
+                <div className="h-2 w-full rounded-full bg-[#20202A] overflow-hidden border border-[#27272A]">
                   <div
-                    className="h-full bg-sky-400 rounded-full transition-all duration-1000"
+                    className="h-full bg-[#60A5FA] rounded-full transition-all duration-1000"
                     style={{ width: `${Math.min(100, Math.round(subscores.efficiency ?? 0))}%` }}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-mist-400">
+                <div className="flex justify-between text-[#A1A1AA]">
                   <span>Edge Cases & Boundary (5%)</span>
-                  <span className="text-amber-400 font-semibold">
+                  <span className="text-[#FBBF24] font-semibold">
                     {Math.round(subscores.edgeCases ?? 0)}%
                   </span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#07080c] overflow-hidden border border-white/[0.04]">
+                <div className="h-2 w-full rounded-full bg-[#20202A] overflow-hidden border border-[#27272A]">
                   <div
-                    className="h-full bg-amber-400 rounded-full transition-all duration-1000"
+                    className="h-full bg-[#FBBF24] rounded-full transition-all duration-1000"
                     style={{ width: `${Math.min(100, Math.round(subscores.edgeCases ?? 0))}%` }}
                   />
                 </div>
@@ -288,131 +288,145 @@ export default function ResultScreenModal({
 
           {/* Badge Section */}
           {badgeIssued ? (
-            <div className="rounded-xl border border-violet-500/25 bg-[#0e1017] p-4 font-mono">
+            <div className="rounded-[12px] border border-[#8B5CF6]/30 bg-[#211635] p-4 font-mono">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="h-12 w-12 rounded-xl bg-violet-500/15 border border-violet-400/30 flex items-center justify-center shrink-0">
-                    <Award className="h-6 w-6 text-violet-300" />
+                  <div className="h-12 w-12 rounded-[10px] bg-[#38245C] border border-[#8B5CF6]/40 flex items-center justify-center shrink-0">
+                    <Award className="h-6 w-6 text-[#C4B5FD]" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-1.5 text-emerald-400 text-[11px] font-semibold uppercase">
+                    <div className="flex items-center gap-1.5 text-[#34D399] text-[11px] font-semibold uppercase">
                       <ShieldCheck className="h-3.5 w-3.5" />
                       <span>Tamper-Proof Credential Issued</span>
                     </div>
-                    <div className="text-sm font-semibold text-white mt-0.5 font-display">
-                      {aiReviewData?.badge?.name || `${challengeTitle} Architect`}
+                    <div className="text-sm font-bold text-[#FAFAFA]">
+                      {challengeTitle} Badge
                     </div>
-                    <div className="text-[10.5px] text-mist-400">
-                      ID: {issueId} · Verifiable proof of skill
+                    <div className="text-[10px] text-[#A1A1AA]">
+                      ID: <span className="font-semibold text-[#C4B5FD]">{issueId}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={handleShare}
-                    className="btn-frosted-glass flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-mist-300 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-mono bg-[#14141B] hover:bg-[#20202A] text-[#FAFAFA] border border-[#27272A] transition-colors"
                   >
                     {copiedLink ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">Copied</span>
+                        <Check className="h-3.5 w-3.5 text-[#34D399]" />
+                        <span className="text-[#34D399]">Copied</span>
                       </>
                     ) : (
                       <>
-                        <Share2 className="h-3.5 w-3.5" />
-                        <span>Share Proof</span>
+                        <Share2 className="h-3.5 w-3.5 text-[#A78BFA]" />
+                        <span>Share Badge</span>
                       </>
                     )}
                   </button>
+                  <Link
+                    to="/dashboard"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-mono font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-colors"
+                  >
+                    <span>View Profile</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 font-mono text-xs text-amber-200">
-              <div className="font-semibold text-amber-300 mb-1 flex items-center gap-1.5">
-                <AlertCircle className="h-4 w-4" />
-                <span>Badge Not Eligible</span>
+            <div className="rounded-[12px] border border-[#FBBF24]/30 bg-[#FBBF24]/10 p-4 font-mono text-xs flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5 text-[#FBBF24]">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>
+                  Badge threshold ({passingThreshold} pts) not reached. Review recommendations below and retry.
+                </span>
               </div>
-              <p className="text-mist-400 text-[11.5px] leading-relaxed">
-                A verified credential requires passing all test cases and achieving a composite score of at least {passingThreshold}.
-              </p>
+              <button
+                type="button"
+                onClick={onTryAgain}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] bg-[#20202A] hover:bg-[#27272A] text-[#FAFAFA] border border-[#30303A] text-xs font-mono shrink-0 transition-colors"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span>Retry Now</span>
+              </button>
             </div>
           )}
 
-          {/* AI Review Notes Cards */}
-          {(strengths.length > 0 || suggestions.length > 0 || weaknesses.length > 0) && (
-            <div className="space-y-3 font-mono text-xs">
-              <span className="text-[10.5px] font-semibold tracking-wider text-mist-500 uppercase block">
-                AI ARCHITECTURAL OBSERVATIONS
-              </span>
-
-              {strengths.length > 0 && (
-                <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1">
-                  <div className="text-emerald-400 font-semibold flex items-center gap-1.5">
-                    <Check className="h-3.5 w-3.5" />
-                    <span>Strengths</span>
-                  </div>
-                  <ul className="list-disc list-inside text-mist-300 text-[11.5px] space-y-1">
-                    {strengths.map((s, idx) => (
-                      <li key={idx}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {weaknesses.length > 0 && (
-                <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 space-y-1">
-                  <div className="text-amber-400 font-semibold flex items-center gap-1.5">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    <span>Areas for Improvement</span>
-                  </div>
-                  <ul className="list-disc list-inside text-mist-300 text-[11.5px] space-y-1">
-                    {weaknesses.map((w, idx) => (
-                      <li key={idx}>{w}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {suggestions.length > 0 && (
-                <div className="p-3.5 rounded-xl border border-sky-500/20 bg-sky-500/5 space-y-1">
-                  <div className="text-sky-400 font-semibold flex items-center gap-1.5">
-                    <BrainCircuit className="h-3.5 w-3.5" />
-                    <span>Architectural Suggestions</span>
-                  </div>
-                  <ul className="list-disc list-inside text-mist-300 text-[11.5px] space-y-1">
-                    {suggestions.map((s, idx) => (
-                      <li key={idx}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
+          {/* AI Feedback: Strengths & Weaknesses */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+            {/* Strengths */}
+            <div className="rounded-[12px] border border-[#27272A] bg-[#14141B] p-4 space-y-2.5">
+              <div className="flex items-center gap-1.5 text-[#34D399] font-semibold text-[11px] uppercase tracking-wider">
+                <Check className="h-3.5 w-3.5" />
+                <span>Verified Strengths</span>
+              </div>
+              {strengths.length > 0 ? (
+                <ul className="space-y-1.5 text-mist-200">
+                  {strengths.map((str, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-[11.5px] leading-relaxed">
+                      <span className="text-[#34D399] mt-0.5">•</span>
+                      <span className="text-[#FAFAFA]">{str}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[#71717A] text-[11px]">
+                  Solid modular solution design with constant time consumption.
+                </p>
               )}
             </div>
-          )}
+
+            {/* Suggestions */}
+            <div className="rounded-[12px] border border-[#27272A] bg-[#14141B] p-4 space-y-2.5">
+              <div className="flex items-center gap-1.5 text-[#A78BFA] font-semibold text-[11px] uppercase tracking-wider">
+                <BrainCircuit className="h-3.5 w-3.5" />
+                <span>Key Takeaways</span>
+              </div>
+              {suggestions.length > 0 ? (
+                <ul className="space-y-1.5 text-mist-200">
+                  {suggestions.map((sug, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-[11.5px] leading-relaxed">
+                      <span className="text-[#A78BFA] mt-0.5">•</span>
+                      <span className="text-[#FAFAFA]">{sug}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[#71717A] text-[11px]">
+                  Review boundary conditions and consider explicit type coercion on numeric bounds.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Modal Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.08] bg-[#07090F]">
+        {/* Modal Footer Controls */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[#27272A] bg-[#14141B]">
           <button
-            onClick={onTryAgain}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-mono text-mist-400 hover:text-white transition-colors"
+            type="button"
+            onClick={onBackToChallenges}
+            className="px-3.5 py-2 rounded-[10px] text-xs font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
           >
-            <RotateCcw className="h-3.5 w-3.5" />
-            <span>Refactor Solution</span>
+            ← Back to Challenges
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
-              onClick={onBackToChallenges}
-              className="px-4 py-2 rounded-lg text-xs font-mono text-mist-300 hover:text-white bg-white/[0.05] border border-white/[0.1] transition-colors"
+              type="button"
+              onClick={onTryAgain}
+              className="px-3.5 py-2 rounded-[10px] text-xs font-mono text-[#E4E4E7] hover:text-white bg-[#20202A] hover:bg-[#27272A] border border-[#30303A] transition-colors flex items-center gap-1.5"
             >
-              All Challenges
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Try Again</span>
             </button>
             {onNextChallenge && (
               <button
+                type="button"
                 onClick={onNextChallenge}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors"
+                className="px-4 py-2 rounded-[10px] text-xs font-mono font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] transition-colors shadow-[0_0_24px_rgba(139,92,246,0.16)] flex items-center gap-1.5"
               >
                 <span>Next Challenge</span>
                 <ArrowRight className="h-3.5 w-3.5" />

@@ -13,7 +13,7 @@ import CTA from "../components/landing/CTA.jsx";
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-black text-mist-100 selection:bg-violet-500/30 selection:text-white">
+    <div className="relative min-h-screen overflow-x-clip bg-black text-mist-100 selection:bg-violet-500/30 selection:text-white">
       {/* Clean Circular Purple Background Glows (Landing Page ONLY as requested) */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         {/* Top Hero circular glow */}
@@ -36,8 +36,6 @@ export default function LandingPage() {
           {/* 3. The 4-Stage Core Architecture Pipeline */}
           <PipelineSimulator />
 
-          {/* 4. Live In-Browser Sandbox Playground */}
-          <InteractivePlayground />
 
           {/* 5. Deep Feature Matrix & Pillars */}
           <FeatureShowcase />

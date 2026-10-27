@@ -48,12 +48,12 @@ export default function VerificationModal({
     return 15;
   }, [currentStatus, isCompleted, isFailed]);
 
-  // Clean, minimal pipeline stages
+  // Pipeline stages
   const stages = useMemo(
     () => [
       {
         id: "queued",
-        label: "Pending in queue",
+        label: "Pending in evaluation queue",
         isDone: ["executing", "evaluating", "completed"].includes(currentStatus),
         isActive: currentStatus === "queued",
       },
@@ -61,10 +61,10 @@ export default function VerificationModal({
         id: "executing",
         label:
           currentStatus === "executing"
-            ? "Running test cases..."
+            ? "Running sandbox test cases..."
             : totalCount > 0
-            ? `Passed ${passedCount} of ${totalCount} test cases`
-            : "Test execution",
+            ? `Passed ${passedCount} of ${totalCount} test suites`
+            : "Isolated V8 sandbox execution",
         isDone: ["evaluating", "completed"].includes(currentStatus),
         isActive: currentStatus === "executing",
       },
@@ -73,15 +73,15 @@ export default function VerificationModal({
         label:
           currentStatus === "evaluating"
             ? "Running AI architectural review..."
-            : "AI review completed",
+            : "AI rubric synthesis completed",
         isDone: currentStatus === "completed",
         isActive: currentStatus === "evaluating",
       },
       {
         id: "completed",
         label: isCompleted
-          ? `Score: ${finalScore}/100 ${badgeIssued ? "(Badge Earned)" : ""}`
-          : "Finalizing score",
+          ? `Score: ${finalScore}/100 ${badgeIssued ? "(Badge Issued)" : ""}`
+          : "Finalizing score & cryptographic proof",
         isDone: isCompleted,
         isActive: false,
       },
@@ -93,46 +93,44 @@ export default function VerificationModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
     >
-      <div className="w-full max-w-lg bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl shadow-2xl overflow-hidden font-sans text-neutral-200">
-        {/* Subtle linear progress bar */}
-        <div className="w-full bg-[#262626] h-1 overflow-hidden">
+      <div className="w-full max-w-lg bg-[#18181F] border border-[#27272A] rounded-[14px] shadow-[0_0_24px_rgba(139,92,246,0.16)] overflow-hidden font-sans text-[#FAFAFA]">
+        {/* Subtle linear progress bar with brand gradient */}
+        <div className="w-full bg-[#14141B] h-1 overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ease-out ${
               isFailed
-                ? "bg-rose-500"
-                : isCompleted
-                ? "bg-emerald-500"
-                : "bg-emerald-500"
+                ? "bg-[#F87171]"
+                : "bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA]"
             }`}
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#2A2A2A]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#27272A] bg-[#14141B]">
           <div className="flex items-center gap-2">
             {!isCompleted && !isFailed && (
-              <Loader2 className="h-4 w-4 text-neutral-400 animate-spin" />
+              <Loader2 className="h-4 w-4 text-[#8B5CF6] animate-spin" />
             )}
             {isCompleted && (
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              <CheckCircle2 className="h-4 w-4 text-[#34D399]" />
             )}
-            {isFailed && <XCircle className="h-4 w-4 text-rose-500" />}
+            {isFailed && <XCircle className="h-4 w-4 text-[#F87171]" />}
 
-            <h3 className="text-sm font-semibold text-neutral-100">
+            <h3 className="text-sm font-semibold text-[#FAFAFA]">
               {isCompleted
                 ? "Submission Result"
                 : isFailed
-                ? "Submission Failed"
-                : "Judging Submission"}
+                ? "Evaluation Failed"
+                : "Evaluating Submission"}
             </h3>
           </div>
 
           <button
             onClick={onCancel}
-            className="p-1 rounded text-neutral-400 hover:text-neutral-200 transition-colors"
+            className="p-1 rounded text-[#71717A] hover:text-[#FAFAFA] transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -140,16 +138,16 @@ export default function VerificationModal({
 
         {/* Content */}
         <div className="p-5 space-y-4">
-          {/* LeetCode-style Outcome Banner */}
+          {/* Outcome Banner */}
           {isCompleted && (
-            <div className="space-y-3 pb-2 border-b border-[#2A2A2A]">
+            <div className="space-y-3 pb-2 border-b border-[#27272A]">
               <div className="flex items-center justify-between">
-                <span className="text-xl font-bold text-emerald-400">
+                <span className="text-xl font-bold text-[#34D399]">
                   Accepted
                 </span>
-                <span className="text-sm font-mono text-neutral-400">
+                <span className="text-sm font-mono text-[#A1A1AA]">
                   Score:{" "}
-                  <strong className="text-white text-base">
+                  <strong className="text-[#FAFAFA] text-base">
                     {finalScore}
                   </strong>
                   /100
@@ -157,20 +155,20 @@ export default function VerificationModal({
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                <div className="p-2.5 rounded bg-[#242424] border border-[#2E2E2E]">
-                  <span className="text-neutral-400 block text-[11px]">
+                <div className="p-2.5 rounded-[10px] bg-[#14141B] border border-[#27272A]">
+                  <span className="text-[#71717A] block text-[11px]">
                     Test Cases
                   </span>
-                  <span className="text-neutral-100 font-semibold text-sm">
+                  <span className="text-[#FAFAFA] font-semibold text-sm">
                     {passedCount} / {totalCount} Passed
                   </span>
                 </div>
-                <div className="p-2.5 rounded bg-[#242424] border border-[#2E2E2E]">
-                  <span className="text-neutral-400 block text-[11px]">
-                    Status
+                <div className="p-2.5 rounded-[10px] bg-[#14141B] border border-[#27272A]">
+                  <span className="text-[#71717A] block text-[11px]">
+                    Verification
                   </span>
-                  <span className="text-emerald-400 font-semibold text-sm">
-                    {badgeIssued ? "Badge Earned" : "Verified"}
+                  <span className="text-[#34D399] font-semibold text-sm">
+                    {badgeIssued ? "Badge Issued" : "Verified"}
                   </span>
                 </div>
               </div>
@@ -180,7 +178,7 @@ export default function VerificationModal({
           {/* Failure banner */}
           {isFailed && (
             <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-rose-400 text-base font-bold">
+              <div className="flex items-center gap-1.5 text-[#F87171] text-base font-bold">
                 <AlertCircle className="h-5 w-5 flex-shrink-0" />
                 <span>
                   {currentStatus === "compilation_error"
@@ -192,7 +190,7 @@ export default function VerificationModal({
                     : "Evaluation Error"}
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#242424] border border-[#2E2E2E] text-xs font-mono text-rose-300 whitespace-pre-wrap max-h-44 overflow-y-auto leading-relaxed">
+              <div className="p-3 rounded-[10px] bg-[#14141B] border border-[#27272A] text-xs font-mono text-[#F87171] whitespace-pre-wrap max-h-44 overflow-y-auto leading-relaxed">
                 {submission?.errorMessage ||
                   submission?.executionResult?.compileOutput ||
                   error ||
@@ -210,33 +208,33 @@ export default function VerificationModal({
               >
                 <div className="flex items-center gap-2.5">
                   {stage.isDone ? (
-                    <div className="h-4 w-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                      <Check className="h-3 w-3 text-emerald-400" />
+                    <div className="h-4 w-4 rounded-full bg-[#34D399]/15 flex items-center justify-center">
+                      <Check className="h-2.5 w-2.5 text-[#34D399]" />
                     </div>
                   ) : stage.isActive ? (
                     <div className="h-4 w-4 flex items-center justify-center">
-                      <Loader2 className="h-3.5 w-3.5 text-neutral-400 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 text-[#8B5CF6] animate-spin" />
                     </div>
                   ) : (
                     <div className="h-4 w-4 rounded-full flex items-center justify-center">
-                      <span className="h-1.5 w-1.5 rounded-full bg-neutral-600" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#52525B]" />
                     </div>
                   )}
 
                   <span
                     className={`${
                       stage.isDone
-                        ? "text-neutral-200"
+                        ? "text-[#FAFAFA]"
                         : stage.isActive
-                        ? "text-white font-medium"
-                        : "text-neutral-500"
+                        ? "text-[#A78BFA] font-medium"
+                        : "text-[#71717A]"
                     }`}
                   >
                     {stage.label}
                   </span>
                 </div>
 
-                <span className="font-mono text-[11px] text-neutral-500">
+                <span className="font-mono text-[11px] text-[#71717A]">
                   {stage.isDone
                     ? "Passed"
                     : stage.isActive
@@ -248,39 +246,36 @@ export default function VerificationModal({
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#2A2A2A]">
-            {isFailed ? (
-              <>
-                <button
-                  onClick={onCancel}
-                  className="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-neutral-200 transition-colors"
-                >
-                  Close
-                </button>
-                {onRetry && (
-                  <button
-                    onClick={onRetry}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium bg-[#2C2C2C] hover:bg-[#383838] text-neutral-100 transition-colors border border-[#3A3A3A]"
-                  >
-                    <RotateCcw className="h-3.5 w-3.5" />
-                    <span>Try Again</span>
-                  </button>
-                )}
-              </>
-            ) : isCompleted ? (
+          <div className="pt-3 border-t border-[#27272A] flex items-center justify-end gap-2.5">
+            {isFailed && (
               <button
-                onClick={() => onComplete && onComplete(submission)}
-                className="flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                type="button"
+                onClick={onRetry}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] text-xs font-mono font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-colors"
               >
-                <span>View Full Scorecard</span>
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Retry Submission</span>
+              </button>
+            )}
+
+            {isCompleted && (
+              <button
+                type="button"
+                onClick={() => onComplete && onComplete(submission)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-mono font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-colors shadow-[0_0_24px_rgba(139,92,246,0.16)]"
+              >
+                <span>View Full AI Breakdown</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
-            ) : (
+            )}
+
+            {!isCompleted && !isFailed && (
               <button
+                type="button"
                 onClick={onCancel}
-                className="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-neutral-200 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
               >
-                Run in Background
+                Cancel
               </button>
             )}
           </div>

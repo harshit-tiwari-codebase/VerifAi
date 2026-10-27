@@ -10,7 +10,6 @@ import {
   Code2,
   FileCode,
   ShieldCheck,
-  ChevronRight,
   Zap,
 } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -104,79 +103,95 @@ async function releaseLock(redis, resourceKey, lockToken) {
   return await redis.eval(RELEASE_SCRIPT, 1, \`lock:\${resourceKey}\`, lockToken);
 }`,
     tests: [
-      { name: "Atomic SET NX PX acquires uncontested lock", passed: true, time: "7ms" },
-      { name: "Second concurrent worker blocked during lease", passed: true, time: "5ms" },
-      { name: "Lua script guarantees lock cannot be freed by expired owner", passed: true, time: "9ms" },
-      { name: "Safe automatic release upon lease expiration", passed: true, time: "11ms" },
+      { name: "Lock acquisition creates key with millisecond TTL", passed: true, time: "5ms" },
+      { name: "Simultaneous acquire attempts: exactly 1 winner", passed: true, time: "9ms" },
+      { name: "Lock auto-releases after TTL expiry without manual intervention", passed: true, time: "12ms" },
+      { name: "Token verification prevents deleting another worker's lock", passed: true, time: "4ms" },
     ],
     aiReview: {
-      score: 98,
-      verdict: "Production Ready",
+      score: 94,
+      verdict: "Production Hardened",
       strengths: [
-        "Lua script execution is completely atomic on the Redis single thread.",
-        "Crypto UUID token prevents dangerous race condition where a lagging worker unlocks a new owner.",
-        "PX millisecond precision prevents long deadlock states.",
+        "Lua script execution guarantees atomicity across distributed nodes.",
+        "UUID owner tokens prevent race conditions where expired locks are hijacked.",
+        "NX + PX flags ensure atomic test-and-set semantics in a single network round-trip.",
       ],
-      optimization: "For multi-node Redis clusters, consider upgrading to the Redlock quorum algorithm.",
-      badgeTitle: "Concurrency: Distributed Mutex Specialist",
+      optimization: "Implement a Redlock multi-instance quorum consensus algorithm for multi-master Redis architectures.",
+      badgeTitle: "Concurrency: Distributed Lock Specialist",
     },
   },
   {
     id: "jwt-rotation",
-    title: "Cryptographic Refresh Token Rotator",
-    category: "API Security",
+    title: "Refresh Token Rotation with Blacklist",
+    category: "Security & Auth",
     difficulty: "Medium",
     language: "Node.js & Crypto",
     description:
-      "Implement one-time refresh token rotation with immediate reuse detection and family token revocation to prevent replay hijacking.",
-    code: `async function rotateRefreshToken(tokenFamilyId, presentedTokenHash) {
-  const session = await Session.findOne({ familyId: tokenFamilyId });
-  if (!session) throw new UnauthorizedError("Invalid session");
-
-  // Replay detection: If token was already used, breach detected!
-  if (session.usedTokens.includes(presentedTokenHash)) {
-    await Session.deleteMany({ familyId: tokenFamilyId }); // Revoke entire family
-    throw new SecurityBreachError("Token reuse detected. All sessions revoked.");
+      "Prevent replay attacks by implementing refresh token rotation with single-use detection that invalidates entire token family upon reuse.",
+    code: `class TokenManager {
+  constructor(db) {
+    this.db = db; // persistent session store
   }
 
-  const nextToken = crypto.randomBytes(32).toString("hex");
-  const nextHash = crypto.createHash("sha256").update(nextToken).digest("hex");
+  async rotateRefreshToken(familyId, presentedToken) {
+    const session = await this.db.findSessionByFamily(familyId);
+    
+    // Compromise detected: presented token was already used!
+    if (session.usedTokens.has(presentedToken)) {
+      await this.db.revokeEntireFamily(familyId);
+      throw new SecurityBreachError("Token reuse detected! Revoking all sessions.");
+    }
 
-  session.usedTokens.push(presentedTokenHash);
-  session.currentHash = nextHash;
-  await session.save();
+    if (session.currentToken !== presentedToken) {
+      throw new UnauthorizedError("Invalid refresh token.");
+    }
 
-  return nextToken;
+    // Mint fresh pair and retire old token
+    const newRefreshToken = crypto.randomBytes(32).toString("hex");
+    const newAccessToken = signJwt({ sub: session.userId }, "15m");
+
+    await this.db.updateSession(familyId, {
+      currentToken: newRefreshToken,
+      usedTokens: session.usedTokens.add(presentedToken),
+    });
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  }
 }`,
     tests: [
-      { name: "Valid token yields fresh access + rotated refresh pair", passed: true, time: "6ms" },
-      { name: "Immediate reuse of previously consumed token triggers breach alarm", passed: true, time: "4ms" },
-      { name: "All sessions in compromised family revoked instantly", passed: true, time: "8ms" },
-      { name: "SHA-256 hashed storage prevents database leak escalation", passed: true, time: "3ms" },
+      { name: "Valid rotation updates current token and returns new pair", passed: true, time: "6ms" },
+      { name: "Replaying a spent refresh token revokes entire session family", passed: true, time: "8ms" },
+      { name: "Compromised token generates security alert event", passed: true, time: "4ms" },
+      { name: "Mismatched family ID safely rejects with 401 Unauthorized", passed: true, time: "3ms" },
     ],
     aiReview: {
-      score: 95,
-      verdict: "High-Assurance Security",
+      score: 98,
+      verdict: "Enterprise Security Grade",
       strengths: [
-        "Zero-trust token family invalidation renders stolen token replays harmless.",
-        "Hashes stored in MongoDB instead of plaintext protects against DB compromise.",
-        "Clear exception stratification for auditing security incidents.",
+        "Cryptographic token-family tracking immediately mitigates stolen refresh tokens.",
+        "Immediate session family revocation bounds blast radius of leaked credentials.",
+        "Strict single-use token semantics conform with RFC 6749 OAuth 2.0 best practices.",
       ],
-      optimization: "Store token family metadata in high-speed Redis TTL cache to reduce MongoDB write pressure.",
-      badgeTitle: "API Security: Token Rotation Architect",
+      optimization: "Add Redis-backed sliding-window rate limiting to the refresh endpoint to prevent brute-force rotation attempts.",
+      badgeTitle: "Security: Cryptographic Auth Architect",
     },
   },
 ];
 
 export default function InteractivePlayground() {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [activeTab, setActiveTab] = useState("code"); // "code" | "tests"
   const [isRunning, setIsRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState("code");
-  const [stepIndex, setStepIndex] = useState(-1);
+  const [stepIndex, setStepIndex] = useState(-1); // -1: idle, 0: compiling, 1: tests, 2: ai review
   const [completed, setCompleted] = useState(false);
-  const playgroundRef = useRef(null);
 
   const challenge = CHALLENGES[selectedIdx];
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setStepIndex(-1);
+    setCompleted(false);
+  };
 
   const handleRunVerification = () => {
     if (isRunning) return;
@@ -184,59 +199,49 @@ export default function InteractivePlayground() {
     setCompleted(false);
     setStepIndex(0);
 
-    // Stage 1: Compiling & dispatching to Judge0
+    // Step 0: Sandbox Compilation
     setTimeout(() => {
       setStepIndex(1);
-    }, 700);
 
-    // Stage 2: Running test cases
-    setTimeout(() => {
-      setStepIndex(2);
-    }, 1800);
+      // Step 1: Unit Test Suite
+      setTimeout(() => {
+        setStepIndex(2);
 
-    // Stage 3: AI Code review
-    setTimeout(() => {
-      setStepIndex(3);
-      setCompleted(true);
-      setIsRunning(false);
+        // Step 2: Senior AI Code Review & Scoring
+        setTimeout(() => {
+          setIsRunning(false);
+          setCompleted(true);
+          setStepIndex(3);
 
-      // Trigger celebration confetti
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.65 },
-          colors: ["#9333EA", "#C084FC", "#38BDF8", "#34D399"],
-        });
-      } catch {
-        // Fallback gracefully
-      }
-    }, 3200);
-  };
-
-  const handleReset = () => {
-    setIsRunning(false);
-    setCompleted(false);
-    setStepIndex(-1);
+          try {
+            confetti({
+              particleCount: 40,
+              spread: 60,
+              origin: { y: 0.7 },
+              colors: ["#8B5CF6", "#7C3AED", "#A78BFA", "#34D399", "#FBBF24"],
+              disableForReducedMotion: true,
+            });
+          } catch {
+            // Confetti optional
+          }
+        }, 1100);
+      }, 950);
+    }, 800);
   };
 
   return (
-    <section id="playground" className="container-xl py-24 relative" ref={playgroundRef}>
-      {/* Background glow */}
-      <div className="pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full bg-violet-600/10 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-1/4 h-72 w-72 rounded-full bg-purple-600/10 blur-3xl" />
-
-      {/* Header */}
-      <div className="mb-12 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
-          <ArrowUpRight className="h-3.5 w-3.5" />
+    <section className="relative w-full max-w-7xl mx-auto font-sans">
+      {/* Eyebrow & Title */}
+      <div className="mb-10 max-w-2xl">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD] font-mono text-xs font-medium mb-3">
+          <ArrowUpRight className="h-3.5 w-3.5 text-[#A78BFA]" />
           <span>Interactive Sandbox Simulator</span>
         </div>
-        <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
+        <h2 className="text-3xl md:text-4xl font-semibold text-[#FAFAFA] font-display tracking-tight">
           Experience VerifAI live. Test real engineering challenges.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
-          Select a real backend challenge below. Hit <strong className="text-violet-400 font-normal">"Run Sandboxed Verification"</strong> to simulate Judge0 executing unit tests and the AI review engine grading your architecture.
+        <p className="mt-3 text-[#A1A1AA] text-sm sm:text-base leading-relaxed font-sans">
+          Select a real backend challenge below. Hit <strong className="text-[#C4B5FD] font-medium">"Run Sandboxed Verification"</strong> to simulate Judge0 executing unit tests and the AI review engine grading your architecture.
         </p>
       </div>
 
@@ -251,66 +256,66 @@ export default function InteractivePlayground() {
                 setSelectedIdx(idx);
                 handleReset();
               }}
-              className={`text-left p-4 rounded-xl border transition-all duration-200 relative overflow-hidden ${
+              className={`text-left p-4 rounded-[14px] border transition-all duration-150 relative overflow-hidden ${
                 isActive
-                  ? "border-violet-500 bg-violet-950/20 shadow-[0_0_25px_rgba(147,51,234,0.15)]"
-                  : "border-ink-600 bg-ink-800/40 hover:border-ink-500 hover:bg-ink-800/70"
+                  ? "border-[#8B5CF6] bg-[#211635] shadow-[0_0_24px_rgba(139,92,246,0.16)]"
+                  : "border-[#27272A] bg-[#18181F] hover:border-[#3F3F4A] hover:bg-[#20202A]"
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-sans text-xs font-medium text-violet-400">{item.category}</span>
+                <span className="font-sans text-xs font-medium text-[#A78BFA]">{item.category}</span>
                 <span
-                  className={`text-[10px] font-sans font-semibold uppercase px-2 py-0.5 rounded ${
+                  className={`text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded ${
                     item.difficulty === "Hard"
-                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                      : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                      ? "bg-[#F87171]/15 text-[#F87171] border border-[#F87171]/30"
+                      : "bg-[#4ADE80]/15 text-[#4ADE80] border border-[#4ADE80]/30"
                   }`}
                 >
                   {item.difficulty}
                 </span>
               </div>
-              <h3 className="font-display text-sm font-semibold text-mist-100">{item.title}</h3>
-              <p className="text-xs text-mist-400 mt-1 line-clamp-1 font-sans">{item.description}</p>
+              <h3 className="font-display text-sm font-semibold text-[#FAFAFA]">{item.title}</h3>
+              <p className="text-xs text-[#A1A1AA] mt-1 line-clamp-1 font-sans">{item.description}</p>
             </button>
           );
         })}
       </div>
 
       {/* Main Interactive IDE & Result Container */}
-      <div className="card overflow-hidden border-white/[0.08] grid grid-cols-1 lg:grid-cols-12 shadow-2xl">
+      <div className="rounded-[14px] overflow-hidden border border-[#27272A] grid grid-cols-1 lg:grid-cols-12 shadow-2xl bg-[#0D0D12]">
         {/* Left Side: Code Editor (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.08] bg-[#07080c]">
+        <div className="lg:col-span-7 flex flex-col border-b lg:border-b-0 lg:border-r border-[#27272A] bg-[#0D0D12]">
           {/* Editor Header */}
-          <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#0e1017] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-[#27272A] bg-[#14141B] px-4 py-2.5">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-red-500/80" />
-                <span className="h-3 w-3 rounded-full bg-amber-500/80" />
-                <span className="h-3 w-3 rounded-full bg-green-500/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
               </div>
-              <span className="font-mono text-xs text-mist-400 flex items-center gap-1.5">
-                <FileCode className="h-3.5 w-3.5 text-violet-400" />
+              <span className="font-mono text-xs text-[#FAFAFA] flex items-center gap-1.5 font-medium">
+                <FileCode className="h-3.5 w-3.5 text-[#8B5CF6]" />
                 solution.js
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setActiveTab("code")}
-                className={`px-3 py-1 rounded-lg font-sans text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded-[8px] font-sans text-xs font-medium transition-colors ${
                   activeTab === "code"
-                    ? "bg-violet-500/20 text-violet-300"
-                    : "text-mist-400 hover:text-mist-200"
+                    ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/30"
+                    : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
                 }`}
               >
                 Code
               </button>
               <button
                 onClick={() => setActiveTab("tests")}
-                className={`px-3 py-1 rounded-lg font-sans text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded-[8px] font-sans text-xs font-medium transition-colors ${
                   activeTab === "tests"
-                    ? "bg-violet-500/20 text-violet-300"
-                    : "text-mist-400 hover:text-mist-200"
+                    ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/30"
+                    : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
                 }`}
               >
                 Test Suite ({challenge.tests.length})
@@ -319,24 +324,24 @@ export default function InteractivePlayground() {
           </div>
 
           {/* Editor Content Area */}
-          <div className="p-4 flex-1 font-mono text-[12.5px] leading-relaxed overflow-x-auto no-scrollbar min-h-[320px] bg-[#070A10]/95 text-mist-300">
+          <div className="p-4 flex-1 font-mono text-[12px] leading-relaxed overflow-x-auto no-scrollbar min-h-[320px] bg-[#0D0D12] text-[#E4E4E7]">
             {activeTab === "code" ? (
-              <pre className="selection:bg-violet-500/30 no-scrollbar">
+              <pre className="selection:bg-[#38245C] no-scrollbar">
                 <code>
                   {challenge.code.split("\n").map((line, idx) => (
                     <div key={idx} className="flex">
-                      <span className="w-8 select-none text-right pr-4 text-mist-700 font-mono text-xs">
+                      <span className="w-8 select-none text-right pr-4 text-[#666675] font-mono text-xs">
                         {idx + 1}
                       </span>
                       <span className="flex-1 whitespace-pre">
                         {line.includes("//") ? (
-                          <span className="text-mist-500 italic">{line}</span>
+                          <span className="text-[#858592] italic">{line}</span>
                         ) : line.includes("class") || line.includes("function") || line.includes("const") || line.includes("async") || line.includes("return") ? (
                           <span
                             dangerouslySetInnerHTML={{
                               __html: line
-                                .replace(/\b(class|constructor|function|const|let|async|await|return|if|else|throw|new)\b/g, '<span class="text-violet-400 font-medium">$1</span>')
-                                .replace(/\b(TokenBucket|Date|Math|crypto|Session|UnauthorizedError|SecurityBreachError)\b/g, '<span class="text-amber-300">$1</span>'),
+                                .replace(/\b(class|constructor|function|const|let|async|await|return|if|else|throw|new)\b/g, '<span class="text-[#C084FC] font-medium">$1</span>')
+                                .replace(/\b(TokenBucket|Date|Math|crypto|Session|UnauthorizedError|SecurityBreachError)\b/g, '<span class="text-[#93C5FD]">$1</span>'),
                             }}
                           />
                         ) : (
@@ -349,17 +354,17 @@ export default function InteractivePlayground() {
               </pre>
             ) : (
               <div className="space-y-2 py-2">
-                <p className="text-xs text-mist-500 mb-3 font-mono">Hidden Unit Tests executed in Judge0 sandbox:</p>
+                <p className="text-xs text-[#71717A] mb-3 font-mono">Hidden Unit Tests executed in Judge0 sandbox:</p>
                 {challenge.tests.map((test, tIdx) => (
                   <div
                     key={tIdx}
-                    className="flex items-center justify-between p-2.5 rounded-lg border border-ink-600 bg-ink-800/40 font-mono text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B] font-mono text-xs"
                   >
-                    <div className="flex items-center gap-2 text-mist-300">
-                      <Code2 className="h-3.5 w-3.5 text-violet-400" />
+                    <div className="flex items-center gap-2 text-[#FAFAFA]">
+                      <Code2 className="h-3.5 w-3.5 text-[#8B5CF6]" />
                       <span>{test.name}</span>
                     </div>
-                    <span className="text-mist-500 text-[11px]">{test.time}</span>
+                    <span className="text-[#71717A] text-[11px]">{test.time}</span>
                   </div>
                 ))}
               </div>
@@ -367,9 +372,9 @@ export default function InteractivePlayground() {
           </div>
 
           {/* Action Bar */}
-          <div className="border-t border-ink-600 bg-ink-800/60 p-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 font-mono text-xs text-mist-500">
-              <span className="h-2 w-2 rounded-full bg-violet-400" />
+          <div className="border-t border-[#27272A] bg-[#111116] p-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 font-mono text-xs text-[#71717A]">
+              <span className="h-2 w-2 rounded-full bg-[#8B5CF6]" />
               <span>Language: {challenge.language}</span>
             </div>
 
@@ -404,16 +409,16 @@ export default function InteractivePlayground() {
         </div>
 
         {/* Right Side: Execution & AI Evaluation Telemetry (5 cols) */}
-        <div className="lg:col-span-5 bg-ink-900/60 p-5 flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-[#14141B] p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-ink-600">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#27272A]">
               <div className="flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-violet-400" />
-                <span className="font-sans text-xs uppercase tracking-wider text-mist-300 font-semibold">
+                <Terminal className="h-4 w-4 text-[#8B5CF6]" />
+                <span className="font-mono text-xs uppercase tracking-wider text-[#FAFAFA] font-semibold">
                   Evaluation Engine
                 </span>
               </div>
-              <span className="font-sans text-xs font-medium text-mist-400">
+              <span className="font-mono text-xs font-medium text-[#71717A]">
                 {isRunning ? "PROCESSING" : completed ? "VERIFIED" : "STANDBY"}
               </span>
             </div>
@@ -423,7 +428,7 @@ export default function InteractivePlayground() {
               {[
                 { title: "Sandbox compilation", desc: "Judge0 isolated Linux container" },
                 { title: "Unit test suite", desc: "4/4 edge cases validated" },
-                { title: "Senior AI code review", desc: "Gemini / Groq architectural audit" },
+                { title: "Senior AI code review", desc: "Staff AI architectural audit" },
               ].map((st, i) => {
                 const isPast = stepIndex > i;
                 const isCurrent = stepIndex === i;
@@ -431,24 +436,24 @@ export default function InteractivePlayground() {
                   <div key={i} className="flex items-start gap-3">
                     <div className="mt-0.5 relative flex items-center justify-center">
                       {isCurrent ? (
-                        <span className="h-4 w-4 rounded-full border border-violet-400 flex items-center justify-center">
-                          <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+                        <span className="h-4 w-4 rounded-full border border-[#8B5CF6] flex items-center justify-center">
+                          <span className="h-2 w-2 rounded-full bg-[#8B5CF6] animate-pulse" />
                         </span>
                       ) : isPast ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                        <CheckCircle2 className="h-4 w-4 text-[#34D399]" />
                       ) : (
-                        <span className="h-4 w-4 rounded-full border border-ink-500 bg-ink-800" />
+                        <span className="h-4 w-4 rounded-full border border-[#27272A] bg-[#18181F]" />
                       )}
                     </div>
                     <div>
                       <p
                         className={`text-xs font-sans font-medium ${
-                          isPast ? "text-mist-100" : isCurrent ? "text-violet-300" : "text-mist-500"
+                          isPast ? "text-[#FAFAFA]" : isCurrent ? "text-[#C4B5FD]" : "text-[#71717A]"
                         }`}
                       >
                         {st.title}
                       </p>
-                      <p className="text-[11px] text-mist-400 font-sans">{st.desc}</p>
+                      <p className="text-[11px] text-[#71717A] font-sans">{st.desc}</p>
                     </div>
                   </div>
                 );
@@ -465,31 +470,31 @@ export default function InteractivePlayground() {
                   className="space-y-4"
                 >
                   {/* Score & Verdict Banner */}
-                  <div className="p-4 rounded-xl purple-comp flex items-center justify-between">
+                  <div className="p-4 rounded-[12px] border border-[#8B5CF6]/30 bg-[#211635] flex items-center justify-between">
                     <div>
-                      <p className="text-[11px] font-sans font-semibold uppercase text-violet-300">Verdict</p>
-                      <h4 className="font-display font-semibold text-white text-base">
+                      <p className="text-[11px] font-mono font-semibold uppercase text-[#A78BFA]">Verdict</p>
+                      <h4 className="font-display font-semibold text-[#FAFAFA] text-base">
                         {challenge.aiReview.verdict}
                       </h4>
                     </div>
                     <div className="text-right">
-                      <span className="font-display text-2xl font-bold text-white">
+                      <span className="font-mono text-2xl font-bold text-[#FAFAFA]">
                         {challenge.aiReview.score}
                       </span>
-                      <span className="font-sans text-xs text-violet-300/80">/100</span>
+                      <span className="font-mono text-xs text-[#A78BFA]">/100</span>
                     </div>
                   </div>
 
                   {/* Strengths */}
-                  <div className="p-3.5 rounded-lg border border-white/[0.08] bg-[#0c0d14] space-y-2">
-                    <p className="text-[11px] font-sans font-semibold text-mist-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Zap className="h-3 w-3 text-violet-400" />
+                  <div className="p-3.5 rounded-[10px] border border-[#27272A] bg-[#18181F] space-y-2">
+                    <p className="text-[11px] font-mono font-semibold text-[#FAFAFA] uppercase tracking-wider flex items-center gap-1.5">
+                      <Zap className="h-3 w-3 text-[#8B5CF6]" />
                       Key Strengths Identified
                     </p>
-                    <ul className="space-y-1.5 text-xs text-mist-300 font-sans">
+                    <ul className="space-y-1.5 text-xs text-[#A1A1AA] font-sans">
                       {challenge.aiReview.strengths.map((str, sIdx) => (
                         <li key={sIdx} className="flex items-start gap-2">
-                          <span className="text-emerald-400 mt-0.5">✓</span>
+                          <span className="text-[#34D399] mt-0.5">✓</span>
                           <span>{str}</span>
                         </li>
                       ))}
@@ -497,31 +502,31 @@ export default function InteractivePlayground() {
                   </div>
 
                   {/* Issued Badge Preview */}
-                  <div className="p-3.5 rounded-xl purple-comp flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-violet-500/20 border border-violet-400/40 flex items-center justify-center shrink-0">
-                      <Award className="h-5 w-5 text-violet-300" />
+                  <div className="p-3.5 rounded-[12px] border border-[#8B5CF6]/30 bg-[#211635] flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-[8px] bg-[#38245C] border border-[#8B5CF6]/40 flex items-center justify-center shrink-0">
+                      <Award className="h-5 w-5 text-[#C4B5FD]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-sans font-semibold uppercase text-emerald-400 flex items-center gap-1">
+                      <span className="text-[10px] font-mono font-semibold uppercase text-[#34D399] flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" /> Badge Minted
                       </span>
-                      <p className="font-display text-xs font-semibold text-mist-100 truncate">
+                      <p className="font-display text-xs font-semibold text-[#FAFAFA] truncate">
                         {challenge.aiReview.badgeTitle}
                       </p>
                     </div>
                   </div>
                 </motion.div>
               ) : isRunning ? (
-                <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-ink-600 rounded-xl">
-                  <RefreshCw className="h-8 w-8 text-violet-400 animate-spin mb-3" />
-                  <p className="text-xs font-sans font-medium text-mist-200">Executing sandbox verification...</p>
-                  <p className="text-[11px] font-sans text-mist-400 mt-1">Collecting stdout & AI critique</p>
+                <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-[#27272A] rounded-[12px] bg-[#111116]">
+                  <RefreshCw className="h-8 w-8 text-[#8B5CF6] animate-spin mb-3" />
+                  <p className="text-xs font-sans font-medium text-[#FAFAFA]">Executing sandbox verification...</p>
+                  <p className="text-[11px] font-sans text-[#71717A] mt-1">Collecting stdout & AI critique</p>
                 </div>
               ) : (
-                <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-ink-600 rounded-xl bg-ink-800/20">
-                  <Terminal className="h-8 w-8 text-mist-600 mb-2" />
-                  <p className="text-xs font-sans font-medium text-mist-400">Ready to execute</p>
-                  <p className="text-[11px] font-sans text-mist-500 mt-1 max-w-xs">
+                <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-[#27272A] rounded-[12px] bg-[#111116]">
+                  <Terminal className="h-8 w-8 text-[#71717A] mb-2" />
+                  <p className="text-xs font-sans font-medium text-[#A1A1AA]">Ready to execute</p>
+                  <p className="text-[11px] font-sans text-[#71717A] mt-1 max-w-xs">
                     Click "Run Sandboxed Verification" to watch the automated evaluation pipeline in action.
                   </p>
                 </div>
@@ -529,9 +534,9 @@ export default function InteractivePlayground() {
             </AnimatePresence>
           </div>
 
-          <div className="pt-4 border-t border-ink-600 flex items-center justify-between text-[11px] font-sans font-medium text-mist-500">
-            <span>Judge0 v1.13 Isolated</span>
-            <span>Gemini 1.5 Pro</span>
+          <div className="pt-4 border-t border-[#27272A] flex items-center justify-between text-[11px] font-mono text-[#71717A]">
+            <span>Judge0 V8 Isolated Sandbox</span>
+            <span>Deterministic AI Scoring</span>
           </div>
         </div>
       </div>

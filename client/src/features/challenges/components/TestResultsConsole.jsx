@@ -17,7 +17,6 @@ import {
   Trash2,
   Send,
   AlertTriangle,
-  Sparkles,
 } from "lucide-react";
 
 export default function TestResultsConsole({
@@ -94,29 +93,29 @@ export default function TestResultsConsole({
 
   return (
     <div
-      className={`border-t border-white/[0.08] bg-[#0c0d12] flex flex-col transition-all duration-200 ease-out relative z-30 shrink-0 select-none ${
+      className={`border-t border-[#27272A] bg-[#0D0D12] flex flex-col transition-all duration-200 ease-out relative z-30 shrink-0 select-none ${
         isMaximized ? "h-[85%]" : "h-[48%]"
       }`}
     >
-      {/* Progress hairline */}
-      <div className="h-0.5 w-full bg-white/[0.06] overflow-hidden shrink-0">
+      {/* Brand Progress hairline */}
+      <div className="h-0.5 w-full bg-[#27272A] overflow-hidden shrink-0">
         <div
-          className="h-full bg-gradient-to-r from-violet-500 via-purple-400 to-emerald-400 transition-all duration-300"
+          className="h-full bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA] transition-all duration-300"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
       {/* Header Tabs bar */}
-      <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#07090F] border-b border-white/[0.08] shrink-0 text-xs font-mono">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#09090B] border-b border-[#27272A] shrink-0 text-xs font-mono">
         <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar">
           {/* Test cases tab */}
           <button
             type="button"
             onClick={() => setActiveTab("tests")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors shrink-0 ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "tests"
-                ? "bg-violet-500/20 text-violet-300 font-medium border border-violet-500/30"
-                : "text-mist-400 hover:text-mist-200"
+                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
+                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
             }`}
           >
             <span>Test Cases</span>
@@ -124,10 +123,10 @@ export default function TestResultsConsole({
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
                   failedCount > 0
-                    ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                    ? "bg-[#F87171]/20 text-[#F87171] border border-[#F87171]/30"
                     : revealedCount === totalCount
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                    ? "bg-[#34D399]/20 text-[#34D399] border border-[#34D399]/30"
+                    : "bg-[#FBBF24]/20 text-[#FBBF24] border border-[#FBBF24]/30"
                 }`}
               >
                 {passedCount}/{totalCount}
@@ -135,48 +134,48 @@ export default function TestResultsConsole({
             )}
           </button>
 
-          {/* Terminal / Output tab */}
+          {/* Terminal tab */}
           <button
             type="button"
             onClick={() => setActiveTab("terminal")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors shrink-0 ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "terminal"
-                ? "bg-violet-500/20 text-violet-300 font-medium border border-violet-500/30"
-                : "text-mist-400 hover:text-mist-200"
+                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
+                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
             }`}
           >
-            <Terminal className="h-3.5 w-3.5 text-violet-400" />
+            <Terminal className="h-3.5 w-3.5 text-[#8B5CF6]" />
             <span>Terminal</span>
             {terminalLogs.length > 0 && (
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#34D399]" />
             )}
           </button>
 
-          {/* Custom Input Playground Tab */}
+          {/* Custom Input Tab */}
           <button
             type="button"
             onClick={() => setActiveTab("custom")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors shrink-0 ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "custom"
-                ? "bg-violet-500/20 text-violet-300 font-medium border border-violet-500/30"
-                : "text-mist-400 hover:text-mist-200"
+                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
+                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
             }`}
           >
-            <Code2 className="h-3.5 w-3.5 text-mist-400" />
+            <Code2 className="h-3.5 w-3.5 text-[#A1A1AA]" />
             <span>Custom Input</span>
           </button>
 
-          {/* AI Static Audit tab */}
+          {/* AI Telemetry tab */}
           <button
             type="button"
             onClick={() => setActiveTab("ai")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors shrink-0 ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "ai"
-                ? "bg-violet-500/20 text-violet-300 font-medium border border-violet-500/30"
-                : "text-mist-400 hover:text-mist-200"
+                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
+                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
             }`}
           >
-            <BrainCircuit className="h-3.5 w-3.5 text-violet-400" />
+            <BrainCircuit className="h-3.5 w-3.5 text-[#8B5CF6]" />
             <span className="hidden sm:inline">Telemetry & Insights</span>
             <span className="sm:hidden">Telemetry</span>
           </button>
@@ -185,8 +184,8 @@ export default function TestResultsConsole({
         {/* Right controls */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {isRunning && (
-            <div className="flex items-center gap-1.5 text-[11px] font-mono text-amber-300 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
-              <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#FBBF24] px-2 py-0.5 rounded bg-[#FBBF24]/10 border border-[#FBBF24]/20">
+              <Loader2 className="h-3 w-3 animate-spin text-[#FBBF24]" />
               <span className="hidden sm:inline">Running sandbox…</span>
             </div>
           )}
@@ -195,10 +194,10 @@ export default function TestResultsConsole({
             <button
               type="button"
               onClick={onRunTests}
-              className="flex items-center gap-1 px-2 py-1 rounded text-[11px] font-mono text-mist-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded-[8px] text-[11px] font-mono text-[#A1A1AA] hover:text-[#FAFAFA] bg-[#14141B] hover:bg-[#20202A] border border-[#27272A] transition-colors"
               title="Rerun test suites (⌘+Enter)"
             >
-              <RotateCcw className="h-3 w-3 text-amber-400" />
+              <RotateCcw className="h-3 w-3 text-[#FBBF24]" />
               <span className="hidden sm:inline">Run Tests</span>
             </button>
           )}
@@ -206,7 +205,7 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={() => setIsMaximized((prev) => !prev)}
-            className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors"
+            className="p-1 rounded-[8px] text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
             title={isMaximized ? "Restore height" : "Maximize height"}
           >
             {isMaximized ? (
@@ -219,7 +218,7 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors"
+            className="p-1 rounded-[8px] text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
             title="Close test panel"
           >
             <ChevronDown className="h-4 w-4" />
@@ -228,19 +227,19 @@ export default function TestResultsConsole({
       </div>
 
       {/* Main Tab Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3 sm:p-4 bg-[#07080c] text-xs font-mono select-text">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3 sm:p-4 bg-[#0D0D12] text-xs font-mono select-text">
         {/* TAB 1: TEST CASES */}
         {activeTab === "tests" && (
           <div className="space-y-2">
             {compileError && (
-              <div className="p-3 rounded-lg border border-rose-500/40 bg-rose-500/10 text-rose-200 flex items-start justify-between gap-3 text-xs mb-3">
+              <div className="p-3 rounded-[10px] border border-[#F87171]/40 bg-[#F87171]/10 text-[#F87171] flex items-start justify-between gap-3 text-xs mb-3">
                 <div className="flex items-start gap-2 min-w-0">
-                  <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-4 w-4 text-[#F87171] shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-rose-300 block mb-0.5">
+                    <span className="font-semibold text-[#FAFAFA] block mb-0.5">
                       Execution / Compilation Error
                     </span>
-                    <pre className="text-[11px] font-mono text-rose-200/90 whitespace-pre-wrap">
+                    <pre className="text-[11px] font-mono text-[#F87171] whitespace-pre-wrap">
                       {compileError}
                     </pre>
                   </div>
@@ -248,7 +247,7 @@ export default function TestResultsConsole({
                 <button
                   type="button"
                   onClick={() => setActiveTab("terminal")}
-                  className="px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[10px] shrink-0 border border-rose-500/30 transition-colors"
+                  className="px-2 py-1 rounded-[8px] bg-[#F87171]/20 hover:bg-[#F87171]/30 text-[#FAFAFA] text-[10px] shrink-0 border border-[#F87171]/30 transition-colors"
                 >
                   View in Terminal →
                 </button>
@@ -256,7 +255,7 @@ export default function TestResultsConsole({
             )}
 
             {testCases.length === 0 ? (
-              <div className="p-6 text-center text-mist-500 text-xs">
+              <div className="p-6 text-center text-[#71717A] text-xs">
                 No test cases available for this challenge. Click "Run Tests" to execute against the sandbox.
               </div>
             ) : (
@@ -268,14 +267,14 @@ export default function TestResultsConsole({
                 return (
                   <div
                     key={tc.id || idx}
-                    className={`rounded-lg border transition-all duration-150 overflow-hidden ${
+                    className={`rounded-[10px] border transition-all duration-150 overflow-hidden ${
                       !isRevealed && !isCurrent
-                        ? "border-white/[0.04] bg-[#05070B] opacity-40"
+                        ? "border-[#27272A] bg-[#14141B] opacity-40"
                         : isCurrent
-                        ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20"
+                        ? "border-[#FBBF24]/40 bg-[#FBBF24]/5 ring-1 ring-[#FBBF24]/20"
                         : tc.passed
-                        ? "border-emerald-500/20 bg-emerald-500/[0.04] hover:border-emerald-500/40"
-                        : "border-rose-500/30 bg-rose-500/10 hover:border-rose-500/50"
+                        ? "border-[#34D399]/25 bg-[#34D399]/5 hover:border-[#34D399]/40"
+                        : "border-[#F87171]/30 bg-[#F87171]/10 hover:border-[#F87171]/50"
                     }`}
                   >
                     {/* Case summary row */}
@@ -288,29 +287,29 @@ export default function TestResultsConsole({
                       <div className="flex items-center gap-2.5 min-w-0">
                         {/* Status indicator */}
                         {isCurrent ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400 shrink-0" />
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FBBF24] shrink-0" />
                         ) : isRevealed ? (
                           tc.passed ? (
-                            <div className="h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                            <div className="h-4 w-4 rounded-full bg-[#34D399]/20 text-[#34D399] flex items-center justify-center shrink-0 border border-[#34D399]/30">
                               <Check className="h-2.5 w-2.5 stroke-[3]" />
                             </div>
                           ) : (
-                            <div className="h-4 w-4 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/30">
+                            <div className="h-4 w-4 rounded-full bg-[#F87171]/20 text-[#F87171] flex items-center justify-center shrink-0 border border-[#F87171]/30">
                               <X className="h-2.5 w-2.5 stroke-[3]" />
                             </div>
                           )
                         ) : (
-                          <div className="h-3 w-3 rounded-full bg-white/10 shrink-0" />
+                          <div className="h-3 w-3 rounded-full bg-[#27272A] shrink-0" />
                         )}
 
                         {/* Title */}
                         {tc.isHidden ? (
-                          <div className="flex items-center gap-1.5 text-mist-400 truncate">
-                            <Lock className="h-3 w-3 text-amber-400/80 shrink-0" />
-                            <span className="font-semibold text-amber-300">
+                          <div className="flex items-center gap-1.5 text-[#A1A1AA] truncate">
+                            <Lock className="h-3 w-3 text-[#FBBF24] shrink-0" />
+                            <span className="font-semibold text-[#FBBF24]">
                               Hidden Case #{idx + 1}
                             </span>
-                            <span className="text-[10px] text-mist-500 font-mono">
+                            <span className="text-[10px] text-[#71717A] font-mono">
                               (Anti-cheat validation)
                             </span>
                           </div>
@@ -319,9 +318,9 @@ export default function TestResultsConsole({
                             className={`truncate font-mono ${
                               isRevealed
                                 ? tc.passed
-                                  ? "text-mist-200"
-                                  : "text-rose-300 font-medium"
-                                : "text-mist-500"
+                                  ? "text-[#FAFAFA]"
+                                  : "text-[#F87171] font-medium"
+                                : "text-[#71717A]"
                             }`}
                           >
                             {tc.name || `Test Case #${idx + 1}`}
@@ -331,14 +330,14 @@ export default function TestResultsConsole({
 
                       <div className="flex items-center gap-2.5 shrink-0">
                         {isRevealed && tc.runtime && (
-                          <span className="text-[10.5px] font-mono text-mist-500 px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                          <span className="text-[10.5px] font-mono text-[#71717A] px-1.5 py-0.5 rounded bg-[#14141B] border border-[#27272A]">
                             {tc.runtime}
                           </span>
                         )}
                         {isRevealed && (
                           <button
                             type="button"
-                            className="text-mist-500 hover:text-mist-300"
+                            className="text-[#71717A] hover:text-[#FAFAFA]"
                             title="Toggle details"
                           >
                             {isExpanded ? (
@@ -353,43 +352,43 @@ export default function TestResultsConsole({
 
                     {/* Expanded test details */}
                     {isExpanded && isRevealed && (
-                      <div className="p-3 bg-[#05070B] border-t border-white/[0.06] space-y-2.5">
+                      <div className="p-3 bg-[#111116] border-t border-[#27272A] space-y-2.5">
                         {tc.isHidden ? (
-                          <div className="p-2.5 rounded bg-[#07080c] border border-white/[0.05] text-mist-400 text-[11px] leading-relaxed">
-                            <span className="text-amber-400 font-semibold">🔒 Input & expected output are masked</span> to safeguard anti-cheat validation.
-                            <div className="mt-1 text-emerald-400 font-mono text-[10.5px]">
+                          <div className="p-2.5 rounded-[8px] bg-[#14141B] border border-[#27272A] text-[#A1A1AA] text-[11px] leading-relaxed">
+                            <span className="text-[#FBBF24] font-semibold">🔒 Input & expected output are masked</span> to safeguard anti-cheat validation.
+                            <div className="mt-1 text-[#34D399] font-mono text-[10.5px]">
                               ✓ Runtime constraint verified in sandbox: {tc.runtime || "11ms"}
                             </div>
                           </div>
                         ) : (
                           <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                              <div className="p-2 rounded bg-[#07080c] border border-white/[0.05]">
-                                <span className="text-mist-500 text-[9.5px] uppercase block mb-1">
+                              <div className="p-2 rounded-[8px] bg-[#14141B] border border-[#27272A]">
+                                <span className="text-[#71717A] text-[9.5px] uppercase block mb-1">
                                   Input
                                 </span>
-                                <pre className="text-mist-200 whitespace-pre-wrap font-mono text-[11px]">
+                                <pre className="text-[#FAFAFA] whitespace-pre-wrap font-mono text-[11px]">
                                   {tc.input || "None"}
                                 </pre>
                               </div>
-                              <div className="p-2 rounded bg-[#07080c] border border-white/[0.05]">
-                                <span className="text-mist-500 text-[9.5px] uppercase block mb-1">
+                              <div className="p-2 rounded-[8px] bg-[#14141B] border border-[#27272A]">
+                                <span className="text-[#71717A] text-[9.5px] uppercase block mb-1">
                                   Expected Output
                                 </span>
-                                <pre className="text-emerald-400 whitespace-pre-wrap font-mono text-[11px]">
+                                <pre className="text-[#34D399] whitespace-pre-wrap font-mono text-[11px]">
                                   {tc.expectedOutput}
                                 </pre>
                               </div>
                             </div>
 
                             {!tc.passed && (
-                              <div className="p-2 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px]">
-                                <span className="text-rose-400 text-[9.5px] uppercase font-semibold block mb-1">
+                              <div className="p-2 rounded-[8px] bg-[#F87171]/10 border border-[#F87171]/30 text-[#F87171] text-[11px]">
+                                <span className="text-[#F87171] text-[9.5px] uppercase font-semibold block mb-1">
                                   Actual Output (Diff)
                                 </span>
                                 <div className="font-mono text-[11px]">
-                                  <span className="text-emerald-400 block">- Expected: {tc.expectedOutput}</span>
-                                  <span className="text-rose-400 block">+ Actual: {tc.actualOutput || "undefined"}</span>
+                                  <span className="text-[#34D399] block">- Expected: {tc.expectedOutput}</span>
+                                  <span className="text-[#F87171] block">+ Actual: {tc.actualOutput || "undefined"}</span>
                                 </div>
                               </div>
                             )}
@@ -408,24 +407,24 @@ export default function TestResultsConsole({
         {activeTab === "terminal" && (
           <div className="h-full flex flex-col font-mono text-xs">
             {/* Terminal Top Info Bar */}
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.06] text-mist-500 text-[11px]">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#27272A] text-[#71717A] text-[11px]">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-mist-300 font-semibold">Node.js V8 Sandboxed Runtime</span>
-                <span className="text-white/20">|</span>
+                <span className="h-2 w-2 rounded-full bg-[#34D399]" />
+                <span className="text-[#FAFAFA] font-semibold">Node.js V8 Sandboxed Runtime</span>
+                <span className="text-[#3F3F4A]">|</span>
                 <span>stdout & stderr stream</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleCopyTerminal}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded text-mist-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-[8px] text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
                   title="Copy terminal contents"
                 >
                   {copiedTerminal ? (
                     <>
-                      <Check className="h-3 w-3 text-emerald-400" />
-                      <span className="text-emerald-400 text-[10px]">Copied</span>
+                      <Check className="h-3 w-3 text-[#34D399]" />
+                      <span className="text-[#34D399] text-[10px]">Copied</span>
                     </>
                   ) : (
                     <>
@@ -438,7 +437,7 @@ export default function TestResultsConsole({
                   <button
                     type="button"
                     onClick={onClearTerminal}
-                    className="flex items-center gap-1 px-2 py-0.5 rounded text-mist-400 hover:text-rose-300 hover:bg-white/[0.06] transition-colors"
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-[8px] text-[#A1A1AA] hover:text-[#F87171] hover:bg-[#20202A] transition-colors"
                     title="Clear console output"
                   >
                     <Trash2 className="h-3 w-3" />
@@ -449,9 +448,9 @@ export default function TestResultsConsole({
             </div>
 
             {/* Terminal Body Log Stream */}
-            <div className="flex-1 min-h-[160px] overflow-y-auto space-y-1.5 p-2 bg-[#05060A] rounded-lg border border-white/[0.04]">
+            <div className="flex-1 min-h-[160px] overflow-y-auto space-y-1.5 p-2 bg-[#09090B] rounded-[8px] border border-[#27272A]">
               {terminalLogs.length === 0 ? (
-                <div className="text-mist-600 text-[11px] p-2 leading-relaxed">
+                <div className="text-[#71717A] text-[11px] p-2 leading-relaxed">
                   Terminal ready. Write `console.log(...)` in your code and hit "Run Tests" (⌘↵) to see live output stream here.
                   <br />
                   Or type any JavaScript expression in the REPL below.
@@ -467,11 +466,11 @@ export default function TestResultsConsole({
                       })
                     : "";
 
-                  let badgeColor = "text-sky-400 bg-sky-500/10 border-sky-500/30";
-                  if (type === "error") badgeColor = "text-rose-400 bg-rose-500/15 border-rose-500/30";
-                  else if (type === "warn") badgeColor = "text-amber-400 bg-amber-500/15 border-amber-500/30";
-                  else if (type === "info" || type === "sys") badgeColor = "text-violet-300 bg-violet-500/15 border-violet-500/30";
-                  else if (type === "success") badgeColor = "text-emerald-400 bg-emerald-500/15 border-emerald-500/30";
+                  let badgeColor = "text-[#60A5FA] bg-[#60A5FA]/10 border-[#60A5FA]/30";
+                  if (type === "error") badgeColor = "text-[#F87171] bg-[#F87171]/15 border-[#F87171]/30";
+                  else if (type === "warn") badgeColor = "text-[#FBBF24] bg-[#FBBF24]/15 border-[#FBBF24]/30";
+                  else if (type === "info" || type === "sys") badgeColor = "text-[#A78BFA] bg-[#211635] border-[#8B5CF6]/30";
+                  else if (type === "success") badgeColor = "text-[#34D399] bg-[#34D399]/15 border-[#34D399]/30";
 
                   return (
                     <div
@@ -479,7 +478,7 @@ export default function TestResultsConsole({
                       className="flex items-start gap-2 text-[11.5px] leading-relaxed font-mono"
                     >
                       {time && (
-                        <span className="text-mist-600 select-none shrink-0 text-[10px] mt-0.5">
+                        <span className="text-[#52525B] select-none shrink-0 text-[10px] mt-0.5">
                           {time}
                         </span>
                       )}
@@ -491,14 +490,14 @@ export default function TestResultsConsole({
                       <pre
                         className={`flex-1 whitespace-pre-wrap break-all ${
                           type === "error"
-                            ? "text-rose-300"
+                            ? "text-[#F87171]"
                             : type === "warn"
-                            ? "text-amber-300"
+                            ? "text-[#FBBF24]"
                             : type === "success"
-                            ? "text-emerald-300 font-semibold"
+                            ? "text-[#34D399] font-semibold"
                             : type === "sys"
-                            ? "text-violet-300"
-                            : "text-mist-200"
+                            ? "text-[#C4B5FD]"
+                            : "text-[#FAFAFA]"
                         }`}
                       >
                         {log.text}
@@ -512,20 +511,20 @@ export default function TestResultsConsole({
 
             {/* Interactive Terminal REPL Prompt at Bottom */}
             <form onSubmit={handleReplSubmit} className="mt-2 flex items-center gap-2">
-              <div className="flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-[#05060A] focus-within:border-violet-500/80 transition-colors">
-                <span className="text-violet-400 font-bold select-none text-xs">$</span>
+              <div className="flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] border border-[#27272A] bg-[#111116] focus-within:border-[#8B5CF6] transition-colors">
+                <span className="text-[#8B5CF6] font-bold select-none text-xs">$</span>
                 <input
                   type="text"
                   value={replInput}
                   onChange={(e) => setReplInput(e.target.value)}
                   placeholder="Evaluate expression... e.g. new TokenBucket(10, 2).allow(3)"
-                  className="w-full bg-transparent text-mist-100 placeholder:text-mist-600 text-xs focus:outline-none font-mono"
+                  className="w-full bg-transparent text-[#FAFAFA] placeholder:text-[#71717A] text-xs focus:outline-none font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={!replInput.trim()}
-                className="btn-specular-primary px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-white disabled:opacity-40 flex items-center gap-1"
+                className="bg-[#8B5CF6] hover:bg-[#7C3AED] px-3 py-1.5 rounded-[10px] text-xs font-mono font-medium text-white disabled:opacity-40 flex items-center gap-1 transition-colors"
                 title="Execute expression in workspace sandbox"
               >
                 <Send className="h-3 w-3" />
@@ -540,10 +539,10 @@ export default function TestResultsConsole({
           <div className="space-y-4 max-w-2xl font-mono text-xs">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-mist-400 text-[11px] uppercase tracking-wider block">
+                <label className="text-[#A1A1AA] text-[11px] uppercase tracking-wider block">
                   Custom Input Payload
                 </label>
-                <span className="text-mist-500 text-[10px]">
+                <span className="text-[#71717A] text-[10px]">
                   Pass arbitrary JSON or arguments to your solution
                 </span>
               </div>
@@ -552,7 +551,7 @@ export default function TestResultsConsole({
                 value={customInput}
                 onChange={(e) => setCustomInput && setCustomInput(e.target.value)}
                 placeholder='e.g. {"capacity": 20, "refillRate": 5, "tokens": 3}'
-                className="w-full rounded-lg border border-white/[0.08] bg-[#0c0d12] p-3 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none font-mono"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] p-3 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:outline-none font-mono"
               />
             </div>
 
@@ -561,23 +560,23 @@ export default function TestResultsConsole({
                 type="button"
                 onClick={onRunCustomTest}
                 disabled={isRunningCustom}
-                className="btn-frosted-glass flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono text-mist-100 hover:text-white transition-colors disabled:opacity-50"
+                className="btn-secondary flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono text-[#FAFAFA] hover:text-white transition-colors disabled:opacity-50"
               >
                 {isRunningCustom ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FBBF24]" />
                 ) : (
-                  <Play className="h-3.5 w-3.5 text-amber-400 fill-current" />
+                  <Play className="h-3.5 w-3.5 text-[#FBBF24] fill-current" />
                 )}
                 <span>Run Custom Test</span>
               </button>
             </div>
 
             {customOutput && (
-              <div className="rounded-lg border border-white/[0.08] bg-[#0c0d12] p-3 space-y-1.5">
-                <span className="text-mist-500 text-[10px] uppercase tracking-wider block">
+              <div className="rounded-[10px] border border-[#27272A] bg-[#14141B] p-3 space-y-1.5">
+                <span className="text-[#71717A] text-[10px] uppercase tracking-wider block">
                   Execution Output
                 </span>
-                <pre className="text-emerald-400 whitespace-pre-wrap font-mono text-[11.5px]">
+                <pre className="text-[#34D399] whitespace-pre-wrap font-mono text-[11.5px]">
                   {customOutput}
                 </pre>
               </div>
@@ -588,32 +587,32 @@ export default function TestResultsConsole({
         {/* TAB 4: TELEMETRY & STATIC ANALYSIS */}
         {activeTab === "ai" && (
           <div className="space-y-3 font-mono text-xs max-w-2xl">
-            <div className="rounded-xl border border-violet-500/20 bg-[#0e1017] p-3.5 text-mist-100">
-              <div className="flex items-center gap-2 mb-1.5 text-violet-300 font-semibold">
+            <div className="rounded-[12px] border border-[#8B5CF6]/30 bg-[#18181F] p-3.5 text-[#FAFAFA]">
+              <div className="flex items-center gap-2 mb-1.5 text-[#A78BFA] font-semibold">
                 <BrainCircuit className="h-4 w-4" />
                 <span className="font-mono">Real-Time AST Telemetry</span>
               </div>
-              <p className="text-mist-300 text-[11.5px] leading-relaxed">
+              <p className="text-[#A1A1AA] text-[11.5px] leading-relaxed">
                 Live sandbox confirmed constant delta time arithmetic with zero unbounded loops. Formal multi-parameter scoring and rubric verification will execute when you submit your solution.
               </p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
-                <span className="text-mist-500 text-[10px] block">Time Complexity</span>
-                <span className="text-emerald-400 font-semibold">O(1) Constant</span>
+              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
+                <span className="text-[#71717A] text-[10px] block">Time Complexity</span>
+                <span className="text-[#34D399] font-semibold">O(1) Constant</span>
               </div>
-              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
-                <span className="text-mist-500 text-[10px] block">Space Complexity</span>
-                <span className="text-emerald-400 font-semibold">O(1) Auxiliary</span>
+              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
+                <span className="text-[#71717A] text-[10px] block">Space Complexity</span>
+                <span className="text-[#34D399] font-semibold">O(1) Auxiliary</span>
               </div>
-              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
-                <span className="text-mist-500 text-[10px] block">Syntax Status</span>
-                <span className="text-sky-400 font-semibold">{compileError ? "Issues Found" : "Valid AST"}</span>
+              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
+                <span className="text-[#71717A] text-[10px] block">Syntax Status</span>
+                <span className="text-[#60A5FA] font-semibold">{compileError ? "Issues Found" : "Valid AST"}</span>
               </div>
-              <div className="p-2.5 rounded-lg border border-white/[0.05] bg-[#0c0d12]">
-                <span className="text-mist-500 text-[10px] block">Audit Readiness</span>
-                <span className="text-violet-300 font-semibold">Ready (~90+)</span>
+              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
+                <span className="text-[#71717A] text-[10px] block">Audit Readiness</span>
+                <span className="text-[#C4B5FD] font-semibold">Ready (~90+)</span>
               </div>
             </div>
           </div>

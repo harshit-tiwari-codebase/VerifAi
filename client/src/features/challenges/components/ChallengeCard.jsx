@@ -12,19 +12,19 @@ import Button from "../../../components/ui/Button.jsx";
 
 const DIFFICULTY_CONFIG = {
   easy: {
-    dot: "bg-emerald-400",
-    badge: "border-emerald-500/25 bg-emerald-500/10 text-emerald-300",
-    glow: "hover:shadow-[0_0_40px_rgba(16,185,129,0.10)]",
+    dot: "bg-[#4ADE80]",
+    badge: "border-[#4ADE80]/30 bg-[#4ADE80]/10 text-[#4ADE80]",
+    glow: "",
   },
   medium: {
-    dot: "bg-amber-400",
-    badge: "border-amber-500/25 bg-amber-500/10 text-amber-300",
-    glow: "hover:shadow-[0_0_40px_rgba(245,158,11,0.10)]",
+    dot: "bg-[#FBBF24]",
+    badge: "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]",
+    glow: "",
   },
   hard: {
-    dot: "bg-rose-400",
-    badge: "border-rose-500/25 bg-rose-500/10 text-rose-300",
-    glow: "hover:shadow-[0_0_40px_rgba(244,63,94,0.10)]",
+    dot: "bg-[#F87171]",
+    badge: "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]",
+    glow: "",
   },
 };
 
@@ -40,7 +40,7 @@ const CATEGORY_LABELS = {
 function Badge({ children, className = "", ...props }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-2.5 py-1 text-[11px] font-medium leading-none ${className}`}
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-[8px] border px-2.5 py-0.5 text-[11px] font-mono leading-none ${className}`}
       {...props}
     >
       {children}
@@ -57,7 +57,7 @@ function IconActionButton({ label, onClick, hoverClass, children }) {
         onClick();
       }}
       aria-label={label}
-      className={`rounded-lg p-2 text-mist-600 transition-colors duration-200 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0D14] ${hoverClass}`}
+      className={`rounded-[8px] p-2 text-[#71717A] transition-colors duration-150 hover:bg-[#27272A] hover:text-[#FAFAFA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] ${hoverClass}`}
     >
       {children}
     </button>
@@ -98,25 +98,18 @@ export default function ChallengeCard({
     <article
       aria-labelledby={`challenge-title-${challengeId}`}
       onClick={() => onView(challenge)}
-      className={`
-        group relative flex h-full cursor-pointer flex-col overflow-hidden
-        rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#10141D] to-[#0A0D14] p-4
-        transition-all duration-300 ease-out
-        hover:-translate-y-0.5 hover:border-violet-500/35
-        motion-reduce:transform-none motion-reduce:transition-none
-        ${diffConfig.glow}
-      `}
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[14px] border border-[#27272A] bg-[#18181F] p-4 transition-all duration-150 ease-out hover:bg-[#20202A] hover:border-[#3F3F4A] hover:shadow-[0_0_24px_rgba(139,92,246,0.12)] motion-reduce:transform-none motion-reduce:transition-none"
     >
       <div className="flex h-full flex-col justify-between gap-4">
         <div>
-          {/* top meta row */}
+          {/* Top meta row */}
           <div className="mb-3 flex items-start justify-between gap-2">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
               <Badge className={diffConfig.badge}>
                 <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${diffConfig.dot}`} />
                 <span className="capitalize">{challenge?.difficulty || "easy"}</span>
               </Badge>
-              <Badge className="min-w-0 truncate border-white/[0.08] bg-white/[0.04] text-mist-300">
+              <Badge className="min-w-0 truncate border-[#27272A] bg-[#14141B] text-[#A1A1AA]">
                 {categoryName}
               </Badge>
             </div>
@@ -124,15 +117,15 @@ export default function ChallengeCard({
             <Badge
               className={`shrink-0 ${
                 challenge?.executionType === "both"
-                  ? "border-violet-500/30 bg-violet-500/10 text-violet-300"
+                  ? "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]"
                   : isTestCase
-                  ? "border-cyan-500/20 bg-cyan-500/[0.06] text-cyan-300"
-                  : "border-sky-500/20 bg-sky-500/[0.06] text-sky-300"
+                  ? "border-[#60A5FA]/30 bg-[#60A5FA]/10 text-[#60A5FA]"
+                  : "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]"
               }`}
               aria-label={`Execution type: ${challenge?.executionType || "both"}`}
             >
               {challenge?.executionType === "both" ? (
-                <BrainCircuit aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2] text-violet-400" />
+                <BrainCircuit aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2] text-[#8B5CF6]" />
               ) : isTestCase ? (
                 <TestTube2 aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2]" />
               ) : (
@@ -149,20 +142,20 @@ export default function ChallengeCard({
           </div>
 
           {hasBadge && (
-            <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.08] px-2.5 py-1 text-[10.5px] font-medium text-emerald-300">
+            <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-[8px] border border-[#34D399]/30 bg-[#34D399]/10 px-2.5 py-0.5 text-[10.5px] font-medium text-[#34D399]">
               <ShieldCheck aria-hidden="true" className="h-3 w-3" />
-              <span>Verified</span>
+              <span>Verified Passed</span>
             </div>
           )}
 
           <h3
             id={`challenge-title-${challengeId}`}
-            className="line-clamp-1 text-[16px] font-semibold leading-snug tracking-tight text-white transition-colors duration-200 group-hover:text-violet-200"
+            className="line-clamp-1 text-[15px] font-semibold leading-snug tracking-tight text-[#FAFAFA] transition-colors duration-150 group-hover:text-[#C4B5FD]"
           >
             {challengeTitle}
           </h3>
 
-          <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-relaxed text-mist-500">
+          <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-relaxed text-[#A1A1AA]">
             {challenge?.description || "No description provided."}
           </p>
 
@@ -171,13 +164,13 @@ export default function ChallengeCard({
               {challenge.tags.slice(0, 3).map((tag, idx) => (
                 <span
                   key={`${tag}-${idx}`}
-                  className="rounded-md bg-white/[0.03] px-2 py-1 text-[10.5px] text-mist-500 transition-colors group-hover:text-mist-400"
+                  className="rounded-[6px] border border-[#27272A] bg-[#14141B] px-2 py-0.5 text-[10.5px] font-mono text-[#71717A] transition-colors group-hover:text-[#A1A1AA]"
                 >
                   #{tag}
                 </span>
               ))}
               {challenge.tags.length > 3 && (
-                <span className="text-[10.5px] text-mist-700" aria-label={`${challenge.tags.length - 3} additional tags`}>
+                <span className="text-[10.5px] font-mono text-[#52525B]" aria-label={`${challenge.tags.length - 3} additional tags`}>
                   +{challenge.tags.length - 3}
                 </span>
               )}
@@ -185,25 +178,25 @@ export default function ChallengeCard({
           )}
         </div>
 
-        {/* footer */}
-        <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] pt-3">
-          <div className="flex min-w-0 items-center gap-2 text-[11px] text-mist-500">
+        {/* Footer */}
+        <div className="flex items-center justify-between gap-3 border-t border-[#27272A] pt-3">
+          <div className="flex min-w-0 items-center gap-2 text-[11px] text-[#71717A]">
             <span
               aria-hidden="true"
-              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-violet-500/15 text-[9.5px] font-semibold text-violet-300"
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#211635] text-[9.5px] font-semibold text-[#C4B5FD] border border-[#8B5CF6]/30"
             >
               {(challenge?.createdBy?.name || "V")[0].toUpperCase()}
             </span>
             <span className="truncate">{challenge?.createdBy?.name || "VerifAI Standard"}</span>
           </div>
 
-          <div className="flex shrink-0 items-center gap-0.5">
+          <div className="flex shrink-0 items-center gap-1">
             {canManage && (
               <>
                 <IconActionButton
                   label={`Edit challenge: ${challengeTitle}`}
                   onClick={() => onEdit(challenge)}
-                  hoverClass="hover:text-mist-200 focus-visible:ring-violet-400/70"
+                  hoverClass="hover:text-[#FAFAFA] focus-visible:ring-[#8B5CF6]"
                 >
                   <Edit2 aria-hidden="true" className="h-3.5 w-3.5 stroke-[1.5]" />
                 </IconActionButton>
@@ -211,7 +204,7 @@ export default function ChallengeCard({
                 <IconActionButton
                   label={`Delete challenge: ${challengeTitle}`}
                   onClick={() => onDelete(challenge)}
-                  hoverClass="hover:!bg-rose-500/[0.08] hover:text-rose-400 focus-visible:ring-rose-400/70"
+                  hoverClass="hover:!bg-[#F87171]/15 hover:text-[#F87171] focus-visible:ring-[#F87171]"
                 >
                   <Trash2 aria-hidden="true" className="h-3.5 w-3.5 stroke-[1.5]" />
                 </IconActionButton>
@@ -220,23 +213,14 @@ export default function ChallengeCard({
 
             <Button
               as={Link}
-              to={`/challenges/${challenge?.slug || challenge?._id || "rate-limiter"}`}
-              variant="ghost"
+              to={`/challenges/${challenge?.slug || challenge?._id}`}
+              onClick={(e) => e.stopPropagation()}
+              variant="verify"
               size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              aria-label={`Solve challenge: ${challengeTitle}`}
-              className="
-                !ml-1 !rounded-lg !border-none !bg-violet-500 !px-3 !py-1.5
-                font-medium text-[11.5px] !text-white
-                transition-colors duration-200
-                hover:!bg-violet-400
-                focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-violet-400/70 focus-visible:!ring-offset-2 focus-visible:!ring-offset-[#0A0D14]
-              "
+              className="!py-1 !px-2.5 !text-[11px] font-mono font-medium"
             >
               Solve
-              <ArrowUpRight aria-hidden="true" className="ml-1 h-3 w-3" />
+              <ArrowUpRight className="h-3 w-3 stroke-[2]" />
             </Button>
           </div>
         </div>

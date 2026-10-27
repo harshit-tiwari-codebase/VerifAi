@@ -7,8 +7,6 @@ import {
   Cpu,
   BrainCircuit,
   Sparkles,
-  Layers,
-  ShieldCheck,
 } from "lucide-react";
 import { createChallenge, updateChallenge } from "../api/challengeApi.js";
 import Button from "../../../components/ui/Button.jsx";
@@ -34,7 +32,7 @@ const EXECUTION_MODES = [
     value: "both",
     label: "Automated Tests + AI Review (Both)",
     badge: "Recommended",
-    badgeColor: "border-violet-500/30 bg-violet-500/10 text-violet-300",
+    badgeColor: "border-[#8B5CF6]/40 bg-[#211635] text-[#C4B5FD]",
     description: "Evaluates automated test cases in the sandbox AND performs in-depth AI architectural review.",
     icon: Sparkles,
   },
@@ -42,7 +40,7 @@ const EXECUTION_MODES = [
     value: "testcases",
     label: "Automated Tests Only",
     badge: "Judge0 / Sandbox",
-    badgeColor: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+    badgeColor: "border-[#34D399]/40 bg-[#34D399]/10 text-[#34D399]",
     description: "Pure test-case verification comparing stdout/return values against expected outputs.",
     icon: Cpu,
   },
@@ -50,7 +48,7 @@ const EXECUTION_MODES = [
     value: "review_only",
     label: "AI Architectural Review Only",
     badge: "AI Evaluator",
-    badgeColor: "border-sky-500/30 bg-sky-500/10 text-sky-300",
+    badgeColor: "border-[#60A5FA]/40 bg-[#60A5FA]/10 text-[#60A5FA]",
     description: "Evaluates code against custom AI rubrics, Big-O complexity, and design patterns.",
     icon: BrainCircuit,
   },
@@ -249,12 +247,12 @@ export default function ChallengeEditorModal({
         if (e.target === e.currentTarget && !loading) onClose();
       }}
     >
-      <div className="relative flex flex-col w-full max-w-3xl h-[90vh] max-h-[850px] bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden font-sans">
+      <div className="relative flex flex-col w-full max-w-3xl h-[90vh] max-h-[850px] bg-[#18181F] border border-[#27272A] rounded-2xl shadow-2xl overflow-hidden font-sans">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-[#07090F] select-none">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#27272A] bg-[#14141B] select-none">
           <div className="flex items-center gap-2">
-            <ModernCodeIcon className="h-4 w-4 text-violet-400" />
-            <span className="font-mono text-sm font-semibold text-mist-100">
+            <ModernCodeIcon className="h-4 w-4 text-[#A78BFA]" />
+            <span className="font-mono text-sm font-semibold text-[#FAFAFA]">
               {isEditing ? "Edit Challenge Specification" : "Author New Challenge"}
             </span>
           </div>
@@ -262,17 +260,17 @@ export default function ChallengeEditorModal({
           <button
             onClick={onClose}
             disabled={loading}
-            className="rounded-lg p-1 text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors disabled:opacity-50"
+            className="rounded-lg p-1 text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors disabled:opacity-50"
           >
             <X className="h-4 w-4 stroke-[1.75]" />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden bg-[#18181F]">
           <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
             {formError && (
-              <div className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs font-mono text-rose-300">
+              <div className="flex items-center gap-2 rounded-[10px] border border-[#F87171]/30 bg-[#F87171]/10 p-3 text-xs font-mono text-[#F87171]">
                 <AlertCircle className="h-3.5 w-3.5 shrink-0 stroke-[1.75]" />
                 <span>{formError}</span>
               </div>
@@ -280,15 +278,15 @@ export default function ChallengeEditorModal({
 
             {/* Title */}
             <div>
-              <label className="block text-xs font-mono text-mist-400 mb-1.5">
-                Challenge Title <span className="text-rose-400">*</span>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Challenge Title <span className="text-[#F87171]">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Distributed Token Bucket Rate Limiter"
-                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3.5 py-2 text-sm text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none font-mono"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3.5 py-2 text-sm text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
                 required
               />
             </div>
@@ -296,14 +294,14 @@ export default function ChallengeEditorModal({
             {/* Difficulty, Category */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-mono text-mist-400 mb-1.5">Difficulty</label>
+                <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">Difficulty</label>
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none capitalize font-mono"
+                  className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none capitalize font-mono transition-colors"
                 >
                   {DIFFICULTIES.map((d) => (
-                    <option key={d.value} value={d.value}>
+                    <option key={d.value} value={d.value} className="bg-[#18181F] text-[#FAFAFA]">
                       {d.label}
                     </option>
                   ))}
@@ -311,14 +309,14 @@ export default function ChallengeEditorModal({
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-mist-400 mb-1.5">Category</label>
+                <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3 py-2 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none font-mono"
+                  className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
                 >
                   {CATEGORIES.map((c) => (
-                    <option key={c.value} value={c.value}>
+                    <option key={c.value} value={c.value} className="bg-[#18181F] text-[#FAFAFA]">
                       {c.label}
                     </option>
                   ))}
@@ -328,8 +326,8 @@ export default function ChallengeEditorModal({
 
             {/* Execution & Verification Mode Selector Cards */}
             <div>
-              <label className="block text-xs font-mono text-mist-400 mb-2">
-                Verification & Evaluation Strategy <span className="text-violet-400">*</span>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-2 font-medium">
+                Verification & Evaluation Strategy <span className="text-[#8B5CF6]">*</span>
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -341,10 +339,10 @@ export default function ChallengeEditorModal({
                     <div
                       key={mode.value}
                       onClick={() => setExecutionType(mode.value)}
-                      className={`cursor-pointer rounded-xl border p-3 flex flex-col justify-between transition-all duration-200 ${
+                      className={`cursor-pointer rounded-xl border p-3 flex flex-col justify-between transition-all duration-150 ${
                         isSelected
-                          ? "border-violet-500/60 bg-violet-950/20 ring-1 ring-violet-500/40 shadow-lg shadow-violet-900/10"
-                          : "border-white/[0.06] bg-[#070A10]/70 hover:border-white/[0.12] hover:bg-[#090D17]"
+                          ? "border-[#8B5CF6] bg-[#211635] ring-1 ring-[#8B5CF6]/40 shadow-sm"
+                          : "border-[#27272A] bg-[#14141B] hover:border-[#3F3F4A] hover:bg-[#18181F]"
                       }`}
                     >
                       <div className="space-y-1.5">
@@ -352,15 +350,15 @@ export default function ChallengeEditorModal({
                           <div
                             className={`p-1.5 rounded-lg border ${
                               isSelected
-                                ? "border-violet-400/30 bg-violet-500/20 text-violet-300"
-                                : "border-white/[0.06] bg-white/[0.02] text-mist-400"
+                                ? "border-[#8B5CF6]/40 bg-[#38245C] text-[#C4B5FD]"
+                                : "border-[#27272A] bg-[#18181F] text-[#A1A1AA]"
                             }`}
                           >
                             <Icon className="h-3.5 w-3.5" />
                           </div>
 
                           <span
-                            className={`rounded-full px-2 py-0.2 text-[9.5px] font-mono border ${mode.badgeColor}`}
+                            className={`rounded-full px-2 py-0.5 text-[9.5px] font-mono border ${mode.badgeColor}`}
                           >
                             {mode.badge}
                           </span>
@@ -368,14 +366,14 @@ export default function ChallengeEditorModal({
 
                         <div
                           className={`text-xs font-mono font-semibold ${
-                            isSelected ? "text-white" : "text-mist-200"
+                            isSelected ? "text-[#FAFAFA]" : "text-[#A1A1AA]"
                           }`}
                         >
                           {mode.label}
                         </div>
                       </div>
 
-                      <p className="text-[10.5px] font-mono text-mist-500 mt-2 leading-relaxed">
+                      <p className="text-[10.5px] font-mono text-[#71717A] mt-2 leading-relaxed">
                         {mode.description}
                       </p>
                     </div>
@@ -386,22 +384,22 @@ export default function ChallengeEditorModal({
 
             {/* Description */}
             <div>
-              <label className="block text-xs font-mono text-mist-400 mb-1.5">
-                Description & Problem Requirements <span className="text-rose-400">*</span>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Description & Problem Requirements <span className="text-[#F87171]">*</span>
               </label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Explain the problem statement, edge cases, requirements, and architectural constraints..."
-                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] p-3 text-xs text-mist-200 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none font-mono"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] p-3 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
                 required
               />
             </div>
 
             {/* Tags */}
             <div>
-              <label className="block text-xs font-mono text-mist-400 mb-1.5">
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
                 Tags (comma separated)
               </label>
               <input
@@ -409,32 +407,32 @@ export default function ChallengeEditorModal({
                 value={tagsInput}
                 onChange={(e) => setTagsInput(e.target.value)}
                 placeholder="redis, concurrency, rate-limiting, algorithms"
-                className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] px-3.5 py-2 text-xs text-mist-200 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none font-mono"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3.5 py-2 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
               />
             </div>
 
             {/* Starter Code */}
             <div>
-              <label className="block text-xs font-mono text-mist-400 mb-1.5">
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
                 Starter Code Template
               </label>
               <textarea
                 rows={4}
                 value={starterCode}
                 onChange={(e) => setStarterCode(e.target.value)}
-                className="w-full rounded-lg border border-white/[0.07] bg-[#05070B] p-3 font-mono text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#0D0D12] p-3 font-mono text-xs text-[#E4E4E7] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none"
                 spellCheck="false"
               />
             </div>
 
-            {/* AI Evaluation Criteria (Rendered when 'both' or 'review_only' is selected) */}
+            {/* AI Evaluation Criteria */}
             {showAiCriteria && (
-              <div className="rounded-xl border border-violet-500/20 bg-violet-950/[0.08] p-4 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-mono text-violet-300 font-semibold">
-                  <BrainCircuit className="h-4 w-4 text-violet-400" />
+              <div className="rounded-xl border border-[#8B5CF6]/30 bg-[#211635] p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#C4B5FD] font-semibold">
+                  <BrainCircuit className="h-4 w-4 text-[#A78BFA]" />
                   <span>AI Evaluation Criteria & Rubric</span>
                 </div>
-                <p className="text-[10.5px] font-mono text-mist-400 leading-relaxed">
+                <p className="text-[10.5px] font-mono text-[#A1A1AA] leading-relaxed">
                   Rules and architectural benchmarks the senior AI reviewer uses to assess code quality, Big-O complexity, and boundary hardening.
                 </p>
                 <textarea
@@ -442,19 +440,19 @@ export default function ChallengeEditorModal({
                   value={evaluationCriteria}
                   onChange={(e) => setEvaluationCriteria(e.target.value)}
                   placeholder="e.g. Check for O(1) time complexity, mathematical token replenishment, boundary condition clamping, and clean object encapsulation..."
-                  className="w-full rounded-lg border border-white/[0.07] bg-[#070A10] p-3 text-xs text-mist-200 focus:border-violet-500/80 focus:outline-none font-mono"
+                  className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] p-3 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
                   required={executionType === "review_only"}
                 />
               </div>
             )}
 
-            {/* Test Cases Builder (Rendered when 'both' or 'testcases' is selected) */}
+            {/* Test Cases Builder */}
             {showTestCases && (
-              <div className="rounded-xl border border-white/[0.06] bg-[#070A10] p-4 space-y-3">
+              <div className="rounded-xl border border-[#27272A] bg-[#14141B] p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Cpu className="h-4 w-4 text-emerald-400" />
-                    <span className="text-xs font-mono uppercase tracking-wider text-mist-300 font-semibold">
+                    <Cpu className="h-4 w-4 text-[#34D399]" />
+                    <span className="text-xs font-mono uppercase tracking-wider text-[#FAFAFA] font-semibold">
                       Automated Test Cases ({testCases.length})
                     </span>
                   </div>
@@ -462,7 +460,7 @@ export default function ChallengeEditorModal({
                   <button
                     type="button"
                     onClick={handleAddTestCase}
-                    className="inline-flex items-center gap-1 rounded-lg border border-white/[0.08] bg-[#0C101A] px-2.5 py-1 text-xs font-mono text-mist-300 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 rounded-[8px] border border-[#27272A] bg-[#20202A] px-2.5 py-1 text-xs font-mono text-[#FAFAFA] hover:border-[#3F3F4A] hover:bg-[#27272A] transition-colors"
                   >
                     <Plus className="h-3 w-3 stroke-[2]" />
                     <span>Add Case</span>
@@ -473,21 +471,21 @@ export default function ChallengeEditorModal({
                   {testCases.map((tc, idx) => (
                     <div
                       key={idx}
-                      className="rounded-lg border border-white/[0.06] bg-[#0B0F19] p-3 text-xs font-mono space-y-2"
+                      className="rounded-lg border border-[#27272A] bg-[#111116] p-3 text-xs font-mono space-y-2"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-violet-400 font-semibold text-[11px]">
+                        <span className="text-[#A78BFA] font-semibold text-[11px]">
                           CASE #{idx + 1}
                         </span>
                         <div className="flex items-center gap-3">
-                          <label className="inline-flex items-center gap-1.5 text-[11px] text-mist-400 cursor-pointer">
+                          <label className="inline-flex items-center gap-1.5 text-[11px] text-[#A1A1AA] cursor-pointer">
                             <input
                               type="checkbox"
                               checked={tc.isHidden}
                               onChange={(e) =>
                                 handleTestCaseChange(idx, "isHidden", e.target.checked)
                               }
-                              className="rounded border-white/20 text-violet-600 focus:ring-0"
+                              className="rounded border-[#27272A] bg-[#18181F] accent-[#8B5CF6] cursor-pointer"
                             />
                             <span>Hidden anti-cheat case</span>
                           </label>
@@ -495,7 +493,7 @@ export default function ChallengeEditorModal({
                             <button
                               type="button"
                               onClick={() => handleRemoveTestCase(idx)}
-                              className="text-mist-500 hover:text-rose-400 transition-colors"
+                              className="text-[#71717A] hover:text-[#F87171] transition-colors"
                             >
                               <Trash2 className="h-3 w-3 stroke-[1.5]" />
                             </button>
@@ -510,7 +508,7 @@ export default function ChallengeEditorModal({
                             value={tc.input}
                             onChange={(e) => handleTestCaseChange(idx, "input", e.target.value)}
                             placeholder="Input: e.g. 10, 2, 5"
-                            className="w-full rounded border border-white/[0.06] bg-[#05070B] px-2.5 py-1 text-xs text-mist-200 focus:outline-none focus:border-violet-500"
+                            className="w-full rounded border border-[#27272A] bg-[#0D0D12] px-2.5 py-1 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:outline-none focus:border-[#8B5CF6]"
                           />
                         </div>
                         <div>
@@ -521,7 +519,7 @@ export default function ChallengeEditorModal({
                               handleTestCaseChange(idx, "expectedOutput", e.target.value)
                             }
                             placeholder="Expected output: e.g. true"
-                            className="w-full rounded border border-white/[0.06] bg-[#05070B] px-2.5 py-1 text-xs text-mist-200 focus:outline-none focus:border-violet-500"
+                            className="w-full rounded border border-[#27272A] bg-[#0D0D12] px-2.5 py-1 text-xs text-[#34D399] placeholder:text-[#71717A] focus:outline-none focus:border-[#8B5CF6]"
                             required
                           />
                         </div>
@@ -534,7 +532,7 @@ export default function ChallengeEditorModal({
 
             {/* Reference Solution */}
             <div>
-              <label className="block text-xs font-mono text-mist-400 mb-1.5">
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
                 Staff Reference Solution (Confidential benchmark)
               </label>
               <textarea
@@ -542,7 +540,7 @@ export default function ChallengeEditorModal({
                 value={referenceSolution}
                 onChange={(e) => setReferenceSolution(e.target.value)}
                 placeholder="// Hidden staff benchmark solution"
-                className="w-full rounded-lg border border-white/[0.07] bg-[#05070B] p-3 font-mono text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#0D0D12] p-3 font-mono text-xs text-[#E4E4E7] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none"
                 spellCheck="false"
               />
             </div>
@@ -554,16 +552,16 @@ export default function ChallengeEditorModal({
                 id="isPublishedCheck"
                 checked={isPublished}
                 onChange={(e) => setIsPublished(e.target.checked)}
-                className="rounded border-white/20 text-violet-600 focus:ring-0"
+                className="rounded border-[#27272A] bg-[#111116] accent-[#8B5CF6] cursor-pointer"
               />
-              <label htmlFor="isPublishedCheck" className="text-xs font-mono text-mist-400 cursor-pointer">
+              <label htmlFor="isPublishedCheck" className="text-xs font-mono text-[#A1A1AA] cursor-pointer">
                 Publish immediately (if unchecked, saved as draft)
               </label>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-white/[0.08] bg-[#07090F]">
+          <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-[#27272A] bg-[#14141B]">
             <Button
               type="button"
               variant="ghost"

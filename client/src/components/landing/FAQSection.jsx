@@ -36,38 +36,40 @@ export default function FAQSection() {
   return (
     <section id="faq" className="container-xl py-24 relative">
       <div className="mb-16 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 font-sans text-xs font-medium mb-3">
-          <HelpCircle className="h-3.5 w-3.5" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[#A1A1AA] font-sans text-xs font-medium mb-3">
+          <HelpCircle className="h-3.5 w-3.5 text-[#8B5CF6]" />
           <span>Frequently Asked Questions</span>
         </div>
-        <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
+        <h2 className="text-3xl md:text-4xl font-semibold text-[#FAFAFA] font-display">
           Everything you need to know about VerifAI.
         </h2>
-        <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans">
+        <p className="mt-4 text-[#A1A1AA] text-base leading-relaxed font-sans">
           Have questions about the evaluation pipeline, sandboxing security, or public verification? We've got answers.
         </p>
       </div>
 
-      <div className="max-w-3xl space-y-4">
+      <div className="max-w-3xl space-y-3.5">
         {FAQS.map((faq, idx) => {
           const isOpen = openIdx === idx;
           return (
             <div
               key={idx}
-              className={`card overflow-hidden border transition-all duration-200 ${
-                isOpen ? "border-violet-500/40 bg-ink-800/60" : "border-ink-600 bg-ink-800/30"
+              className={`card overflow-hidden border rounded-xl transition-all duration-200 ${
+                isOpen ? "border-[#8B5CF6]/50 bg-[#18181F]" : "border-[#27272A] bg-[#14141B] hover:border-[#3F3F4A]"
               }`}
             >
               <button
                 onClick={() => setOpenIdx(isOpen ? -1 : idx)}
                 className="w-full p-5 md:p-6 text-left flex items-center justify-between gap-4"
               >
-                <span className="font-display font-semibold text-base text-mist-100">
+                <span className="font-display font-semibold text-base text-[#FAFAFA]">
                   {faq.question}
                 </span>
                 <span
-                  className={`h-7 w-7 rounded-lg border border-ink-600 bg-ink-900 flex items-center justify-center shrink-0 text-mist-400 transition-transform duration-300 ${
-                    isOpen ? "rotate-180 text-violet-400 border-violet-500/30" : ""
+                  className={`h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 transition-all duration-200 ${
+                    isOpen
+                      ? "border-[#8B5CF6]/40 bg-[#211635] text-[#C4B5FD] rotate-180"
+                      : "border-[#27272A] bg-[#20202A] text-[#71717A]"
                   }`}
                 >
                   <ChevronDown className="h-4 w-4" />
@@ -80,9 +82,9 @@ export default function FAQSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <div className="px-5 pb-6 md:px-6 text-sm text-mist-300 leading-relaxed border-t border-ink-600/50 pt-4 font-sans">
+                    <div className="px-5 pb-6 md:px-6 text-sm text-[#A1A1AA] leading-relaxed border-t border-[#27272A] pt-4 font-sans">
                       {faq.answer}
                     </div>
                   </motion.div>

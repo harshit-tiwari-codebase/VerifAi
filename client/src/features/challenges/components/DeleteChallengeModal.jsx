@@ -60,34 +60,34 @@ export default function DeleteChallengeModal({
         if (e.target === e.currentTarget && !loading) onClose();
       }}
     >
-      <div className="relative flex flex-col w-full max-w-md bg-[#0A0D15] border border-white/[0.08] rounded-2xl shadow-2xl p-6">
+      <div className="relative flex flex-col w-full max-w-md bg-[#18181F] border border-[#27272A] rounded-2xl shadow-2xl p-6">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2 text-rose-400">
+          <div className="flex items-center gap-2 text-[#F87171]">
             <AlertCircle className="h-5 w-5 stroke-[1.75]" />
-            <h3 className="font-mono text-sm font-semibold text-mist-100">
+            <h3 className="font-mono text-sm font-semibold text-[#FAFAFA]">
               Confirm Deletion
             </h3>
           </div>
           <button
             onClick={onClose}
             disabled={loading}
-            className="rounded-lg p-1 text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors disabled:opacity-50"
+            className="rounded-lg p-1 text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors disabled:opacity-50"
           >
             <X className="h-4 w-4 stroke-[1.75]" />
           </button>
         </div>
 
         <div className="mt-4">
-          <p className="text-xs text-mist-400 leading-relaxed font-sans">
+          <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
             Permanently delete{" "}
-            <span className="font-mono font-semibold text-mist-200">
+            <span className="font-mono font-semibold text-[#FAFAFA]">
               "{challenge.title}"
             </span>
             ? This action cannot be reversed.
           </p>
 
           {error && (
-            <p className="mt-3 text-xs font-mono text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg p-2.5">
+            <p className="mt-3 text-xs font-mono text-[#F87171] bg-[#F87171]/10 border border-[#F87171]/30 rounded-lg p-2.5">
               {error}
             </p>
           )}

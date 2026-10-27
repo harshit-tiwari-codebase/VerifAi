@@ -51,15 +51,11 @@ function XIcon({ className = "w-4.5 h-4.5" }) {
 
 export default function Footer() {
   return (
-    <footer className="relative bg-transparent text-mist-100 border-t border-white/[0.04] overflow-hidden select-none">
-      {/* =========================================================
-          1. TOP GIANT TRANSPARENT HOVER-GLOW WORDMARK
-      ========================================================== */}
+    <footer className="relative bg-[#09090B] text-[#FAFAFA] border-t border-[#27272A] overflow-hidden select-none">
+      {/* 1. TOP WORDMARK */}
       <CinematicTypography />
 
-      {/* =========================================================
-          2. BOTTOM CONTENT SECTION (Sheryians Layout)
-      ========================================================== */}
+      {/* 2. BOTTOM CONTENT SECTION */}
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 pt-6 pb-12">
         <div className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-16">
           {/* Left Column: Brand Logo & Social Icons */}
@@ -68,18 +64,18 @@ export default function Footer() {
               <VerifaiLogo size="lg" showWordmark={true} />
             </Link>
 
-            <p className="text-xs text-mist-400 font-sans leading-relaxed max-w-xs">
+            <p className="text-xs text-[#A1A1AA] font-sans leading-relaxed max-w-xs">
               Cryptographically verified proof of engineering craftsmanship. Built for production rigor, audited by Staff AI.
             </p>
 
-            {/* Social Icons Row (Instagram, LinkedIn, Discord, YouTube, X) */}
-            <div className="flex items-center gap-5 text-mist-400 pt-2">
+            {/* Social Icons Row */}
+            <div className="flex items-center gap-5 text-[#71717A] pt-2">
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-[#A78BFA] transition-colors duration-150"
               >
                 <InstagramIcon className="w-5 h-5" />
               </a>
@@ -89,7 +85,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-[#A78BFA] transition-colors duration-150"
               >
                 <LinkedinIcon className="w-5 h-5" />
               </a>
@@ -99,7 +95,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Discord"
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-[#A78BFA] transition-colors duration-150"
               >
                 <DiscordIcon className="w-5 h-5" />
               </a>
@@ -109,7 +105,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube"
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-[#A78BFA] transition-colors duration-150"
               >
                 <YoutubeIcon className="w-5 h-5" />
               </a>
@@ -119,7 +115,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="X (Twitter)"
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-[#A78BFA] transition-colors duration-150"
               >
                 <XIcon className="w-4.5 h-4.5" />
               </a>
@@ -130,29 +126,28 @@ export default function Footer() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-12 lg:gap-16 flex-1 w-full">
             {/* Column 1: ABOUT */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-white font-sans">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FAFAFA] font-sans">
                 About
               </h3>
-              <ul className="space-y-2.5 text-xs text-mist-400 font-sans">
+              <ul className="space-y-2.5 text-xs text-[#A1A1AA] font-sans">
                 <li>
-                  <Link to="/docs" className="hover:text-white transition-colors block">
+                  <Link to="/docs" className="hover:text-[#FAFAFA] transition-colors block">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <a href="mailto:support@verifai.io" className="hover:text-white transition-colors block">
+                  <a href="mailto:support@verifai.io" className="hover:text-[#FAFAFA] transition-colors block">
                     Support
                   </a>
                 </li>
                 <li>
-                  <Link to="/docs" className="hover:text-white transition-colors block">
+                  <Link to="/docs" className="hover:text-[#FAFAFA] transition-colors block">
                     Privacy Policy
                   </Link>
                 </li>
-               
                 <li>
-                  <Link to="/docs" className="hover:text-white transition-colors block">
-                    Terms and Condition
+                  <Link to="/docs" className="hover:text-[#FAFAFA] transition-colors block">
+                    Terms & Conditions
                   </Link>
                 </li>
               </ul>
@@ -160,61 +155,51 @@ export default function Footer() {
 
             {/* Column 2: COMPANY */}
             <div className="space-y-3">
-              <ul className="space-y-2.5 text-xs text-mist-400 font-sans">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FAFAFA] font-sans">
+                Platform
+              </h3>
+              <ul className="space-y-2.5 text-xs text-[#A1A1AA] font-sans">
                 <li>
-                  <Link to="/playground" className="hover:text-white transition-colors block">
-                    Resume Checker
+                  <Link to="/challenges" className="hover:text-[#FAFAFA] transition-colors block">
+                    Challenge Arena
                   </Link>
                 </li>
                 <li>
-                  <Link to="/leaderboard" className="hover:text-white transition-colors block">
-                    Hire From Us
-                  </Link>
-                </li>
-               
-               
-                <li>
-                  <Link to="/dashboard" className="hover:text-white transition-colors block">
-                    Submit Projects
+                  <Link to="/playground" className="hover:text-[#FAFAFA] transition-colors block">
+                    V8 Sandbox
                   </Link>
                 </li>
                 <li>
-                  <a href="mailto:feedback@verifai.io" className="hover:text-white transition-colors block">
-                    Feedback
-                  </a>
+                  <Link to="/leaderboard" className="hover:text-[#FAFAFA] transition-colors block">
+                    Leaderboard
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard" className="hover:text-[#FAFAFA] transition-colors block">
+                    Developer Dashboard
+                  </Link>
                 </li>
               </ul>
             </div>
 
             {/* Column 3: CONTACT */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-white font-sans">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FAFAFA] font-sans">
                 Contact
               </h3>
-              <div className="space-y-2.5 text-xs text-mist-400 font-sans leading-relaxed">
+              <div className="space-y-2.5 text-xs text-[#A1A1AA] font-sans leading-relaxed">
                 <div>
-                  <span className="text-white font-medium">Online: </span>
-                  <span className="text-mist-300">10am - 10pm</span>
-                  <span className="text-mist-400 ml-1">+91 90714XXXXX</span>
-                </div>
-
-                <div>
-                  <span className="text-white font-medium">Offline: </span>
-                  <span className="text-mist-300">11am - 8pm</span>
-                  <span className="text-mist-400 ml-1">+91 9691XXXXXX</span>
-                </div>
-
-                <div>
-                  <a
-                    href="mailto:hello@verifai.io"
-                    className="hover:text-white transition-colors text-mist-300 block"
-                  >
+                  <span className="text-[#FAFAFA] font-medium">Support: </span>
+                  <a href="mailto:hello@verifai.io" className="text-[#A78BFA] hover:underline">
                     hello@verifai.io
                   </a>
                 </div>
-
-                <div className="pt-1 text-mist-500">
-                  IPS ACADEMY, INDORE (MP), 
+                <div>
+                  <span className="text-[#FAFAFA] font-medium">Engineering Hub: </span>
+                  <span className="text-[#A1A1AA]">IPS Academy, Indore (MP)</span>
+                </div>
+                <div className="pt-1 text-[#71717A]">
+                  Autonomous V8 sandbox evaluation & cryptographic proof-of-work.
                 </div>
               </div>
             </div>
@@ -222,9 +207,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Hairline & Legal Bar */}
-        <div className="border-t border-white/[0.06] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-mist-500 font-sans">
+        <div className="border-t border-[#27272A] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#71717A] font-sans">
           <p>© {new Date().getFullYear()} VerifAI Inc. All rights reserved.</p>
-          <p className="text-mist-600">Proof of work, not claims of work.</p>
+          <p className="text-[#52525B]">Production-grade developer verification tooling.</p>
         </div>
       </div>
     </footer>

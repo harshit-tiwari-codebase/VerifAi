@@ -9,7 +9,6 @@ const STATS = [
     prefix: "< ",
     suffix: "s",
     detail: "From Monaco editor submit to verified badge",
-    tone: "verify",
   },
   {
     icon: Zap,
@@ -18,7 +17,6 @@ const STATS = [
     prefix: "",
     suffix: " Metrics",
     detail: "Correctness, time complexity, safety, style",
-    tone: "signal",
   },
   {
     icon: Cpu,
@@ -27,7 +25,6 @@ const STATS = [
     prefix: "",
     suffix: "%",
     detail: "Linux cgroups + seccomp micro-containers",
-    tone: "verify",
   },
   {
     icon: ShieldCheck,
@@ -36,7 +33,6 @@ const STATS = [
     prefix: "₹",
     suffix: " / month",
     detail: "Engineered on modern production free tiers",
-    tone: "signal",
   },
 ];
 
@@ -70,25 +66,22 @@ function StatCard({ stat, active }) {
   const Icon = stat.icon;
 
   return (
-    <div className="card p-6 border-ink-600 hover:border-violet-500/30 hover:shadow-[0_0_25px_rgba(147,51,234,0.08)] transition-all duration-300 relative overflow-hidden group">
-      {/* Subtle purple atmosphere */}
-      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-violet-600/10 blur-2xl group-hover:bg-violet-600/20 transition-colors" />
-
+    <div className="card p-6 border border-[#27272A] hover:border-[#3F3F4A] bg-[#18181F] hover:bg-[#20202A] rounded-2xl transition-all duration-200 relative overflow-hidden group">
       <div className="flex items-center justify-between mb-3">
-        <span className="font-display text-3xl md:text-4xl font-bold tracking-tight text-mist-100">
-          <span className="text-violet-400 font-semibold">{stat.prefix}</span>
+        <span className="font-display text-3xl md:text-4xl font-bold tracking-tight text-[#FAFAFA]">
+          <span className="text-[#8B5CF6] font-semibold">{stat.prefix}</span>
           {count}
-          <span className="text-mist-400 text-lg md:text-xl font-normal ml-0.5">
+          <span className="text-[#A1A1AA] text-lg md:text-xl font-normal ml-0.5">
             {stat.suffix}
           </span>
         </span>
-        <div className="h-9 w-9 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+        <div className="h-9 w-9 rounded-xl bg-[#211635] border border-[#8B5CF6]/30 flex items-center justify-center text-[#A78BFA]">
           <Icon className="h-4.5 w-4.5" />
         </div>
       </div>
 
-      <p className="font-display font-medium text-sm text-mist-200">{stat.label}</p>
-      <p className="text-xs text-mist-400 mt-1 font-sans">{stat.detail}</p>
+      <p className="font-display font-medium text-sm text-[#FAFAFA]">{stat.label}</p>
+      <p className="text-xs text-[#71717A] mt-1 font-sans">{stat.detail}</p>
     </div>
   );
 }
@@ -108,7 +101,7 @@ export default function Stats() {
           observer.disconnect();
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.3 }
     );
 
     observer.observe(el);
@@ -116,10 +109,10 @@ export default function Stats() {
   }, []);
 
   return (
-    <section ref={ref} className="container-xl py-12 relative">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {STATS.map((stat) => (
-          <StatCard key={stat.label} stat={stat} active={active} />
+    <section ref={ref} className="container-xl py-12 md:py-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+        {STATS.map((stat, idx) => (
+          <StatCard key={idx} stat={stat} active={active} />
         ))}
       </div>
     </section>

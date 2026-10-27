@@ -35,7 +35,7 @@ export default function ChallengesPage() {
   const urlDifficulty = searchParams.get("difficulty") || "all";
   const urlPage = Number(searchParams.get("page")) || 1;
 
-  // Local search input (for debounce — may differ from URL until debounce fires)
+  // Local search input
   const [searchInput, setSearchInput] = useState(urlSearch);
 
   const [challenges, setChallenges] = useState([]);
@@ -49,10 +49,8 @@ export default function ChallengesPage() {
   const [challengeToEdit, setChallengeToEdit] = useState(null);
   const [challengeToDelete, setChallengeToDelete] = useState(null);
 
-  // Abort controller ref for cancelling stale requests
   const abortRef = useRef(null);
 
-  // --- Helpers to update URL params ---
   const updateParams = useCallback(
     (updates) => {
       setSearchParams((prev) => {
@@ -70,7 +68,6 @@ export default function ChallengesPage() {
     [setSearchParams]
   );
 
-  // --- Debounced search: sync searchInput → URL after DEBOUNCE_MS ---
   useEffect(() => {
     const timer = setTimeout(() => {
       const trimmed = searchInput.trim();
@@ -79,16 +76,13 @@ export default function ChallengesPage() {
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [searchInput]); // intentionally only depend on searchInput
+  }, [searchInput]);
 
-  // Keep local input in sync if URL changes externally (e.g. back/forward)
   useEffect(() => {
     setSearchInput(urlSearch);
   }, [urlSearch]);
 
-  // --- Fetch challenges when URL filter params change ---
   useEffect(() => {
-    // Cancel any in-flight request
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -118,7 +112,6 @@ export default function ChallengesPage() {
     return () => controller.abort();
   }, [urlPage, urlCategory, urlDifficulty, urlSearch]);
 
-  // --- Filter handlers ---
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const trimmed = searchInput.trim();
@@ -145,10 +138,7 @@ export default function ChallengesPage() {
 
   const hasActiveFilters = urlSearch || urlCategory !== "all" || urlDifficulty !== "all";
 
-  // Refetch helper for after create/edit/delete
   const refetch = () => {
-    // Trigger re-fetch by bumping a dummy param (URL params haven't changed)
-    // Simplest: just re-call getChallenges inline
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -177,26 +167,26 @@ export default function ChallengesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-mist-100 flex flex-col justify-between selection:bg-violet-600/30">
+    <div className="min-h-screen bg-[#09090B] text-[#FAFAFA] flex flex-col justify-between selection:bg-[#38245C]">
       <div>
         <Navbar />
 
         <main className="container-xl py-8 sm:py-10 space-y-8">
           {/* Header Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#27272A] pb-6">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
                 <Link
                   to="/dashboard"
-                  className="inline-flex items-center gap-1 font-mono text-xs text-mist-400 hover:text-mist-100 transition-colors"
+                  className="inline-flex items-center gap-1 font-mono text-xs text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors"
                 >
                   ← Dashboard
                 </Link>
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-mist-100">
+              <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[#FAFAFA]">
                 Engineering Challenges
               </h1>
-              <p className="mt-1 text-xs font-mono text-mist-400">
+              <p className="mt-1 text-xs font-mono text-[#A1A1AA]">
                 Real-world concurrency, rate limits, schema migrations, and system design audited by AI.
               </p>
             </div>
@@ -217,15 +207,15 @@ export default function ChallengesPage() {
           </div>
 
           {/* Filter Toolbar */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-[#0c0d12] p-2.5">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-[14px] border border-[#27272A] bg-[#14141B] p-2.5">
             <form onSubmit={handleSearchSubmit} className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-mist-500 stroke-[1.75]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717A] stroke-[1.75]" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search challenges by title, keyword, or concept..."
-                className="w-full rounded-lg border border-white/[0.06] bg-[#07080c] pl-9 pr-8 py-1.5 text-xs text-mist-100 placeholder:text-mist-600 focus:border-violet-500/80 focus:outline-none"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] pl-9 pr-8 py-2 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:outline-none transition-colors"
                 aria-label="Search challenges"
               />
               {searchInput && (
@@ -235,7 +225,7 @@ export default function ChallengesPage() {
                     setSearchInput("");
                     updateParams({ search: "", page: 1 });
                   }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-mist-500 hover:text-mist-200 transition-colors"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#FAFAFA] transition-colors"
                   aria-label="Clear search"
                 >
                   <XIcon className="h-3 w-3 stroke-[2]" />
@@ -247,7 +237,7 @@ export default function ChallengesPage() {
               <select
                 value={urlCategory}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="rounded-lg border border-white/[0.06] bg-[#07080c] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none"
+                className="rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:outline-none transition-colors cursor-pointer"
                 aria-label="Filter by category"
               >
                 {CATEGORIES.map((c) => (
@@ -260,7 +250,7 @@ export default function ChallengesPage() {
               <select
                 value={urlDifficulty}
                 onChange={(e) => handleDifficultyChange(e.target.value)}
-                className="rounded-lg border border-white/[0.06] bg-[#07080c] px-3 py-1.5 text-xs text-mist-300 focus:border-violet-500/80 focus:outline-none capitalize"
+                className="rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:outline-none capitalize transition-colors cursor-pointer"
                 aria-label="Filter by difficulty"
               >
                 <option value="all">All Difficulties</option>
@@ -273,7 +263,7 @@ export default function ChallengesPage() {
                 <button
                   type="button"
                   onClick={handleClearFilters}
-                  className="rounded-lg px-2.5 py-1.5 text-xs font-mono text-mist-400 hover:text-rose-400 transition-colors"
+                  className="rounded-[10px] px-2.5 py-1.5 text-xs font-mono text-[#A1A1AA] hover:text-[#F87171] hover:bg-[#20202A] transition-colors"
                 >
                   Reset
                 </button>
@@ -288,23 +278,23 @@ export default function ChallengesPage() {
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <div
                     key={i}
-                    className="h-56 animate-pulse rounded-xl border border-white/[0.05] bg-[#0B0F19]/40 p-5 space-y-4"
+                    className="h-56 animate-pulse rounded-[14px] border border-[#27272A] bg-[#18181F] p-5 space-y-4"
                   />
                 ))}
               </div>
             ) : error ? (
-              <div className="rounded-xl border border-white/[0.08] bg-[#0B0F19] p-8 text-center">
-                <p className="text-xs font-mono text-rose-400">{error}</p>
+              <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-8 text-center">
+                <p className="text-xs font-mono text-[#F87171]">{error}</p>
                 <Button variant="ghost" size="sm" onClick={refetch} className="mt-4">
                   Retry
                 </Button>
               </div>
             ) : challenges.length === 0 ? (
-              <div className="rounded-xl border border-white/[0.06] bg-[#0B0F19]/60 p-12 text-center space-y-2">
-                <h3 className="font-display text-sm font-semibold text-mist-100">
+              <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-12 text-center space-y-2">
+                <h3 className="font-display text-sm font-semibold text-[#FAFAFA]">
                   No matching challenges found
                 </h3>
-                <p className="text-xs text-mist-400 max-w-sm mx-auto">
+                <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto">
                   Try loosening your filters or clearing search terms.
                 </p>
                 <Button variant="ghost" size="sm" onClick={handleClearFilters}>

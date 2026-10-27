@@ -1,12 +1,47 @@
 const TONES = {
+  // Brand
   verify:
-    "border-violet-400/40 bg-violet-500/10 text-violet-400 shadow-[0_0_12px_rgba(139,92,246,0.08)]",
-
+    "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]",
+  violet:
+    "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]",
   signal:
-    "border-purple-300/35 bg-purple-500/10 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.06)]",
+    "border-[#A78BFA]/30 bg-[#211635] text-[#A78BFA]",
+  premium:
+    "border-[#A78BFA]/30 bg-[#211635] text-[#A78BFA]",
 
+  // Semantic Status
+  accepted:
+    "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]",
+  success:
+    "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]",
+  wrong:
+    "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]",
+  error:
+    "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]",
+  runtime:
+    "border-[#FB7185]/30 bg-[#FB7185]/10 text-[#FB7185]",
+  warning:
+    "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]",
+  tle:
+    "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]",
+  running:
+    "border-[#60A5FA]/30 bg-[#60A5FA]/10 text-[#60A5FA]",
+  info:
+    "border-[#60A5FA]/30 bg-[#60A5FA]/10 text-[#60A5FA]",
+  pending:
+    "border-[#27272A] bg-[#14141B] text-[#A1A1AA]",
+
+  // Difficulty Levels
+  easy:
+    "border-[#4ADE80]/30 bg-[#4ADE80]/10 text-[#4ADE80]",
+  medium:
+    "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]",
+  hard:
+    "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]",
+
+  // Neutral
   neutral:
-    "border-ink-500 bg-ink-800 text-mist-300",
+    "border-[#27272A] bg-[#14141B] text-[#A1A1AA]",
 };
 
 export default function Badge({
@@ -16,7 +51,7 @@ export default function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-sans text-xs font-medium tracking-normal transition-all duration-200 ${TONES[tone]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-medium tracking-normal transition-colors duration-150 ${TONES[tone] || TONES.neutral} ${className}`}
     >
       {children}
     </span>

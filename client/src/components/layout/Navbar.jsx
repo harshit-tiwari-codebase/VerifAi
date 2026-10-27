@@ -63,9 +63,9 @@ export default function Navbar({ showNavigation = true }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-200 ${
         scrolled
-          ? "border-b border-white/[0.06] bg-black/80 backdrop-blur-xl py-3 shadow-lg shadow-black/40"
+          ? "border-b border-[#27272A] bg-[#0D0D12]/90 backdrop-blur-xl py-3 shadow-lg shadow-black/60"
           : "bg-transparent py-4"
       }`}
     >
@@ -78,70 +78,62 @@ export default function Navbar({ showNavigation = true }) {
           <VerifaiLogo size="md" />
         </Link>
 
-        {/* Center Navigation: Sheryians-inspired floating pill container */}
-        {showNavigation && <div className="hidden md:flex items-center rounded-xl border-x-2 border-t-2 border-white/[0.08] bg-[#0e1017]/80 backdrop-blur-md px-1 py-2">
-          <div
-            className="flex items-center gap-0.5"
-            onMouseLeave={() => setHoveredIdx(null)}
-          >
-            {navLinks.map((link, idx) => {
-              const isActive = link.active;
+        {/* Center Navigation: Floating pill container */}
+        {showNavigation && (
+          <div className="hidden md:flex items-center rounded-xl border border-[#27272A] bg-[#14141B]/90 backdrop-blur-md px-1.5 py-1">
+            <div
+              className="flex items-center gap-1"
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              {navLinks.map((link, idx) => {
+                const isActive = link.active;
 
-              return (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  onMouseEnter={() => setHoveredIdx(idx)}
-                  className="relative px-3.5 py-2 text-xs font-sans font-medium block transition-colors duration-200"
-                >
-                  {/* Active/Hover Pill */}
-                  {isActive && (
-                    <motion.span
-                      layoutId="navbarActivePill"
-                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                      className="absolute inset-0 rounded-lg bg-white/[0.08] border border-white/[0.08]"
-                    />
-                  )}
-                  {hoveredIdx === idx && !isActive && (
-                    <motion.span
-                      layoutId="navbarHoverPill"
-                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                      className="absolute inset-0 rounded-lg bg-white/[0.04]"
-                    />
-                  )}
-
-                  <span
-                    className={`relative z-10 transition-colors ${
-                      isActive
-                        ? "text-white font-semibold"
-                        : hoveredIdx === idx
-                        ? "text-mist-100"
-                        : "text-mist-400"
-                    }`}
+                return (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    onMouseEnter={() => setHoveredIdx(idx)}
+                    className="relative px-3.5 py-1.5 text-xs font-sans font-medium block transition-colors duration-150"
                   >
-                    {link.label}
-                  </span>
-                </Link>
-              );
-            })}
+                    {/* Active Pill: #211635 with subtle violet border */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="navbarActivePill"
+                        transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                        className="absolute inset-0 rounded-[8px] bg-[#211635] border border-[#8B5CF6]/30"
+                      />
+                    )}
+                    {hoveredIdx === idx && !isActive && (
+                      <motion.span
+                        layoutId="navbarHoverPill"
+                        transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                        className="absolute inset-0 rounded-[8px] bg-[#20202A]"
+                      />
+                    )}
+
+                    <span
+                      className={`relative z-10 transition-colors ${
+                        isActive
+                          ? "text-[#A78BFA] font-semibold"
+                          : hoveredIdx === idx
+                          ? "text-[#FAFAFA]"
+                          : "text-[#A1A1AA]"
+                      }`}
+                    >
+                      {link.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>}
+        )}
 
-        {/* Right Section: Profile Avatar (Sheryians purple circle with initial) or Auth */}
-        <div className="flex items-center gap-3 shrink-0 ">
+        {/* Right Section: Profile Avatar or Auth Buttons */}
+        <div className="flex items-center gap-3 shrink-0">
           {isAuthenticated ? (
-            <div className="flex items-center gap-2.5 ">
-              {/* <Button
-                as={Link}
-                to="/dashboard"
-                variant="verify"
-                size="sm"
-                className="hidden sm:inline-flex !rounded-lg !px-3.5 !py-1.5"
-              >
-                Dashboard
-              </Button> */}
-
-              {/* Purple Circle Avatar with Initial */}
+            <div className="flex items-center gap-2.5">
+              {/* Violet Circle Avatar with Initial */}
               <div className="relative">
                 <button
                   type="button"
@@ -149,13 +141,13 @@ export default function Navbar({ showNavigation = true }) {
                   aria-label="Open profile menu"
                   aria-expanded={profileMenuOpen}
                   onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
-                  className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-violet-500/40 transition-all group"
+                  className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[#8B5CF6]/50 transition-all group"
                 >
-                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white font-bold text-xs border border-white/20 shadow-[0_0_15px_rgba(147,51,234,0.35)] group-hover:scale-105 transition-transform">
+                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA] text-white font-bold text-xs border border-[#8B5CF6]/40 shadow-[0_0_16px_rgba(139,92,246,0.25)] group-hover:scale-105 transition-transform">
                     {userInitial}
-                    <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-black" />
+                    <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#34D399] ring-2 ring-[#0D0D12]" />
                   </span>
-                  <ChevronDown className="h-3.5 w-3.5 text-mist-500 group-hover:text-white transition-colors hidden sm:inline" />
+                  <ChevronDown className="h-3.5 w-3.5 text-[#71717A] group-hover:text-[#FAFAFA] transition-colors hidden sm:inline" />
                 </button>
 
                 <AnimatePresence>
@@ -164,33 +156,38 @@ export default function Navbar({ showNavigation = true }) {
                       initial={{ opacity: 0, y: -6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                      className="absolute right-0 top-12 z-50 w-48 overflow-hidden rounded-lg border border-white/[0.16] bg-[#0e0b0d] shadow-2xl shadow-black/50"
+                      className="absolute right-0 top-12 z-50 w-52 overflow-hidden rounded-xl border border-[#27272A] bg-[#18181F] shadow-2xl shadow-black/80"
                     >
-                      <div className="flex items-center gap-3 border-b border-white/[0.12] px-4 py-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-sm font-bold text-white">
+                      <div className="flex items-center gap-3 border-b border-[#27272A] px-4 py-3 bg-[#14141B]">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] text-sm font-bold text-white shadow-[0_0_12px_rgba(139,92,246,0.3)]">
                           {userInitial}
                         </span>
-                        <span className="truncate text-sm font-medium text-mist-100">
-                          {user?.name || "User"}
-                        </span>
+                        <div className="min-w-0">
+                          <span className="truncate text-sm font-medium text-[#FAFAFA] block">
+                            {user?.name || "Developer"}
+                          </span>
+                          <span className="truncate text-xs text-[#71717A] block">
+                            {user?.email || ""}
+                          </span>
+                        </div>
                       </div>
 
                       <Link
                         to="/dashboard"
                         onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-mist-200 transition-colors hover:bg-white/[0.06] hover:text-white"
+                        className="flex items-center gap-3 px-4 py-2.5 text-xs text-[#A1A1AA] transition-colors hover:bg-[#20202A] hover:text-[#FAFAFA]"
                       >
-                        <CircleUserRound className="h-6 w-6 text-mist-400" />
-                        Profile
+                        <CircleUserRound className="h-4 w-4 text-[#A78BFA]" />
+                        Dashboard Profile
                       </Link>
 
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-3 border-t border-white/[0.12] px-4 py-3 text-left text-sm text-mist-200 transition-colors hover:bg-rose-500/[0.08] hover:text-rose-400"
+                        className="flex w-full items-center gap-3 border-t border-[#27272A] px-4 py-2.5 text-left text-xs text-[#A1A1AA] transition-colors hover:bg-[#F87171]/10 hover:text-[#F87171]"
                       >
-                        <LogOut className="h-6 w-6 text-rose-500" />
-                        Logout
+                        <LogOut className="h-4 w-4 text-[#F87171]" />
+                        Sign Out
                       </button>
                     </motion.div>
                   )}
@@ -201,11 +198,11 @@ export default function Navbar({ showNavigation = true }) {
             <div className="hidden sm:flex items-center gap-2 font-sans text-xs font-medium">
               <Link
                 to="/login"
-                className="px-3 py-1.5 text-mist-400 hover:text-white transition-colors"
+                className="px-3 py-1.5 text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors"
               >
                 Sign in
               </Link>
-              <Button as={Link} to="/register" variant="verify" size="sm" className="!rounded-lg">
+              <Button as={Link} to="/register" variant="verify" size="sm">
                 Get verified
               </Button>
             </div>
@@ -215,7 +212,7 @@ export default function Navbar({ showNavigation = true }) {
           {showNavigation && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 rounded-lg border border-white/10 text-mist-300 hover:text-white hover:border-violet-500/40"
+              className="md:hidden p-1.5 rounded-[10px] border border-[#27272A] bg-[#14141B] text-[#A1A1AA] hover:text-[#FAFAFA] hover:border-[#8B5CF6]/50"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -231,7 +228,7 @@ export default function Navbar({ showNavigation = true }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-white/[0.08] bg-black/95 backdrop-blur-xl px-6 py-6 space-y-3 font-sans text-xs"
+            className="md:hidden border-b border-[#27272A] bg-[#0D0D12]/98 backdrop-blur-xl px-6 py-6 space-y-3 font-sans text-xs"
           >
             <div className="flex flex-col space-y-1">
               {navLinks.map((link) => (
@@ -239,10 +236,10 @@ export default function Navbar({ showNavigation = true }) {
                   key={link.label}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`rounded-lg px-3 py-2 transition-all ${
+                  className={`rounded-[10px] px-3 py-2 transition-all ${
                     link.active
-                      ? "bg-violet-600 text-white font-medium"
-                      : "text-mist-400 hover:text-white hover:bg-white/[0.04]"
+                      ? "bg-[#211635] text-[#A78BFA] border border-[#8B5CF6]/30 font-medium"
+                      : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
                   }`}
                 >
                   {link.label}
@@ -250,20 +247,20 @@ export default function Navbar({ showNavigation = true }) {
               ))}
             </div>
 
-            <div className="pt-2 border-t border-white/[0.08]">
+            <div className="pt-2 border-t border-[#27272A]">
               {isAuthenticated ? (
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between rounded-lg bg-[#0e1017] p-2.5 border border-white/[0.08]"
+                  className="flex items-center justify-between rounded-[10px] bg-[#18181F] p-2.5 border border-[#27272A]"
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-600 text-white font-bold text-xs">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#8B5CF6] text-white font-bold text-xs">
                       {userInitial}
                     </span>
-                    <span className="text-white font-medium text-xs">{user?.name || "Dashboard"}</span>
+                    <span className="text-[#FAFAFA] font-medium text-xs">{user?.name || "Dashboard"}</span>
                   </div>
-                  <span className="text-[11px] text-violet-400 font-medium">Open →</span>
+                  <span className="text-[11px] text-[#A78BFA] font-medium">Open →</span>
                 </Link>
               ) : (
                 <div className="flex flex-col gap-2 pt-1">

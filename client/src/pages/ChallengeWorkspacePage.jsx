@@ -610,40 +610,40 @@ export default function ChallengeWorkspacePage() {
   const activeAiReview = submissionResult?.evaluation || challenge.aiReview;
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-black text-mist-100 flex flex-col selection:bg-violet-600/30 font-sans">
+    <div className="h-screen w-screen overflow-hidden bg-[#09090B] text-[#FAFAFA] flex flex-col selection:bg-[#38245C] font-sans">
       {/* Top Workspace Header Bar */}
-      <header className="h-14 bg-black border-b border-white/[0.08] px-4 flex items-center justify-between gap-3 shrink-0 select-none z-10">
+      <header className="h-14 bg-[#0D0D12] border-b border-[#27272A] px-4 flex items-center justify-between gap-3 shrink-0 select-none z-10">
         {/* Left: Brand / Back to Challenges / Challenge Details */}
         <div className="flex items-center gap-3 min-w-0">
           <Link to="/" className="flex items-center gap-2 group mr-1">
             <VerifaiLogo size={24} />
           </Link>
 
-          <span className="text-white/20">/</span>
+          <span className="text-[#3F3F4A]">/</span>
 
           <Link
             to="/challenges"
-            className="flex items-center gap-1 font-mono text-xs text-mist-400 hover:text-mist-100 transition-colors shrink-0"
+            className="flex items-center gap-1 font-mono text-xs text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors shrink-0"
             title="Return to Challenges"
           >
             <span>Challenges</span>
           </Link>
 
-          <span className="text-white/20 hidden md:inline">/</span>
+          <span className="text-[#3F3F4A] hidden md:inline">/</span>
 
           <div className="flex items-center gap-2 min-w-0">
-            <h1 className="font-display text-xs sm:text-sm font-semibold text-white truncate">
+            <h1 className="font-display text-xs sm:text-sm font-semibold text-[#FAFAFA] truncate">
               {challenge?.title || "Distributed Token Bucket Rate Limiter"}
             </h1>
 
             {/* Difficulty Pill */}
             <span
-              className={`rounded-full px-2 py-0.5 text-[10.5px] font-mono font-medium border shrink-0 capitalize ${
+              className={`rounded-full px-2.5 py-0.5 text-[10.5px] font-mono font-medium border shrink-0 capitalize ${
                 challenge?.difficulty === "Hard"
-                  ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
+                  ? "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]"
                   : challenge?.difficulty === "Easy"
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                  : "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                  ? "border-[#4ADE80]/30 bg-[#4ADE80]/10 text-[#4ADE80]"
+                  : "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]"
               }`}
             >
               {challenge?.difficulty || "Medium"}
@@ -655,18 +655,18 @@ export default function ChallengeWorkspacePage() {
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Keystrokes counter */}
           {keystrokeCount > 0 && (
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-white/[0.08] bg-white/[0.02] text-[11px] font-mono text-mist-400">
-              <span className="text-mist-200 font-semibold">{keystrokeCount}</span>
-              <span className="text-mist-500">keys</span>
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[11px] font-mono text-[#A1A1AA]">
+              <span className="text-[#FAFAFA] font-semibold">{keystrokeCount}</span>
+              <span className="text-[#71717A]">keys</span>
             </div>
           )}
 
           {/* Elapsed Timer Chip */}
           <div
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-white/[0.08] bg-white/[0.03] text-[11px] font-mono text-mist-300"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[11px] font-mono text-[#A1A1AA]"
             title="Time elapsed on problem"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#8B5CF6]" />
             <span>{formatTimer(elapsedSeconds)}</span>
           </div>
 
@@ -681,14 +681,14 @@ export default function ChallengeWorkspacePage() {
                 setConsoleTab("terminal");
               }
             }}
-            className={`btn-frosted-glass flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] text-xs font-mono transition-colors border ${
               isConsoleOpen && consoleTab === "terminal"
-                ? "text-violet-300 border-violet-500/40 bg-violet-500/10"
-                : "text-mist-400"
+                ? "text-[#C4B5FD] border-[#8B5CF6]/50 bg-[#211635]"
+                : "text-[#A1A1AA] border-[#27272A] bg-[#14141B] hover:text-[#FAFAFA] hover:bg-[#20202A]"
             }`}
             title="Toggle terminal & execution logs (⌘+`)"
           >
-            <Terminal className="h-3.5 w-3.5 text-violet-400" />
+            <Terminal className="h-3.5 w-3.5 text-[#8B5CF6]" />
             <span className="hidden sm:inline">Terminal</span>
           </button>
 
@@ -703,14 +703,14 @@ export default function ChallengeWorkspacePage() {
                 setConsoleTab("tests");
               }
             }}
-            className={`btn-frosted-glass flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] text-xs font-mono transition-colors border ${
               isConsoleOpen && consoleTab === "tests"
-                ? "text-violet-300 border-violet-500/40 bg-violet-500/10"
-                : "text-mist-400"
+                ? "text-[#C4B5FD] border-[#8B5CF6]/50 bg-[#211635]"
+                : "text-[#A1A1AA] border-[#27272A] bg-[#14141B] hover:text-[#FAFAFA] hover:bg-[#20202A]"
             }`}
             title="Toggle test cases panel"
           >
-            <Code2 className="h-3.5 w-3.5 text-mist-400" />
+            <Code2 className="h-3.5 w-3.5 text-[#A1A1AA]" />
             <span className="hidden sm:inline">Tests</span>
           </button>
 
@@ -719,13 +719,13 @@ export default function ChallengeWorkspacePage() {
             type="button"
             onClick={handleRunTests}
             disabled={isRunningTests || isVerificationOpen || isSubmitting}
-            className="btn-frosted-glass flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono text-mist-200 hover:text-white transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-mono text-[#E4E4E7] hover:text-white bg-[#20202A] hover:bg-[#27272A] border border-[#30303A] transition-all disabled:opacity-50"
             title="Run tests in sandbox (⌘+Enter)"
           >
             {isRunningTests ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FBBF24]" />
             ) : (
-              <Play className="h-3.5 w-3.5 text-amber-400 fill-current" />
+              <Play className="h-3.5 w-3.5 text-[#FBBF24] fill-current" />
             )}
             <span className="hidden sm:inline">Run</span>
           </button>
@@ -735,7 +735,7 @@ export default function ChallengeWorkspacePage() {
             type="button"
             onClick={handleSubmitSolution}
             disabled={isRunningTests || isVerificationOpen || isSubmitting}
-            className="btn-specular-primary flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium text-white shadow-lg transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] shadow-[0_0_24px_rgba(139,92,246,0.16)] transition-all disabled:opacity-50"
             title="Submit solution for verified evaluation (⌘+Shift+Enter)"
           >
             {isSubmitting || isVerificationOpen ? (
@@ -749,12 +749,12 @@ export default function ChallengeWorkspacePage() {
       </header>
 
       {/* Main Workspace Split Grid */}
-      <div className="flex-1 min-h-0 w-full flex gap-3 p-3 overflow-hidden bg-black">
+      <div className="flex-1 min-h-0 w-full flex gap-3 p-3 overflow-hidden bg-[#09090B]">
         {/* Left Pane: Problem Spec & Rubric */}
         {isSidebarOpen && (
           <section
             aria-label="Problem Specification"
-            className="w-full lg:w-[42%] h-full flex flex-col min-h-0 rounded-2xl border border-white/[0.08] bg-[#0c0d12] overflow-hidden shadow-2xl transition-all"
+            className="w-full lg:w-[42%] h-full flex flex-col min-h-0 rounded-[14px] border border-[#27272A] bg-[#0D0D12] overflow-hidden shadow-2xl transition-all"
           >
             <ProblemSpecPane challenge={challenge} />
           </section>
@@ -763,16 +763,16 @@ export default function ChallengeWorkspacePage() {
         {/* Right Pane: Code Editor + Test Console */}
         <section
           aria-label="Code Editor"
-          className="flex-1 h-full flex flex-col min-h-0 rounded-2xl border border-white/[0.08] bg-[#07080c] overflow-hidden relative shadow-2xl"
+          className="flex-1 h-full flex flex-col min-h-0 rounded-[14px] border border-[#27272A] bg-[#0D0D12] overflow-hidden relative shadow-2xl"
         >
           {/* Editor Header Bar */}
-          <div className="h-10 px-4 bg-[#0e1017] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none text-xs font-mono">
+          <div className="h-10 px-4 bg-[#111116] border-b border-[#27272A] flex items-center justify-between shrink-0 select-none text-xs font-mono">
             {/* Left: Sidebar toggle + file tab */}
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setIsSidebarOpen((prev) => !prev)}
-                className="p-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors"
+                className="p-1 rounded text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
                 title={isSidebarOpen ? "Collapse problem spec (⌘+B)" : "Expand problem spec (⌘+B)"}
               >
                 {isSidebarOpen ? (
@@ -782,18 +782,18 @@ export default function ChallengeWorkspacePage() {
                 )}
               </button>
 
-              <div className="hidden sm:flex items-center gap-1.5 pr-2 border-r border-white/[0.08]">
-                <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+              <div className="hidden sm:flex items-center gap-1.5 pr-2 border-r border-[#27272A]">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
               </div>
 
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black text-mist-100 border border-white/[0.08] text-[11px] font-medium">
-                <FileCode className="h-3.5 w-3.5 text-violet-400" />
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0D0D12] text-[#FAFAFA] border border-[#27272A] text-[11px] font-medium">
+                <FileCode className="h-3.5 w-3.5 text-[#8B5CF6]" />
                 <span>solution.js</span>
               </div>
 
-              <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hidden sm:inline">
+              <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-[#34D399] bg-[#34D399]/10 border border-[#34D399]/20 hidden sm:inline">
                 sandbox-ready
               </span>
             </div>
@@ -803,7 +803,7 @@ export default function ChallengeWorkspacePage() {
               <button
                 type="button"
                 onClick={handleFormatCode}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors text-[11px]"
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors text-[11px]"
                 title="Format / Beautify code"
               >
                 <AlignLeft className="h-3 w-3" />
@@ -813,7 +813,7 @@ export default function ChallengeWorkspacePage() {
               <button
                 type="button"
                 onClick={handleResetStarterCode}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-mist-500 hover:text-mist-200 hover:bg-white/[0.06] transition-colors text-[11px]"
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors text-[11px]"
                 title="Reset to starter code"
               >
                 <RotateCcw className="h-3 w-3" />
@@ -823,13 +823,13 @@ export default function ChallengeWorkspacePage() {
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-mist-400 hover:text-mist-100 hover:bg-white/[0.06] transition-colors text-[11px]"
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors text-[11px]"
                 title="Copy code"
               >
                 {copiedCode ? (
                   <>
-                    <Check className="h-3 w-3 text-emerald-400" />
-                    <span className="text-emerald-400">Copied</span>
+                    <Check className="h-3 w-3 text-[#34D399]" />
+                    <span className="text-[#34D399]">Copied</span>
                   </>
                 ) : (
                   <>
@@ -841,8 +841,8 @@ export default function ChallengeWorkspacePage() {
             </div>
           </div>
 
-          {/* Monaco Editor Canvas (Pure Black Background) */}
-          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-black">
+          {/* Monaco Editor Canvas (Background #0D0D12) */}
+          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-[#0D0D12]">
             <Editor
               height="100%"
               width="100%"

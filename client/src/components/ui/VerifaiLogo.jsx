@@ -4,14 +4,17 @@ export default function VerifaiLogo({
   className = "",
 }) {
   const dimensions = {
-    sm: { icon: 30, text: "text-lg" },
-    md: { icon: 40, text: "text-2xl" },
-    lg: { icon: 52, text: "text-3xl" },
-  }[size] || { icon: 40, text: "text-2xl" };
+    sm: { icon: 28, text: "text-base" },
+    md: { icon: 36, text: "text-xl" },
+    lg: { icon: 46, text: "text-2xl" },
+  }[typeof size === "string" ? size : "md"] || {
+    icon: typeof size === "number" ? size : 36,
+    text: "text-xl",
+  };
 
   return (
-    <div className={`inline-flex items-center gap-3 select-none ${className}`}>
-      {/* Mark — a dot-flower with a diagonal check-slash through it */}
+    <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
+      {/* Mark — dot-flower with signature electric violet accents */}
       <svg
         width={dimensions.icon}
         height={dimensions.icon}
@@ -20,31 +23,31 @@ export default function VerifaiLogo({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="vfDots" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#A78BFA" />
-            <stop offset="1" stopColor="#E879F9" />
+          <linearGradient id="vfVioletDots" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#8B5CF6" />
+            <stop offset="1" stopColor="#A78BFA" />
           </linearGradient>
         </defs>
 
         {/* six petals arranged in a ring */}
-        <circle cx="24" cy="9" r="5.5" fill="url(#vfDots)" />
-        <circle cx="37" cy="16.5" r="4.2" fill="url(#vfDots)" />
-        <circle cx="37" cy="31.5" r="4.2" fill="url(#vfDots)" />
-        <circle cx="24" cy="39" r="5.5" fill="url(#vfDots)" />
-        <circle cx="11" cy="31.5" r="4.2" fill="url(#vfDots)" />
-        <circle cx="11" cy="16.5" r="4.2" fill="url(#vfDots)" />
+        <circle cx="24" cy="9" r="5.5" fill="url(#vfVioletDots)" />
+        <circle cx="37" cy="16.5" r="4.2" fill="url(#vfVioletDots)" />
+        <circle cx="37" cy="31.5" r="4.2" fill="url(#vfVioletDots)" />
+        <circle cx="24" cy="39" r="5.5" fill="url(#vfVioletDots)" />
+        <circle cx="11" cy="31.5" r="4.2" fill="url(#vfVioletDots)" />
+        <circle cx="11" cy="16.5" r="4.2" fill="url(#vfVioletDots)" />
 
         {/* diagonal check-slash cutting through the flower */}
         <path
           d="M15 30L24 21L33 12"
-          stroke="#0B0912"
+          stroke="#09090B"
           strokeWidth="6.5"
           strokeLinecap="round"
         />
         <path
           d="M15 30L24 21L33 12"
           stroke="#FAFAFA"
-          strokeWidth="4.2"
+          strokeWidth="4"
           strokeLinecap="round"
         />
       </svg>
@@ -52,10 +55,10 @@ export default function VerifaiLogo({
       {/* Wordmark */}
       {showWordmark && (
         <div className="flex items-baseline">
-          <span className={`font-semibold lowercase text-slate-100 tracking-[-0.01em] ${dimensions.text}`}>
+          <span className={`font-semibold lowercase text-[#FAFAFA] font-sans tracking-tight ${dimensions.text}`}>
             verifai
           </span>
-          <span className="ml-1 h-[5px] w-[5px] rounded-full bg-fuchsia-400 self-start mt-1" />
+          <span className="ml-1 h-[5px] w-[5px] rounded-full bg-[#8B5CF6] self-start mt-1" />
         </div>
       )}
     </div>

@@ -135,10 +135,14 @@ export default function PipelineSimulator() {
     <section id="architecture" className="container-xl py-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
         <div className="max-w-2xl">
-          <h2 className="text-3xl md:text-4xl font-semibold text-mist-100 font-display">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[#A1A1AA] font-sans text-xs font-medium mb-3">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#8B5CF6]" />
+            <span>Telemetry Pipeline</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-semibold text-[#FAFAFA] font-display">
             One submission, four stages, a verifiable result
           </h2>
-          <p className="mt-4 text-mist-300 text-base leading-relaxed font-sans max-w-xl">
+          <p className="mt-4 text-[#A1A1AA] text-base leading-relaxed font-sans max-w-xl">
             Open a stage to see what actually happens inside it — including
             the real telemetry it emits along the way.
           </p>
@@ -161,7 +165,7 @@ export default function PipelineSimulator() {
 
       <div className="relative">
         {/* connecting rail */}
-        <div className="absolute left-[23px] top-6 bottom-6 w-px bg-ink-600" />
+        <div className="absolute left-[23px] top-6 bottom-6 w-px bg-[#27272A]" />
 
         <div className="flex flex-col gap-2">
           {STAGES.map((stage, idx) => {
@@ -178,10 +182,10 @@ export default function PipelineSimulator() {
                   <span
                     className={`relative z-10 flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center border transition-colors ${
                       isActive
-                        ? "border-violet-400 bg-violet-500/20 text-violet-300"
+                        ? "border-[#8B5CF6] bg-[#211635] text-[#C4B5FD]"
                         : isDone
-                        ? "border-emerald-500/40 bg-ink-900 text-emerald-400"
-                        : "border-ink-600 bg-ink-900 text-mist-500 group-hover:text-mist-300 group-hover:border-ink-500"
+                        ? "border-[#34D399]/40 bg-[#14141B] text-[#34D399]"
+                        : "border-[#27272A] bg-[#14141B] text-[#71717A] group-hover:text-[#FAFAFA] group-hover:border-[#3F3F4A]"
                     }`}
                   >
                     {isDone ? <Check className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
@@ -189,22 +193,22 @@ export default function PipelineSimulator() {
 
                   <span className="flex-1 min-w-0 pt-1.5">
                     <span className="flex items-baseline gap-3 flex-wrap">
-                      <span className="font-mono text-xs text-mist-500">{stage.number}</span>
+                      <span className="font-mono text-xs text-[#71717A]">{stage.number}</span>
                       <span
                         className={`font-display font-semibold ${
-                          isActive ? "text-mist-100 text-lg" : "text-mist-300 text-base"
+                          isActive ? "text-[#FAFAFA] text-lg" : "text-[#A1A1AA] text-base"
                         }`}
                       >
                         {stage.title}
                       </span>
                     </span>
-                    <span className="block text-sm text-mist-400 mt-0.5 font-sans">
+                    <span className="block text-sm text-[#71717A] mt-0.5 font-sans">
                       {stage.subtitle}
                     </span>
                   </span>
 
                   <ChevronDown
-                    className={`h-4 w-4 mt-2.5 flex-shrink-0 text-mist-500 transition-transform ${
+                    className={`h-4 w-4 mt-2.5 flex-shrink-0 text-[#71717A] transition-transform ${
                       isActive ? "rotate-180" : ""
                     }`}
                   />
@@ -222,21 +226,21 @@ export default function PipelineSimulator() {
                     >
                       <div className="pl-16 pb-8 pr-2 grid grid-cols-1 lg:grid-cols-12 gap-6">
                         <div className="lg:col-span-6 space-y-4">
-                          <p className="font-mono text-xs text-violet-300/80">
+                          <p className="font-mono text-xs text-[#A78BFA]">
                             {stage.flowLabel}
                           </p>
-                          <p className="text-mist-300 text-sm leading-relaxed">
+                          <p className="text-[#A1A1AA] text-sm leading-relaxed">
                             {stage.description}
                           </p>
 
-                          <dl className="text-sm border-t border-ink-700">
-                            <div className="grid grid-cols-[72px_1fr] gap-3 py-2.5 border-b border-ink-700">
-                              <dt className="font-mono text-xs text-mist-500 pt-0.5">why</dt>
-                              <dd className="text-mist-300">{stage.why}</dd>
+                          <dl className="text-sm border-t border-[#27272A]">
+                            <div className="grid grid-cols-[72px_1fr] gap-3 py-2.5 border-b border-[#27272A]">
+                              <dt className="font-mono text-xs text-[#71717A] pt-0.5">why</dt>
+                              <dd className="text-[#A1A1AA]">{stage.why}</dd>
                             </div>
-                            <div className="grid grid-cols-[72px_1fr] gap-3 py-2.5 border-b border-ink-700">
-                              <dt className="font-mono text-xs text-mist-500 pt-0.5">stack</dt>
-                              <dd className="text-violet-300 font-mono text-xs pt-0.5">
+                            <div className="grid grid-cols-[72px_1fr] gap-3 py-2.5 border-b border-[#27272A]">
+                              <dt className="font-mono text-xs text-[#71717A] pt-0.5">stack</dt>
+                              <dd className="text-[#C4B5FD] font-mono text-xs pt-0.5">
                                 {stage.stack}
                               </dd>
                             </div>
@@ -244,16 +248,16 @@ export default function PipelineSimulator() {
                         </div>
 
                         <div className="lg:col-span-6">
-                          <div className="rounded-lg border border-ink-700 bg-[#05070A] overflow-hidden">
-                            <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-ink-700 bg-ink-900/60">
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
-                              <span className="ml-2 font-mono text-[11px] text-mist-500">
+                          <div className="rounded-xl border border-[#27272A] bg-[#0D0D12] overflow-hidden">
+                            <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-[#27272A] bg-[#111116]">
+                              <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
+                              <span className="ml-2 font-mono text-[11px] text-[#71717A]">
                                 telemetry — stage {stage.number}
                               </span>
                             </div>
-                            <pre className="p-4 font-mono text-xs text-emerald-300/90 leading-relaxed overflow-x-auto no-scrollbar">
+                            <pre className="p-4 font-mono text-xs text-[#34D399] leading-relaxed overflow-x-auto no-scrollbar bg-[#0D0D12]">
                               <code>
                                 {Object.entries(stage.telemetry)
                                   .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)

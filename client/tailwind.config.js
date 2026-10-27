@@ -5,37 +5,102 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Pure pitch-black surface scale — used for backgrounds, cards, borders
-        ink: {
-          500: "#2D3245", // pending/inactive state dots
-          600: "#1C1F2E", // hairline borders
-          700: "#141722", // inner inset surfaces
-          800: "#0E1017", // card/panel surface (Sheryians UI style)
-          900: "#000000", // true pitch black background
-          950: "#000000", // deepest black
+        // --- 1. Backgrounds ---
+        app: "#09090B",
+        "bg-secondary": "#0D0D12",
+
+        // --- 2. Surfaces ---
+        surface: {
+          DEFAULT: "#14141B",
+          app: "#09090B",
+          secondary: "#0D0D12",
+          card: "#18181F",
+          elevated: "#20202A",
+          hover: "#27272A",
         },
-        // Primary accent — was teal-green, now purple per request.
-        // Keeping the token name "verify" (not renaming it) so every
-        // existing bg-verify / text-verify / border-verify / shadow-verify
-        // usage across the app picks up the new color automatically,
-        // without touching every component file.
-        verify: "#9333EA",
-        // Secondary accent — a lighter violet, still distinct enough from
-        // the new purple "verify" to read as a separate tone in LiveDemo.
-        signal: "#C084FC",
-        // Foreground text scale, light-on-dark
+
+        // --- 3. Brand Colors (Black + Electric Violet) ---
+        brand: {
+          DEFAULT: "#8B5CF6", // primary violet
+          hover: "#7C3AED",   // primary violet hover
+          lavender: "#A78BFA",// secondary lavender
+          light: "#C4B5FD",   // light lavender
+          subtle: "#211635",  // subtle violet background
+          selection: "#38245C",// violet selection background
+        },
+
+        // --- 4. Typography Scale ---
+        primary: "#FAFAFA",
+        secondary: "#A1A1AA",
+        muted: "#71717A",
+        disabled: "#52525B",
+
+        // --- 5. Borders ---
+        border: {
+          DEFAULT: "#27272A",
+          hover: "#3F3F4A",
+          focus: "#8B5CF6",
+          selected: "#A78BFA",
+        },
+
+        // --- 6. Semantic Status Colors ---
+        status: {
+          accepted: "#34D399",
+          success: "#34D399",
+          wrong: "#F87171",
+          error: "#F87171",
+          runtime: "#FB7185",
+          warning: "#FBBF24",
+          tle: "#FBBF24",
+          info: "#60A5FA",
+          running: "#60A5FA",
+          pending: "#A1A1AA",
+          easy: "#4ADE80",
+          medium: "#FBBF24",
+          hard: "#F87171",
+        },
+
+        // --- Compatibility Tokens (Mapped to exact new Black + Violet system) ---
+        ink: {
+          500: "#3F3F4A", // hover border
+          600: "#27272A", // default border
+          700: "#20202A", // elevated surface
+          800: "#18181F", // card background
+          850: "#14141B", // standard surface
+          900: "#0D0D12", // secondary background
+          950: "#09090B", // main application background
+        },
+        verify: {
+          DEFAULT: "#8B5CF6",
+          hover: "#7C3AED",
+        },
+        signal: {
+          DEFAULT: "#A78BFA",
+          light: "#C4B5FD",
+        },
         mist: {
-          100: "#F4F6FA", // primary text
-          300: "#C7CEDA", // secondary text
-          400: "#A6AEBD", // secondary/body copy on dashboard-style pages
-          500: "#8B93A3", // muted text
-          700: "#586173", // dim/pending text
+          100: "#FAFAFA", // primary text
+          200: "#FAFAFA",
+          300: "#A1A1AA", // secondary text
+          400: "#A1A1AA",
+          500: "#71717A", // muted text
+          600: "#71717A",
+          700: "#52525B", // disabled text
         },
       },
       fontFamily: {
-        sans: ['"Poppins"', "system-ui", "sans-serif"],
-        display: ['"Montserrat"', "Poppins", "system-ui", "sans-serif"],
-        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+        sans: ['"Geist"', '"Poppins"', "system-ui", "-apple-system", "sans-serif"],
+        display: ['"Montserrat"', '"Geist"', '"Poppins"', "system-ui", "sans-serif"],
+        mono: ['"Geist Mono"', '"JetBrains Mono"', "ui-monospace", "monospace"],
+      },
+      boxShadow: {
+        violet: "0 0 24px rgba(139, 92, 246, 0.16)",
+        "violet-subtle": "0 0 16px rgba(139, 92, 246, 0.10)",
+        "violet-strong": "0 0 32px rgba(139, 92, 246, 0.25)",
+      },
+      borderRadius: {
+        card: "14px",
+        button: "10px",
       },
       spacing: {
         section: "6rem",
@@ -53,10 +118,6 @@ export default {
         rise: {
           "0%": { transform: "translateY(12px)", opacity: 0 },
           "100%": { transform: "translateY(0)", opacity: 1 },
-        },
-        "type-in": {
-          from: { width: "0%" },
-          to: { width: "100%" },
         },
       },
       animation: {

@@ -30,7 +30,6 @@ export default function VerifyEmailPage() {
             "This verification link is missing the token."
           );
         }
-
         return;
       }
 
@@ -79,35 +78,24 @@ export default function VerifyEmailPage() {
       }
       subtitle={
         isSuccess
-          ? "You can sign in and start using VerifAI."
+          ? "You can sign in and start exploring challenges."
           : isError
             ? "We couldn't complete the verification process."
-            : "This link will complete your account verification."
+            : "Confirming your identity on the platform."
       }
     >
       <div className="relative">
-        {/* Dark moon ambient glow */}
-        <div
-          className={`pointer-events-none absolute -inset-10 -z-10 rounded-[2rem] blur-3xl ${
-            isSuccess
-              ? "bg-violet-600/[0.06]"
-              : isError
-                ? "bg-red-600/[0.04]"
-                : "bg-purple-600/[0.04]"
-          }`}
-        />
-
         <div
           className={`
             relative overflow-hidden rounded-2xl border
-            bg-ink-800/60 p-6
-            shadow-2xl shadow-black/20
+            bg-[#18181F] p-6
+            shadow-xl
             ${
               isSuccess
-                ? "border-violet-400/20"
+                ? "border-[#34D399]/30"
                 : isError
-                  ? "border-red-500/30"
-                  : "border-purple-400/15"
+                  ? "border-[#F87171]/30"
+                  : "border-[#27272A]"
             }
           `}
         >
@@ -119,10 +107,10 @@ export default function VerifyEmailPage() {
                 rounded-xl border
                 ${
                   isSuccess
-                    ? "border-violet-400/20 bg-violet-500/10 text-violet-400"
+                    ? "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]"
                     : isError
-                      ? "border-red-500/20 bg-red-500/10 text-red-400"
-                      : "border-purple-400/20 bg-purple-500/10 text-purple-300"
+                      ? "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]"
+                      : "border-[#8B5CF6]/30 bg-[#211635] text-[#A78BFA]"
                 }
               `}
             >
@@ -148,10 +136,10 @@ export default function VerifyEmailPage() {
                   uppercase tracking-[0.12em]
                   ${
                     isSuccess
-                      ? "border-violet-400/20 bg-violet-500/10 text-violet-400"
+                      ? "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]"
                       : isError
-                        ? "border-red-500/30 bg-red-500/10 text-red-400"
-                        : "border-purple-400/20 bg-purple-500/10 text-purple-300"
+                        ? "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]"
+                        : "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]"
                   }
                 `}
               >
@@ -165,15 +153,15 @@ export default function VerifyEmailPage() {
           </div>
 
           {/* Message */}
-          <p className="mt-5 text-sm leading-6 text-mist-300">
+          <p className="mt-5 text-sm leading-6 text-[#A1A1AA]">
             {message}
           </p>
 
           {/* Success confirmation */}
           {isSuccess && (
-            <div className="mt-4 rounded-lg border border-violet-400/10 bg-violet-500/[0.04] px-4 py-3">
-              <p className="font-mono text-[11px] text-violet-300">
-                Your profile is ready for verified challenges.
+            <div className="mt-4 rounded-[10px] border border-[#8B5CF6]/20 bg-[#211635] px-4 py-3">
+              <p className="font-mono text-[11px] text-[#C4B5FD]">
+                Your profile is ready for verified engineering challenges.
               </p>
             </div>
           )}

@@ -5,7 +5,6 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Loader2,
   AlertCircle,
   CheckCircle2,
   RefreshCw,
@@ -110,22 +109,22 @@ export default function LoginPage() {
   return (
     <AuthLayout>
       <div className="w-full">
-        {/* Header matching the reference screenshot */}
+        {/* Header */}
         <div className="text-center mb-5">
-          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#FAFAFA]">
             Welcome back
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-mist-400">
-            Log in to continue
+          <p className="mt-1 text-xs sm:text-sm text-[#A1A1AA]">
+            Log in to continue your verified journey
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-3" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
           {/* Email Input */}
           <div className="space-y-1">
             <div className="relative flex items-center">
-              <div className="pointer-events-none absolute left-3.5 text-mist-500">
+              <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
                 <User className="h-4 w-4" />
               </div>
               <input
@@ -135,28 +134,28 @@ export default function LoginPage() {
                 inputMode="email"
                 autoComplete="username"
                 required
-                placeholder="Email"
+                placeholder="developer@company.com"
                 value={form.email}
                 onChange={(e) => {
                   setForm({ ...form, email: e.target.value });
                   if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: "" });
                 }}
-                className={`w-full rounded-xl border bg-[#12141d]/90 text-sm text-mist-100 placeholder:text-mist-500 outline-none transition-all py-2.5 pl-10 pr-3.5 ${
+                className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
                   fieldErrors.email
-                    ? "border-red-500/60 focus:border-red-400 focus:ring-2 focus:ring-red-500/20"
-                    : "border-ink-600/90 hover:border-ink-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                    ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
+                    : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
                 }`}
               />
             </div>
             {fieldErrors.email && (
-              <p className="text-[10.5px] text-red-400 pl-1 font-mono">{fieldErrors.email}</p>
+              <p className="text-[11px] text-[#F87171] pl-1 font-mono">{fieldErrors.email}</p>
             )}
           </div>
 
           {/* Password Input */}
           <div className="space-y-1">
             <div className="relative flex items-center">
-              <div className="pointer-events-none absolute left-3.5 text-mist-500">
+              <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
                 <Lock className="h-4 w-4" />
               </div>
               <input
@@ -165,47 +164,47 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                placeholder="Password"
+                placeholder="••••••••"
                 value={form.password}
                 onChange={(e) => {
                   setForm({ ...form, password: e.target.value });
                   if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: "" });
                 }}
-                className={`w-full rounded-xl border bg-[#12141d]/90 text-sm text-mist-100 placeholder:text-mist-500 outline-none transition-all py-2.5 pl-10 pr-10 ${
+                className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-10 ${
                   fieldErrors.password
-                    ? "border-red-500/60 focus:border-red-400 focus:ring-2 focus:ring-red-500/20"
-                    : "border-ink-600/90 hover:border-ink-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                    ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
+                    : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 p-1 rounded-md text-mist-500 hover:text-mist-200 transition-colors"
+                className="absolute right-3 p-1 rounded-md text-[#71717A] hover:text-[#A1A1AA] transition-colors"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
               </button>
             </div>
             {fieldErrors.password && (
-              <p className="text-[10.5px] text-red-400 pl-1 font-mono">{fieldErrors.password}</p>
+              <p className="text-[11px] text-[#F87171] pl-1 font-mono">{fieldErrors.password}</p>
             )}
           </div>
 
           {/* Remember me & Forgot password row */}
           <div className="flex items-center justify-between text-xs py-0.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-mist-400 hover:text-mist-300">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-[#A1A1AA] hover:text-[#FAFAFA]">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-3.5 w-3.5 rounded border-ink-600 bg-[#12141d] accent-violet-600 cursor-pointer"
+                className="h-3.5 w-3.5 rounded border-[#27272A] bg-[#111116] accent-[#8B5CF6] cursor-pointer"
               />
               <span>Remember me</span>
             </label>
 
             <Link
               to="/forgot-password"
-              className="text-mist-400 hover:text-violet-300 transition-colors"
+              className="text-[#A78BFA] hover:text-[#C4B5FD] transition-colors"
             >
               Forgot password?
             </Link>
@@ -213,25 +212,25 @@ export default function LoginPage() {
 
           {/* Auth Error Banner */}
           {authError && (
-            <div className="p-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-xs font-mono space-y-1.5">
+            <div className="p-3 rounded-[10px] border border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171] text-xs font-mono space-y-1.5">
               <div className="flex items-start gap-2">
-                <AlertCircle className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />
+                <AlertCircle className="h-3.5 w-3.5 text-[#F87171] shrink-0 mt-0.5" />
                 <p className="flex-1">{authError}</p>
               </div>
 
               {needsVerification && (
-                <div className="pt-1.5 border-t border-red-500/20 flex flex-wrap items-center gap-2">
+                <div className="pt-1.5 border-t border-[#F87171]/20 flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={handleResendVerification}
                     disabled={resending}
-                    className="px-2 py-0.5 rounded-lg border border-violet-500/40 bg-violet-500/20 text-violet-300 hover:bg-violet-500/30 transition-colors flex items-center gap-1.5 text-[11px]"
+                    className="px-2.5 py-1 rounded-[8px] border border-[#8B5CF6]/40 bg-[#211635] text-[#C4B5FD] hover:bg-[#38245C] transition-colors flex items-center gap-1.5 text-[11px]"
                   >
                     <RefreshCw className={`h-3 w-3 ${resending ? "animate-spin" : ""}`} />
                     {resending ? "Resending..." : "Resend link"}
                   </button>
                   {resendMessage && (
-                    <span className="text-emerald-400 text-[10.5px] flex items-center gap-1">
+                    <span className="text-[#34D399] text-[11px] flex items-center gap-1">
                       <CheckCircle2 className="h-3 w-3" /> Sent!
                     </span>
                   )}
@@ -242,29 +241,29 @@ export default function LoginPage() {
 
           {/* Social notice feedback if clicked */}
           {socialNotice && (
-            <div className="p-2.5 rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-200 text-xs flex items-center gap-2">
-              <Info className="h-3.5 w-3.5 text-violet-400 shrink-0" />
+            <div className="p-2.5 rounded-[10px] border border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD] text-xs flex items-center gap-2">
+              <Info className="h-3.5 w-3.5 text-[#A78BFA] shrink-0" />
               <p className="flex-1">{socialNotice}</p>
             </div>
           )}
 
-          {/* Submit Button (Modern Awwwards specular primary) */}
+          {/* Submit Button */}
           <Button
             type="submit"
             variant="verify"
             size="md"
             disabled={submitting}
             loading={submitting}
-            className="w-full !py-2.5 !rounded-xl"
+            className="w-full !py-2.5"
           >
             Log In
           </Button>
 
           {/* Divider "Or" */}
           <div className="relative flex items-center justify-center my-3 py-1">
-            <div className="border-t border-ink-600/80 w-full" />
-            <span className="bg-[#04030a] px-3 text-xs text-mist-500 font-sans absolute">
-              Or
+            <div className="border-t border-[#27272A] w-full" />
+            <span className="bg-[#18181F] px-3 text-xs text-[#71717A] font-sans absolute">
+              Or continue with
             </span>
           </div>
 
@@ -275,7 +274,7 @@ export default function LoginPage() {
               type="button"
               variant="secondary"
               onClick={() => handleSocialLogin("Google")}
-              className="w-full !py-2 !rounded-xl !bg-[#12141d]/90 hover:!bg-[#181a26] text-xs sm:text-sm !font-medium"
+              className="w-full !py-2 !rounded-[10px] text-xs sm:text-sm !font-medium"
             >
               <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -303,7 +302,7 @@ export default function LoginPage() {
               type="button"
               variant="secondary"
               onClick={() => handleSocialLogin("Facebook")}
-              className="w-full !py-2 !rounded-xl !bg-[#12141d]/90 hover:!bg-[#181a26] text-xs sm:text-sm !font-medium"
+              className="w-full !py-2 !rounded-[10px] text-xs sm:text-sm !font-medium"
             >
               <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="#1877F2">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -313,11 +312,11 @@ export default function LoginPage() {
           </div>
 
           {/* Sign up prompt */}
-          <div className="pt-3 text-center text-xs text-mist-400">
+          <div className="pt-3 text-center text-xs text-[#A1A1AA]">
             <span>Don't have an account? </span>
             <Link
               to="/register"
-              className="text-violet-400 hover:text-violet-300 font-semibold underline-offset-2 hover:underline transition-colors"
+              className="text-[#A78BFA] hover:text-[#C4B5FD] font-semibold underline-offset-2 hover:underline transition-colors"
             >
               Sign Up
             </Link>

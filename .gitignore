@@ -7,3 +7,5 @@ BRAIN.md
 .VSCodeCounter/
 *.docx
 *.pdf
+.agent/
+
