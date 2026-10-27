@@ -160,3 +160,27 @@ test("Execution Provider: empty testCases returns completed with 0 counts", asyn
   assert.equal(res.totalCount, 0);
   assert.equal(res.passedCount, 0);
 });
+
+test("Execution Provider: missing Judge0 configuration fails closed", async () => {
+  const envKeys = ["RAPIDAPI_KEY", "JUDGE0_API_KEY", "JUDGE0_API_URL"];
+  const originalValues = Object.fromEntries(
+    envKeys.map((key) => [key, process.env[key]])
+  );
+  envKeys.forEach((key) => delete process.env[key]);
+
+  try {
+    const res = await executeSubmissionAgainstChallenge({
+      code: "console.log('untrusted')",
+      challenge: {
+        testCases: [{ input: "{}", expectedOutput: "{}", _id: "test-1" }],
+      },
+    });
+    assert.equal(res.status, "provider_unavailable");
+    assert.equal(res.errorCode, "PROVIDER_UNAVAILABLE");
+  } finally {
+    envKeys.forEach((key) => {
+      if (originalValues[key] === undefined) delete process.env[key];
+      else process.env[key] = originalValues[key];
+    });
+  }
+});

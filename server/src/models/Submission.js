@@ -43,7 +43,7 @@ const submissionSchema = new mongoose.Schema(
       index: true,
     },
 
-    scoreVersion: { type: String, default: "v1" },
+    scoreVersion: { type: String, default: "v2" },
 
     executionResult: {
       testResults: [testCaseResultSchema],

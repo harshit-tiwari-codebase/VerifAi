@@ -58,7 +58,7 @@ const createSubmission = async (req, res, next) => {
       code,
       language,
       status: "queued",
-      scoreVersion: "v1",
+      scoreVersion: "v2",
       telemetry: {
         keystrokeCount:
           telemetry?.keystrokeCount || req.body.keystrokeCount || 0,

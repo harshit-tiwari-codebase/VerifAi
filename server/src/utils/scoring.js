@@ -1,14 +1,11 @@
 /**
  * VerifAI Versioned Scoring Policy (§3)
  *
- * scoreVersion: "v1"
+ * scoreVersion: "v2"
  * correctness = 100 * weighted_points_passed / weighted_points_total
- * finalScore  = round(
- *   0.70 * correctness +
- *   0.15 * codeQuality +
- *   0.10 * efficiency +
- *   0.05 * edgeCases
- * )
+ * finalScore  = round(correctness)
+ *
+ * AI review scores are advisory only and never affect a score or badge.
  */
 
 const BADGE_THRESHOLD = Number(process.env.BADGE_SCORE_THRESHOLD || 70);
@@ -21,8 +18,7 @@ function isValidSubscore(val) {
 }
 
 /**
- * Validates AI evaluation schema.
- * Rejects and marks ai_evaluation_failed if qualitative scores are missing or out of [0, 100].
+ * Validates AI evaluation score fields for display as advisory feedback.
  */
 function validateAiEvaluation(aiEvaluation) {
   if (!aiEvaluation || typeof aiEvaluation !== "object") {
@@ -42,7 +38,7 @@ function validateAiEvaluation(aiEvaluation) {
 }
 
 /**
- * Centralized Scoring Policy v1
+ * Centralized Scoring Policy v2
  */
 function calculateScore({
   executionType = "both",
@@ -50,7 +46,7 @@ function calculateScore({
   aiEvaluation = null,
   threshold = BADGE_THRESHOLD,
 }) {
-  // 1. review_only challenges: explicit result shape, no correctness field, no auto badge
+  // AI-only reviews are advisory and cannot produce an automated score or badge.
   if (executionType === "review_only") {
     const aiValidation = validateAiEvaluation(aiEvaluation);
     if (!aiValidation.valid) {
@@ -58,16 +54,11 @@ function calculateScore({
       err.code = "AI_EVALUATION_FAILED";
       throw err;
     }
-    const { codeQuality, efficiency, edgeCases } = aiEvaluation;
-    const finalScore = Math.round(
-      0.40 * codeQuality + 0.35 * efficiency + 0.25 * edgeCases
-    );
     return {
-      scoreVersion: "v1",
+      scoreVersion: "v2",
       executionType: "review_only",
-      finalScore,
-      subscores: { codeQuality, efficiency, edgeCases },
-      badgeEligible: false, // review_only requires human review, cannot issue automatic badge
+      finalScore: null,
+      badgeEligible: false,
       threshold,
     };
   }
@@ -115,7 +106,7 @@ function calculateScore({
     const badgeEligible =
       requiredPassedCount === requiredTotalCount && finalScore >= threshold;
     return {
-      scoreVersion: "v1",
+      scoreVersion: "v2",
       executionType: "testcases",
       correctness,
       finalScore,
@@ -137,19 +128,14 @@ function calculateScore({
   }
 
   const { codeQuality, efficiency, edgeCases } = aiEvaluation;
-  const finalScore = Math.round(
-    0.70 * correctness +
-    0.15 * codeQuality +
-    0.10 * efficiency +
-    0.05 * edgeCases
-  );
+  const finalScore = Math.round(correctness);
 
-  // Badge eligibility is a separate gate: required tests passed AND finalScore >= threshold
+  // Only deterministic test outcomes can contribute to an automated badge.
   const badgeEligible =
     requiredPassedCount === requiredTotalCount && finalScore >= threshold;
 
   return {
-    scoreVersion: "v1",
+    scoreVersion: "v2",
     executionType: "both",
     correctness,
     finalScore,

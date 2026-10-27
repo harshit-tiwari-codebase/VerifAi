@@ -3,7 +3,7 @@
 > **Status:** Fully Implemented, Tested, and Verified (Target Design v2)  
 > **Branch:** `submission/UI`  
 > **Last Updated:** 2026-09-30  
-> **Automated Tests:** 58/58 passing (`npm test` in `server`)  
+> **Automated Tests:** 62/62 passing (`npm test` in `server`)
 > **Client Build:** Clean production build passing (`npm run build` in `client`)
 
 ---
@@ -23,7 +23,7 @@ Every design decision closes specific failure modes documented in the engineerin
 
 1. **Server Authoritative:** A score only exists if computed by the server, from the server's own test suite, against the server's database challenge record. Client-supplied tests, rubrics, or scores are ignored.
 2. **Failure Never Mimics Success:** Infrastructure errors (queue outage, provider unavailable, model timeout) produce terminal failed states (`queue_unavailable`, `provider_unavailable`, `ai_evaluation_failed`). No synthetic IDs, local fallback scores, or default badges are permitted.
-3. **Execution Safety:** Untrusted user code is executed in isolated runtime boundaries with hard limits on CPU time, wall-clock time, memory, and output size. `node:vm` and `new Function` are completely removed from the grading path.
+3. **Execution Safety:** Untrusted code is sent only to the configured external execution provider with resource limits. If no provider is configured or it is unavailable, execution fails closed; the server does not run candidate code locally.
 4. **Separation of Concerns:** Running candidate code against public test cases (`POST /api/challenges/:id/run`) is read-only exploration and **never** creates submissions, mints badges, or invokes AI evaluators.
 5. **No Blind Fallbacks:** Unknown challenge IDs return `404 Not Found`; the system never falls back to a default or mock challenge.
 6. **Hidden Test Privacy:** Hidden test inputs, expected outputs, stdout, stderr, and reference solutions are strictly stripped before returning data to the client or emitting across sockets.
@@ -68,7 +68,7 @@ executionAdapter: {
 Canonical collection storing durable lifecycle state:
 
 - **Identifiers:** `user` (ref: `User`), `challenge` (ref: `Challenge`)
-- **Version:** `scoreVersion: "v1"`
+- **Version:** `scoreVersion: "v2"` for new submissions
 - **Lifecycle Status:**
   `queued` $\rightarrow$ `executing` $\rightarrow$ `evaluating` $\rightarrow$ `completed` | `failed`
   *Terminal error statuses:* `compilation_error`, `runtime_error`, `timeout`, `provider_unavailable`, `ai_evaluation_failed`
@@ -100,21 +100,23 @@ Generates the self-contained JavaScript wrapper executed by the runner:
 - **Universal Class & Function Adapter:** Automatically supports OOP classes with `.solve(input)` (all 20 VerifAI algorithm challenges), static methods, and pure functions.
 
 ### 4.3 Code Executor (`server/src/utils/codeExecutor.js`)
-- **Production Mode (with Judge0):** Uses batch submission (`submitBatch`) and polling (`pollBatch`) via RapidAPI or hosted Judge0. Enforces 3s CPU limit, 5s wall-clock limit, 128MB memory limit.
-- **Standalone / Local Development Mode:** When no external Judge0 API key is configured, executes test cases in isolated OS Node child processes (`child_process.execFile`) with process boundaries, 4s wall-clock timeouts, and 1MB output buffer limits (never touching `node:vm` or `new Function`).
+- Uses batch submission (`submitBatch`) and polling (`pollBatch`) through the configured external execution provider. Enforces 3s CPU limit, 5s wall-clock limit, 128MB memory limit.
+- If no provider is configured or the provider is unavailable, returns `provider_unavailable`. Untrusted candidate code is never executed in a local Node child process.
 - **Terminal Error Mapping:** Distinguishes syntax errors (`compilation_error`), timeouts (`timeout`), runtime crashes (`runtime_error`), and network/host failures (`provider_unavailable`).
 
 ---
 
-## 5. Centralized Scoring Policy v1 (§3)
+## 5. Centralized Scoring Policy v2 (§3)
 
 Implemented in [`server/src/utils/scoring.js`](file:///C:/Users/VISION/Desktop/VerifAI/server/src/utils/scoring.js):
 
 ### Correctness Calculation
 $$\text{correctness} = 100 \times \frac{\sum_{\text{passed}} \text{weight}_i}{\sum_{\text{all}} \text{weight}_i}$$
 
-### Composite Final Score (v1)
-$$\text{finalScore} = \text{round}(0.70 \times \text{correctness} + 0.15 \times \text{codeQuality} + 0.10 \times \text{efficiency} + 0.05 \times \text{edgeCases})$$
+### Final Score (v2)
+$$\text{finalScore} = \text{round}(\text{correctness})$$
+
+AI-generated code quality, efficiency, and edge-case scores are advisory feedback only. They do not affect the automated score or badge decision.
 
 ### Invariant Rules
 1. **Empty / Malformed Test Suites:** Zero tests throws `EVALUATION_ERROR` (never divides by zero; never awards 94/100).
@@ -123,7 +125,7 @@ $$\text{finalScore} = \text{round}(0.70 \times \text{correctness} + 0.15 \times 
    - `requiredPassedCount === requiredTotalCount` (all required tests must pass), **AND**
    - `finalScore >= threshold` (default: 70).
    Failing even one required test blocks the badge regardless of numeric score.
-4. **Review-Only Challenges:** Scores computed solely from AI subscores without a correctness metric; badge eligibility remains `false` until mentor approval.
+4. **Review-Only Challenges:** AI feedback is shown without an automated score or badge; a human review is required.
 
 ---
 
@@ -211,7 +213,7 @@ All 20 existing challenges in MongoDB Atlas have been migrated to declare their 
 
 ## 10. Automated Test Matrix (§10)
 
-Running `npm test` inside `server/` executes 58 automated tests:
+Running `npm test` inside `server/` executes 62 automated tests:
 
 ```text
 ✔ stripFences: removes markdown code blocks cleanly
@@ -252,7 +254,7 @@ Running `npm test` inside `server/` executes 58 automated tests:
 ✔ validateAiEvaluation validates subscores and required fields
 ✔ No tests / malformed challenge → evaluation error, no score or badge
 ✔ Empty code with zero tests → evaluation error, never 94/100
-✔ All tests passed with valid AI evaluation yields correct composite score
+✔ All tests passed with valid AI evaluation yields deterministic test score
 ✔ Half tests failed yields reduced correctness
 ✔ All tests passed but score below threshold → badge not eligible
 ✔ High score but required test failed → badge not eligible
@@ -260,7 +262,7 @@ Running `npm test` inside `server/` executes 58 automated tests:
 ✔ Missing AI evaluation for 'both' type → ai_evaluation_failed
 ✔ Pure testcases: correctness equals the weighted result directly
 ✔ Pure testcases: all passed with correct weight → badge eligible
-✔ review_only: uses AI evaluation only, badge never auto-issued
+✔ review_only: no model-generated score or badge is issued
 ✔ Weighted tests: weighted points correctly used
 ✔ buildVerificationUrl uses the backend verification endpoint
 ✔ buildPasswordResetUrl uses the backend reset endpoint

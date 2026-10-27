@@ -64,7 +64,7 @@ export default function VerificationModal({
             ? "Running sandbox test cases..."
             : totalCount > 0
             ? `Passed ${passedCount} of ${totalCount} test suites`
-            : "Isolated V8 sandbox execution",
+            : "Execution provider test run",
         isDone: ["evaluating", "completed"].includes(currentStatus),
         isActive: currentStatus === "executing",
       },
@@ -80,7 +80,9 @@ export default function VerificationModal({
       {
         id: "completed",
         label: isCompleted
-          ? `Score: ${finalScore}/100 ${badgeIssued ? "(Badge Issued)" : ""}`
+          ? finalScore === null
+            ? "AI review complete; manual review required"
+            : `Score: ${finalScore}/100 ${badgeIssued ? "(Badge Issued)" : ""}`
           : "Finalizing score & cryptographic proof",
         isDone: isCompleted,
         isActive: false,
@@ -148,9 +150,9 @@ export default function VerificationModal({
                 <span className="text-sm font-mono text-[#A1A1AA]">
                   Score:{" "}
                   <strong className="text-[#FAFAFA] text-base">
-                    {finalScore}
+                    {finalScore === null ? "Manual review required" : finalScore}
                   </strong>
-                  /100
+                  {finalScore !== null && "/100"}
                 </span>
               </div>
 
@@ -168,7 +170,11 @@ export default function VerificationModal({
                     Verification
                   </span>
                   <span className="text-[#34D399] font-semibold text-sm">
-                    {badgeIssued ? "Badge Issued" : "Verified"}
+                    {badgeIssued
+                      ? "Badge Issued"
+                      : finalScore === null
+                      ? "Human review required"
+                      : "Verified"}
                   </span>
                 </div>
               </div>

@@ -98,7 +98,7 @@ test("Empty code with zero tests → evaluation error, never 94/100", () => {
 
 // ─── calculateScore — correct formula ────────────────────────────────────────
 
-test("All tests passed with valid AI evaluation yields correct composite score", () => {
+test("All tests passed with valid AI evaluation yields deterministic test score", () => {
   const result = calculateScore({
     executionType: "both",
     testResults: [
@@ -110,11 +110,10 @@ test("All tests passed with valid AI evaluation yields correct composite score",
   });
 
   // correctness = 100
-  // finalScore = round(0.70*100 + 0.15*90 + 0.10*80 + 0.05*70)
-  //            = round(70 + 13.5 + 8 + 3.5) = round(95) = 95
-  assert.equal(result.finalScore, 95);
+  // AI review scores are advisory; only test correctness determines finalScore.
+  assert.equal(result.finalScore, 100);
   assert.equal(result.badgeEligible, true);
-  assert.equal(result.scoreVersion, "v1");
+  assert.equal(result.scoreVersion, "v2");
 });
 
 test("Half tests failed yields reduced correctness", () => {
@@ -128,13 +127,11 @@ test("Half tests failed yields reduced correctness", () => {
   });
 
   // correctness = 100 * 1/2 = 50
-  // finalScore = round(0.70*50 + 0.15*80 + 0.10*80 + 0.05*80)
-  //            = round(35 + 12 + 8 + 4) = round(59) = 59
-  assert.equal(result.finalScore, 59);
+  assert.equal(result.finalScore, 50);
   assert.equal(result.badgeEligible, false);
 });
 
-test("All tests passed but score below threshold → badge not eligible", () => {
+test("AI review scores cannot lower a passing test score or affect badge eligibility", () => {
   const result = calculateScore({
     executionType: "both",
     testResults: [
@@ -145,10 +142,8 @@ test("All tests passed but score below threshold → badge not eligible", () => 
   });
 
   // correctness = 100
-  // finalScore = round(0.70*100 + 0.15*10 + 0.10*10 + 0.05*10)
-  //            = round(70 + 1.5 + 1 + 0.5) = round(73) = 73
-  assert.equal(result.finalScore, 73);
-  assert.equal(result.badgeEligible, false);
+  assert.equal(result.finalScore, 100);
+  assert.equal(result.badgeEligible, true);
 });
 
 test("High score but required test failed → badge not eligible", () => {
@@ -163,9 +158,7 @@ test("High score but required test failed → badge not eligible", () => {
   });
 
   // correctness = 100*2/3 = 66.67
-  // finalScore = round(0.70*66.67 + 0.15*100 + 0.10*100 + 0.05*100)
-  //            = round(46.67 + 15 + 10 + 5) = round(76.67) = 77
-  assert.equal(result.finalScore, 77);
+  assert.equal(result.finalScore, 67);
   assert.equal(result.badgeEligible, false); // required test failed!
 });
 
@@ -233,14 +226,13 @@ test("Pure testcases: all passed with correct weight → badge eligible", () => 
 
 // ─── calculateScore — review_only ────────────────────────────────────────────
 
-test("review_only: uses AI evaluation only, badge never auto-issued", () => {
+test("review_only: no model-generated score or badge is issued", () => {
   const result = calculateScore({
     executionType: "review_only",
     aiEvaluation: { codeQuality: 90, efficiency: 85, edgeCases: 80 },
   });
 
-  // finalScore = round(0.40*90 + 0.35*85 + 0.25*80) = round(36 + 29.75 + 20) = round(85.75) = 86
-  assert.equal(result.finalScore, 86);
+  assert.equal(result.finalScore, null);
   assert.equal(result.badgeEligible, false);
 });
 

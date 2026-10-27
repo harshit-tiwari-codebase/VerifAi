@@ -24,16 +24,21 @@ export default function ResultScreenModal({
   const [animatedScore, setAnimatedScore] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  const scoreAvailable =
+    typeof aiReviewData?.finalScore === "number" ||
+    typeof aiReviewData?.score === "number";
   const finalScore =
     typeof aiReviewData?.finalScore === "number"
       ? aiReviewData.finalScore
       : typeof aiReviewData?.score === "number"
       ? aiReviewData.score
-      : 0;
+      : null;
 
   const passingThreshold = aiReviewData?.threshold ?? aiReviewData?.passingThreshold ?? 70;
-  const badgeIssued = !!(aiReviewData?.badgeIssued || (aiReviewData?.badgeEligible && finalScore >= passingThreshold));
-  const isPassed = finalScore >= passingThreshold;
+  const badgeIssued = !!(
+    aiReviewData?.badgeIssued ||
+    (scoreAvailable && aiReviewData?.badgeEligible && finalScore >= passingThreshold)
+  );
 
   const totalTests = aiReviewData?.executionResult?.totalCount ?? 0;
   const passedTests = aiReviewData?.executionResult?.passedCount ?? 0;
@@ -90,7 +95,7 @@ export default function ResultScreenModal({
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const current = Math.floor(ease * finalScore);
+      const current = Math.floor(ease * (finalScore ?? 0));
       setAnimatedScore(current);
 
       if (progress < 1) {
@@ -188,7 +193,9 @@ export default function ResultScreenModal({
                     strokeDashoffset={strokeDashoffset}
                     strokeLinecap="round"
                     className={`transition-all duration-300 ease-out ${
-                      animatedScore >= passingThreshold
+                      !scoreAvailable
+                        ? "text-[#71717A]"
+                        : animatedScore >= passingThreshold
                         ? "text-[#34D399]"
                         : animatedScore >= 50
                         ? "text-[#FBBF24]"
@@ -199,10 +206,10 @@ export default function ResultScreenModal({
 
                 <div className="absolute flex flex-col items-center justify-center text-center">
                   <span className="text-3xl font-bold font-mono text-[#FAFAFA] font-display">
-                    {animatedScore}
+                    {scoreAvailable ? animatedScore : "—"}
                   </span>
                   <span className="text-[10px] font-mono text-[#71717A] tracking-wider">
-                    / 100 POINTS
+                    {scoreAvailable ? "/ 100 POINTS" : "MANUAL REVIEW"}
                   </span>
                 </div>
               </div>
@@ -217,31 +224,35 @@ export default function ResultScreenModal({
                 >
                   {badgeIssued
                     ? "PASSED & BADGE ISSUED"
-                    : `SCORE ${finalScore} — THRESHOLD ${passingThreshold}`}
+                    : scoreAvailable
+                    ? `SCORE ${finalScore} — THRESHOLD ${passingThreshold}`
+                    : "AI REVIEW ONLY — NO AUTOMATED SCORE"}
                 </span>
               </div>
             </div>
 
             {/* Sub-score Progress Bars */}
             <div className="md:col-span-8 space-y-3 font-mono text-xs">
-              <div className="space-y-1">
-                <div className="flex justify-between text-[#A1A1AA]">
-                  <span>Correctness (70%)</span>
-                  <span className="text-[#34D399] font-semibold">
-                    {Math.round(subscores.correctness ?? 0)}%
-                  </span>
+              {totalTests > 0 && (
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[#A1A1AA]">
+                    <span>Correctness (automated tests)</span>
+                    <span className="text-[#34D399] font-semibold">
+                      {Math.round(subscores.correctness ?? 0)}%
+                    </span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-[#20202A] overflow-hidden border border-[#27272A]">
+                    <div
+                      className="h-full bg-[#34D399] rounded-full transition-all duration-1000"
+                      style={{ width: `${Math.min(100, Math.round(subscores.correctness ?? 0))}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#20202A] overflow-hidden border border-[#27272A]">
-                  <div
-                    className="h-full bg-[#34D399] rounded-full transition-all duration-1000"
-                    style={{ width: `${Math.min(100, Math.round(subscores.correctness ?? 0))}%` }}
-                  />
-                </div>
-              </div>
+              )}
 
               <div className="space-y-1">
                 <div className="flex justify-between text-[#A1A1AA]">
-                  <span>Code Quality & Idioms (15%)</span>
+                  <span>AI review: Code quality (advisory)</span>
                   <span className="text-[#A78BFA] font-semibold">
                     {Math.round(subscores.codeQuality ?? 0)}%
                   </span>
@@ -256,7 +267,7 @@ export default function ResultScreenModal({
 
               <div className="space-y-1">
                 <div className="flex justify-between text-[#A1A1AA]">
-                  <span>Algorithmic Efficiency (10%)</span>
+                  <span>AI review: Efficiency (advisory)</span>
                   <span className="text-[#60A5FA] font-semibold">
                     {Math.round(subscores.efficiency ?? 0)}%
                   </span>
@@ -271,7 +282,7 @@ export default function ResultScreenModal({
 
               <div className="space-y-1">
                 <div className="flex justify-between text-[#A1A1AA]">
-                  <span>Edge Cases & Boundary (5%)</span>
+                  <span>AI review: Edge cases (advisory)</span>
                   <span className="text-[#FBBF24] font-semibold">
                     {Math.round(subscores.edgeCases ?? 0)}%
                   </span>
@@ -319,6 +330,13 @@ export default function ResultScreenModal({
                         <Check className="h-3.5 w-3.5 text-[#34D399]" />
                         <span className="text-[#34D399]">Copied</span>
                       </>
+                    ) : !scoreAvailable ? (
+                      <div className="rounded-[12px] border border-[#FBBF24]/30 bg-[#FBBF24]/10 p-4 font-mono text-xs flex items-center gap-2.5 text-[#FBBF24]">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>
+                          AI feedback is advisory only. This challenge requires human review; no score or badge was issued.
+                        </span>
+                      </div>
                     ) : (
                       <>
                         <Share2 className="h-3.5 w-3.5 text-[#A78BFA]" />

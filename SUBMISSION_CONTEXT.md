@@ -122,21 +122,19 @@ The dotted queue path is present in code but is not used by the current submit c
 
 ### 3. Versioned score policy
 
-Use a deterministic server-owned policy, stored with each result (for example, `scoreVersion`). Suggested v1 for `testcases` and `both` challenges:
+Use a deterministic server-owned policy, stored with each result (for example, `scoreVersion`). Current policy v2 for `testcases` and `both` challenges:
 
 ```text
 correctness = 100 * weighted_points_passed / weighted_points_total
-finalScore = round(0.70 * correctness
-                 + 0.15 * codeQuality
-                 + 0.10 * efficiency
-                 + 0.05 * edgeCases)
+finalScore = round(correctness)
 ```
 
 - A missing/empty automated suite is an evaluation error, never 100% correctness.
 - Test results determine correctness. AI may provide bounded, schema-validated qualitative subscores and evidence, but cannot change test outcomes or correctness.
 - Require all required tests to pass as a separate badge eligibility gate, in addition to the configured score threshold. A numeric score alone does not issue a badge.
 - Centralize weights and threshold; do not duplicate them in controller, worker, and client. Validate every AI number is finite and between 0 and 100; validate required arrays/fields and reject malformed output. AI failure should leave qualitative review pending/failed and must not manufacture a successful result.
-- For `review_only`, use an explicit rubric-only result shape with no fabricated automated correctness. Define whether it can issue a credential and whether it requires human review. Do not reuse the automated-test formula with implicit “all passed”.
+- AI-generated subscores are advisory only and must not affect `finalScore` or credential eligibility.
+- For `review_only`, provide AI feedback with no automated score or credential; human review is required. Do not reuse the automated-test formula with implicit “all passed”.
 - Store the exact execution summary, score version, qualitative evaluation, evaluator/provider version, and credential decision on the submission so a score can be explained and audited later.
 
 If product owners choose different weights or badge rules, document and test those rules before implementation. The crucial invariant is that score and badge decisions are deterministic, explainable, and cannot contradict test evidence.

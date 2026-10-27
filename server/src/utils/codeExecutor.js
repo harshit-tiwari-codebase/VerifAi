@@ -1,4 +1,3 @@
-const { execFile } = require("child_process");
 const { submitBatch, pollBatch, LANGUAGE_IDS } = require("./judge0Client");
 const { buildHarness } = require("./executionHarness");
 
@@ -6,72 +5,6 @@ let mockExecutor = null;
 
 function setMockExecutor(fn) {
   mockExecutor = fn;
-}
-
-function executeInChildProcess(sourceCode, stdin = "", timeoutMs = 4000) {
-  return new Promise((resolve) => {
-    const child = execFile(
-      process.execPath,
-      ["-e", sourceCode],
-      {
-        timeout: timeoutMs,
-        maxBuffer: 1024 * 1024,
-      },
-      (error, stdout, stderr) => {
-        const outStr = (stdout || "").trim();
-        const errStr = (stderr || "").trim();
-
-        if (error) {
-          if (error.killed || error.signal === "SIGTERM" || error.code === "ETIMEDOUT") {
-            return resolve({
-              status_id: 5,
-              status: { description: "Time Limit Exceeded" },
-              stderr: "Execution timed out (Time Limit Exceeded)",
-            });
-          }
-          if (errStr.includes("SyntaxError")) {
-            return resolve({
-              status_id: 6,
-              status: { description: "Compilation Error" },
-              compile_output: errStr,
-              stderr: errStr,
-            });
-          }
-          return resolve({
-            status_id: 11,
-            status: { description: "Runtime Error" },
-            stderr: errStr || error.message,
-          });
-        }
-
-        let statusId = 3;
-        if (outStr.startsWith("{") && outStr.endsWith("}")) {
-          try {
-            const parsed = JSON.parse(outStr);
-            if (parsed.passed === false) {
-              statusId = 4;
-            }
-          } catch (_) {}
-        }
-
-        return resolve({
-          status_id: statusId,
-          status: { description: statusId === 3 ? "Accepted" : "Wrong Answer" },
-          stdout: outStr,
-          stderr: errStr,
-          time: "15ms",
-          memory: 12000,
-        });
-      }
-    );
-
-    if (stdin && child.stdin) {
-      try {
-        child.stdin.write(stdin);
-        child.stdin.end();
-      } catch (_) {}
-    }
-  });
 }
 
 /**
@@ -144,27 +77,23 @@ async function executeSubmissionAgainstChallenge({
       const tokens = batchResponse.map((r) => r.token);
       batchResults = await pollBatch(tokens);
     } catch (err) {
-      console.warn(`[codeExecutor] Judge0 provider unavailable (${err.message}). Falling back to local execution engine...`);
-      // Fallback cleanly to isolated process execution so submissions and test runs never break when Judge0 is offline
-      try {
-        batchResults = await Promise.all(
-          submissions.map((s) => executeInChildProcess(s.source_code, s.stdin, 4000))
-        );
-      } catch (fallbackErr) {
-        return {
-          status: "provider_unavailable",
-          errorCode: "PROVIDER_UNAVAILABLE",
-          errorMessage: `Execution provider unreachable: ${err.message}`,
-          testResults: [],
-          compileOutput: "",
-        };
-      }
+      console.error(`[codeExecutor] Judge0 provider unavailable: ${err.message}`);
+      return {
+        status: "provider_unavailable",
+        errorCode: "PROVIDER_UNAVAILABLE",
+        errorMessage: "Code execution provider is currently unavailable. Please try again later.",
+        testResults: [],
+        compileOutput: "",
+      };
     }
   } else {
-    // Run via isolated OS Node child processes with process boundary, timeout, and maxBuffer limits
-    batchResults = await Promise.all(
-      submissions.map((s) => executeInChildProcess(s.source_code, s.stdin, 4000))
-    );
+    return {
+      status: "provider_unavailable",
+      errorCode: "PROVIDER_UNAVAILABLE",
+      errorMessage: "Code execution provider is not configured.",
+      testResults: [],
+      compileOutput: "",
+    };
   }
 
   // Analyze batch results

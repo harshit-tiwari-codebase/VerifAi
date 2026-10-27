@@ -4,8 +4,6 @@ services:
     image: redis:7-alpine
     container_name: verifai-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -16,8 +14,6 @@ services:
     image: mongo:7.0
     container_name: verifai-mongo
     restart: unless-stopped
-    ports:
-      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
@@ -36,6 +32,8 @@ services:
       - ./server/.env
     environment:
       - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/verifai
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
       - mongo
