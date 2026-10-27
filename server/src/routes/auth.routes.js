@@ -32,6 +32,10 @@ router.get("/me", verifyAccessToken, getMe);
 // Forget Password
 
 // Password reset
+router.get("/reset-password/:token", (req, res) => {
+  const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
+  return res.redirect(`${clientUrl}/reset-password/${encodeURIComponent(req.params.token)}`);
+});
 router.post("/forgot-password", authLimiter, forgotPassword);
 router.post("/reset-password/:token", authLimiter, resetPassword);
 

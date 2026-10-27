@@ -8,6 +8,8 @@ const testCaseResultSchema = new mongoose.Schema(
     statusDescription: { type: String },
     time: { type: String },
     memory: { type: Number },
+    weight: { type: Number, default: 1 },
+    isRequired: { type: Boolean, default: true },
     actualOutput: { type: String },
     expectedOutput: { type: String },
     stdout: { type: String },
@@ -64,6 +66,13 @@ const submissionSchema = new mongoose.Schema(
     },
 
     finalScore: Number,
+    correctness: Number,
+    subscores: {
+      correctness: Number,
+      codeQuality: Number,
+      efficiency: Number,
+      edgeCases: Number,
+    },
     badgeEligible: Boolean,
     badgeIssued: { type: Boolean, default: false },
 

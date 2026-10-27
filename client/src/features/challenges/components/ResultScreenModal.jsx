@@ -35,8 +35,13 @@ export default function ResultScreenModal({
   const badgeIssued = !!(aiReviewData?.badgeIssued || (aiReviewData?.badgeEligible && finalScore >= passingThreshold));
   const isPassed = finalScore >= passingThreshold;
 
+  const totalTests = aiReviewData?.executionResult?.totalCount ?? 0;
+  const passedTests = aiReviewData?.executionResult?.passedCount ?? 0;
+  const correctness =
+    aiReviewData?.correctness ??
+    (totalTests > 0 ? (100 * passedTests) / totalTests : 0);
   const subscores = aiReviewData?.subscores || {
-    correctness: aiReviewData?.correctness ?? 0,
+    correctness,
     codeQuality: aiReviewData?.aiEvaluation?.codeQuality ?? 0,
     efficiency: aiReviewData?.aiEvaluation?.efficiency ?? 0,
     edgeCases: aiReviewData?.aiEvaluation?.edgeCases ?? 0,

@@ -120,6 +120,8 @@ async function processExecutionJob({ submissionId }) {
       });
 
       submission.finalScore = scoreResult.finalScore;
+      submission.correctness = scoreResult.correctness;
+      submission.subscores = scoreResult.subscores;
       submission.badgeEligible = scoreResult.badgeEligible;
       submission.status = "completed";
 

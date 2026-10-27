@@ -99,10 +99,12 @@ test("AI Evaluator: missing fields rejected with AI_EVALUATION_FAILED", async ()
   setMockAiEvaluator(null);
 });
 
-test("AI Evaluator: missing GEMINI_API_KEY throws PROVIDER_UNAVAILABLE in production", async () => {
-  const origKey = process.env.GEMINI_API_KEY;
+test("AI Evaluator: missing both GEMINI_API_KEY and GROQ_API_KEY throws PROVIDER_UNAVAILABLE in production", async () => {
+  const origGemini = process.env.GEMINI_API_KEY;
+  const origGroq = process.env.GROQ_API_KEY;
   const origEnv = process.env.NODE_ENV;
   delete process.env.GEMINI_API_KEY;
+  delete process.env.GROQ_API_KEY;
   process.env.NODE_ENV = "production";
 
   await assert.rejects(
@@ -118,6 +120,29 @@ test("AI Evaluator: missing GEMINI_API_KEY throws PROVIDER_UNAVAILABLE in produc
     }
   );
 
-  if (origKey) process.env.GEMINI_API_KEY = origKey;
+  if (origGemini) process.env.GEMINI_API_KEY = origGemini;
+  if (origGroq) process.env.GROQ_API_KEY = origGroq;
+  process.env.NODE_ENV = origEnv;
+});
+
+test("AI Evaluator: fallback to static analysis when both keys missing in development", async () => {
+  const origGemini = process.env.GEMINI_API_KEY;
+  const origGroq = process.env.GROQ_API_KEY;
+  const origEnv = process.env.NODE_ENV;
+  delete process.env.GEMINI_API_KEY;
+  delete process.env.GROQ_API_KEY;
+  process.env.NODE_ENV = "development";
+
+  const result = await evaluateSubmissionWithAi({
+    code: "function add(a, b) { return a + b; }",
+    challenge: { title: "Add" },
+  });
+
+  assert.equal(result.validated, true);
+  assert.equal(result.evaluatorVersion, "static-code-analyzer-v1");
+  assert.ok(typeof result.codeQuality === "number");
+
+  if (origGemini) process.env.GEMINI_API_KEY = origGemini;
+  if (origGroq) process.env.GROQ_API_KEY = origGroq;
   process.env.NODE_ENV = origEnv;
 });

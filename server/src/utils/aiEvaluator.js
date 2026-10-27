@@ -1,3 +1,7 @@
+const dns = require("dns");
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder("ipv4first");
+}
 const axios = require("axios");
 const { validateAiEvaluation } = require("./scoring");
 
@@ -5,6 +9,14 @@ const GEMINI_MODELS = [
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+];
+
+const GROQ_MODELS = [
+  "openai/gpt-oss-20b",
+  "openai/gpt-oss-120b",
+  "qwen/qwen3.8-27b",
+  "llama-3.3-70b-versatile",
+  "llama-3.1-8b-instant",
 ];
 
 function stripFences(str) {
@@ -113,7 +125,134 @@ function setMockAiEvaluator(fn) {
 }
 
 /**
- * Evaluates candidate code using Gemini API.
+ * Attempts evaluation with Gemini API models.
+ */
+async function evaluateWithGemini(prompt, apiKey) {
+  let lastError = null;
+
+  for (const modelUrl of GEMINI_MODELS) {
+    try {
+      const response = await axios.post(
+        modelUrl,
+        { contents: [{ parts: [{ text: prompt }] }] },
+        {
+          headers: {
+            "x-goog-api-key": apiKey,
+            "Content-Type": "application/json",
+          },
+          timeout: 15000,
+        }
+      );
+
+      const rawText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) {
+        throw new Error("Empty response from AI evaluation model");
+      }
+
+      const cleaned = stripFences(rawText);
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (parseErr) {
+        throw new Error(`AI returned malformed JSON: ${parseErr.message}`);
+      }
+
+      const validation = validateAiEvaluation(parsed);
+      if (!validation.valid) {
+        throw new Error(`AI evaluation schema invalid: ${validation.reason}`);
+      }
+
+      const evaluatorVersion = modelUrl.includes("gemini-3.8")
+        ? "gemini-3.8-flash"
+        : modelUrl.includes("gemini-3.5")
+        ? "gemini-3.5-flash-lite"
+        : "gemini-flash-latest";
+
+      return {
+        codeQuality: Number(parsed.codeQuality),
+        efficiency: Number(parsed.efficiency),
+        edgeCases: Number(parsed.edgeCases),
+        strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
+        weaknesses: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : [],
+        suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
+        evaluatorVersion,
+        validated: true,
+      };
+    } catch (err) {
+      lastError = err;
+      console.warn(`Gemini evaluation via ${modelUrl} failed: ${err.message}`);
+    }
+  }
+
+  throw lastError || new Error("All Gemini models failed");
+}
+
+/**
+ * Attempts evaluation with Groq API models.
+ */
+async function evaluateWithGroq(prompt, apiKey) {
+  let lastError = null;
+
+  for (const model of GROQ_MODELS) {
+    try {
+      const response = await axios.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          model,
+          messages: [{ role: "user", content: prompt }],
+          response_format: { type: "json_object" },
+          temperature: 0.1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 15000,
+        }
+      );
+
+      const rawText = response.data?.choices?.[0]?.message?.content;
+      if (!rawText) {
+        throw new Error("Empty response from Groq evaluation model");
+      }
+
+      const cleaned = stripFences(rawText);
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (parseErr) {
+        throw new Error(`Groq returned malformed JSON: ${parseErr.message}`);
+      }
+
+      const validation = validateAiEvaluation(parsed);
+      if (!validation.valid) {
+        throw new Error(`Groq evaluation schema invalid: ${validation.reason}`);
+      }
+
+      const evaluatorVersion = `groq-${model.replace(/^.*\//, "")}`;
+
+      return {
+        codeQuality: Number(parsed.codeQuality),
+        efficiency: Number(parsed.efficiency),
+        edgeCases: Number(parsed.edgeCases),
+        strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
+        weaknesses: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : [],
+        suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
+        evaluatorVersion,
+        validated: true,
+      };
+    } catch (err) {
+      lastError = err;
+      console.warn(`Groq evaluation via ${model} failed: ${err.message}`);
+    }
+  }
+
+  throw lastError || new Error("All Groq models failed");
+}
+
+/**
+ * Evaluates candidate code using Gemini API, with automatic fallback to Groq API.
  * Validates the schema strictly — every subscore must be finite and in [0, 100].
  * Does NOT impose lower bounds and does NOT substitute fabricated fallbacks.
  */
@@ -138,10 +277,12 @@ async function evaluateSubmissionWithAi({
     };
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.trim().length === 0) {
+  const geminiApiKey = process.env.GEMINI_API_KEY?.trim();
+  const groqApiKey = process.env.GROQ_API_KEY?.trim();
+
+  if (!geminiApiKey && !groqApiKey) {
     if (process.env.NODE_ENV === "production") {
-      const err = new Error("AI evaluation provider unavailable (missing GEMINI_API_KEY)");
+      const err = new Error("AI evaluation provider unavailable (missing GEMINI_API_KEY and GROQ_API_KEY)");
       err.code = "PROVIDER_UNAVAILABLE";
       throw err;
     }
@@ -149,72 +290,37 @@ async function evaluateSubmissionWithAi({
   }
 
   const prompt = buildEvaluationPrompt({ code, language, challenge, testSummary });
+  let result = null;
   let lastError = null;
 
-  for (const modelUrl of GEMINI_MODELS) {
+  // 1. Try Gemini first if key is present
+  if (geminiApiKey) {
     try {
-      const response = await axios.post(
-        modelUrl,
-        { contents: [{ parts: [{ text: prompt }] }] },
-        {
-          headers: {
-            "x-goog-api-key": apiKey,
-            "Content-Type": "application/json",
-          },
-          timeout: 20000,
-        }
-      );
-
-      const rawText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) {
-        throw new Error("Empty response from AI evaluation model");
-      }
-
-      const cleaned = stripFences(rawText);
-      let parsed;
-      try {
-        parsed = JSON.parse(cleaned);
-      } catch (parseErr) {
-        const err = new Error(`AI returned malformed JSON: ${parseErr.message}`);
-        err.code = "AI_EVALUATION_FAILED";
-        throw err;
-      }
-
-      const validation = validateAiEvaluation(parsed);
-      if (!validation.valid) {
-        const err = new Error(`AI evaluation schema invalid: ${validation.reason}`);
-        err.code = "AI_EVALUATION_FAILED";
-        throw err;
-      }
-
-      const evaluatorVersion = modelUrl.includes("gemini-3.8")
-        ? "gemini-3.8-flash"
-        : modelUrl.includes("gemini-3.5")
-        ? "gemini-3.5-flash-lite"
-        : "gemini-flash-latest";
-
-      return {
-        codeQuality: Number(parsed.codeQuality),
-        efficiency: Number(parsed.efficiency),
-        edgeCases: Number(parsed.edgeCases),
-        strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
-        weaknesses: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : [],
-        suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
-        evaluatorVersion,
-        validated: true,
-      };
-    } catch (err) {
-      lastError = err;
-      if (err.code === "AI_EVALUATION_FAILED") {
-        throw err;
-      }
-      console.warn(`Gemini evaluation via ${modelUrl} failed: ${err.message}`);
+      result = await evaluateWithGemini(prompt, geminiApiKey);
+    } catch (geminiErr) {
+      lastError = geminiErr;
+      console.warn(`Gemini evaluation failed: ${geminiErr.message}. Checking Groq fallback...`);
     }
+  }
+
+  // 2. Fallback to Groq if Gemini failed or was unconfigured
+  if (!result && groqApiKey) {
+    try {
+      console.info("Engaging Groq AI evaluation fallback...");
+      result = await evaluateWithGroq(prompt, groqApiKey);
+    } catch (groqErr) {
+      lastError = groqErr;
+      console.warn(`Groq fallback evaluation failed: ${groqErr.message}`);
+    }
+  }
+
+  if (result) {
+    return result;
   }
 
   if (process.env.NODE_ENV !== "production") {
     console.warn(
-      `Falling back to static code analyzer due to Gemini failure in development: ${lastError?.message}`
+      `Falling back to static code analyzer due to AI provider failure in development: ${lastError?.message}`
     );
     return evaluateStaticAnalysis({ code, language, challenge, testSummary });
   }
@@ -228,6 +334,10 @@ async function evaluateSubmissionWithAi({
 
 module.exports = {
   evaluateSubmissionWithAi,
+  evaluateWithGemini,
+  evaluateWithGroq,
   setMockAiEvaluator,
   stripFences,
+  GEMINI_MODELS,
+  GROQ_MODELS,
 };

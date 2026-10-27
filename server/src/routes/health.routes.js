@@ -108,6 +108,39 @@ async function checkAllServices() {
     };
   }
 
+  // 3b. Groq AI API Check
+  try {
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) {
+      services.groqAI = {
+        status: "missing_key",
+        message: "GROQ_API_KEY is not set in environment variables",
+      };
+    } else {
+      const res = await axios.get("https://api.groq.com/openai/v1/models", {
+        headers: { Authorization: `Bearer ${groqKey}` },
+        timeout: 4000,
+      });
+      if (res.status === 200) {
+        services.groqAI = {
+          status: "connected",
+          message: "Groq AI fallback provider connected and ready",
+          modelsAvailable: res.data?.data?.length || 0,
+        };
+      } else {
+        services.groqAI = {
+          status: "degraded",
+          message: `Groq API responded with status ${res.status}`,
+        };
+      }
+    }
+  } catch (err) {
+    services.groqAI = {
+      status: "error",
+      message: `Groq AI ping failed: ${err.response?.data?.error?.message || err.message}`,
+    };
+  }
+
   // 4. Judge0 Execution Provider Check
   try {
     const judgeUrl = process.env.JUDGE0_API_URL || "http://localhost:2358";
