@@ -1,0 +1,373 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Background Colors */
+  --background: #09090B;
+  --background-secondary: #0D0D12;
+  --surface: #14141B;
+  --surface-card: #18181F;
+  --surface-elevated: #20202A;
+  --surface-hover: #27272A;
+
+  /* Brand Colors */
+  --primary: #8B5CF6;
+  --primary-hover: #7C3AED;
+  --accent: #A78BFA;
+  --accent-light: #C4B5FD;
+  --accent-subtle: #211635;
+  --accent-selection: #38245C;
+
+  /* Typography Colors */
+  --text-primary: #FAFAFA;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  --text-disabled: #52525B;
+
+  /* Borders */
+  --border: #27272A;
+  --border-hover: #3F3F4A;
+  --border-focus: #8B5CF6;
+  --border-selected: #A78BFA;
+
+  /* Semantic Colors */
+  --success: #34D399;
+  --error: #F87171;
+  --warning: #FBBF24;
+  --info: #60A5FA;
+
+  /* Difficulty Colors */
+  --diff-easy: #4ADE80;
+  --diff-medium: #FBBF24;
+  --diff-hard: #F87171;
+
+  /* Radii */
+  --radius-card: 14px;
+  --radius-button: 10px;
+
+  /* Visual effects */
+  --violet-glow: 0 0 24px rgba(139, 92, 246, 0.16);
+  --brand-gradient: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #A78BFA 100%);
+}
+
+@layer base {
+  * {
+    border-color: #27272A;
+  }
+
+  html {
+    background-color: #09090B;
+    color-scheme: dark;
+    scrollbar-color: #27272A #09090B;
+    scrollbar-width: thin;
+  }
+
+  body {
+    background-color: #09090B;
+    color: #FAFAFA;
+    min-height: 100vh;
+    font-family: "Geist", "Poppins", system-ui, -apple-system, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Montserrat", "Geist", system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    color: #FAFAFA;
+  }
+
+  ::selection {
+    background-color: #38245C;
+    color: #FAFAFA;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8B5CF6;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Sleek root document scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #09090B;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #27272A;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3F3F4A;
+  }
+
+  /* Remove scrollbars from compact code views and horizontal scrollers */
+  .no-scrollbar,
+  pre,
+  code,
+  .overflow-x-auto,
+  .overflow-y-auto {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .no-scrollbar::-webkit-scrollbar,
+  pre::-webkit-scrollbar,
+  code::-webkit-scrollbar,
+  .overflow-x-auto::-webkit-scrollbar,
+  .overflow-y-auto::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Clean custom scrollbar for IDE panes and problem spec */
+  .custom-scrollbar {
+    scrollbar-width: thin !important;
+    scrollbar-color: #27272A transparent !important;
+    -ms-overflow-style: auto !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #27272A !important;
+    border-radius: 9999px !important;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #3F3F4A !important;
+  }
+}
+
+@layer components {
+  .container-xl {
+    @apply w-full px-4 sm:px-8 lg:px-12 xl:px-16;
+  }
+
+  .eyebrow {
+    font-family: "Geist Mono", "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #A78BFA;
+  }
+
+  .card {
+    background-color: #18181F;
+    border: 1px solid #27272A;
+    border-radius: 14px;
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+
+  .card:hover {
+    background-color: #20202A;
+    border-color: #3F3F4A;
+  }
+
+  /* Clean Black + Violet button system */
+  .btn-specular-primary {
+    background-color: #8B5CF6;
+    color: #FFFFFF;
+    border-radius: 10px;
+    font-weight: 500;
+    box-shadow: 0 0 24px rgba(139, 92, 246, 0.16);
+    transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-specular-primary:hover {
+    background-color: #7C3AED;
+    transform: translateY(-1px);
+    box-shadow: 0 0 28px rgba(139, 92, 246, 0.28);
+  }
+
+  .btn-specular-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background-color: #20202A;
+    color: #E4E4E7;
+    border: 1px solid #30303A;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-secondary:hover {
+    background-color: #27272A;
+    border-color: #3F3F4A;
+    color: #FAFAFA;
+  }
+
+  .btn-frosted-glass {
+    background-color: #20202A;
+    border: 1px solid #27272A;
+    color: #A1A1AA;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-frosted-glass:hover {
+    background-color: #27272A;
+    border-color: #3F3F4A;
+    color: #FAFAFA;
+  }
+
+  .btn-frosted-glass:active {
+    transform: translateY(0);
+  }
+
+  /* Subtle sheen effect */
+  .btn-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-sheen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 30%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: left 0.75s ease-in-out;
+    pointer-events: none;
+  }
+
+  .btn-sheen:hover::after {
+    left: 180%;
+  }
+
+  /* Subtle violet hero background radial */
+  .circular-glow-purple {
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, rgba(124, 58, 237, 0.05) 45%, transparent 70%);
+    filter: blur(80px);
+  }
+}
+
+/* Cinematic text animation with violet tones */
+@keyframes cinematicSweepText {
+  0% {
+    background-position: -40% 50%;
+    opacity: 0.88;
+  }
+  58.6% {
+    background-position: 90% 50%;
+    opacity: 0.98;
+  }
+  69.0% {
+    background-position: 110% 50%;
+    opacity: 1;
+  }
+  82.0% {
+    background-position: 50% 50%;
+    opacity: 0.28;
+  }
+  92.0% {
+    background-position: 15% 50%;
+    opacity: 0.18;
+  }
+  100% {
+    background-position: -40% 50%;
+    opacity: 0.88;
+  }
+}
+
+.cinematic-text-base {
+  color: #09090B;
+  -webkit-text-fill-color: #09090B;
+  -webkit-text-stroke: 1.2px #27272A;
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.cinematic-text-sweep {
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.25) 15%,
+    #7C3AED 28%,
+    #8B5CF6 38%,
+    #A78BFA 46%,
+    #C4B5FD 50%,
+    #A78BFA 54%,
+    #8B5CF6 62%,
+    #7C3AED 72%,
+    rgba(124, 58, 237, 0.25) 85%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px rgba(167, 139, 250, 0.4);
+  animation: cinematicSweepText 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
+}
+
+.cinematic-text-glow {
+  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.25) 15%,
+    #7C3AED 28%,
+    #8B5CF6 38%,
+    #A78BFA 46%,
+    #C4B5FD 50%,
+    #A78BFA 54%,
+    #8B5CF6 62%,
+    #7C3AED 72%,
+    rgba(124, 58, 237, 0.25) 85%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(22px);
+  animation: cinematicSweepText 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

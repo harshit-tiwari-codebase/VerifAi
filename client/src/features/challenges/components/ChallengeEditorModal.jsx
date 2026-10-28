@@ -1,0 +1,589 @@
+import { useEffect, useState } from "react";
+import {
+  X,
+  Plus,
+  Trash2,
+  AlertCircle,
+  Cpu,
+  BrainCircuit,
+  Sparkles,
+} from "lucide-react";
+import { createChallenge, updateChallenge } from "../api/challengeApi.js";
+import Button from "../../../components/ui/Button.jsx";
+import { ModernCodeIcon } from "../../../components/ui/Icons.jsx";
+
+const CATEGORIES = [
+  { value: "dsa", label: "DSA (Algorithms & Data Structures)" },
+  { value: "bug-fix", label: "Bug Fix & Refactoring" },
+  { value: "api-design", label: "API Design & Concurrency" },
+  { value: "schema-modeling", label: "Schema Modeling & DBs" },
+  { value: "system-design", label: "System Design & Architecture" },
+  { value: "debugging", label: "Performance Debugging" },
+];
+
+const DIFFICULTIES = [
+  { value: "easy", label: "Easy" },
+  { value: "medium", label: "Medium" },
+  { value: "hard", label: "Hard" },
+];
+
+const EXECUTION_MODES = [
+  {
+    value: "both",
+    label: "Automated Tests + AI Review (Both)",
+    badge: "Recommended",
+    badgeColor: "border-[#8B5CF6]/40 bg-[#211635] text-[#C4B5FD]",
+    description: "Evaluates automated test cases in the sandbox AND performs in-depth AI architectural review.",
+    icon: Sparkles,
+  },
+  {
+    value: "testcases",
+    label: "Automated Tests Only",
+    badge: "Judge0 / Sandbox",
+    badgeColor: "border-[#34D399]/40 bg-[#34D399]/10 text-[#34D399]",
+    description: "Pure test-case verification comparing stdout/return values against expected outputs.",
+    icon: Cpu,
+  },
+  {
+    value: "review_only",
+    label: "AI Architectural Review Only",
+    badge: "AI Evaluator",
+    badgeColor: "border-[#60A5FA]/40 bg-[#60A5FA]/10 text-[#60A5FA]",
+    description: "Evaluates code against custom AI rubrics, Big-O complexity, and design patterns.",
+    icon: BrainCircuit,
+  },
+];
+
+export default function ChallengeEditorModal({
+  isOpen,
+  onClose,
+  challengeToEdit = null,
+  onSaved,
+}) {
+  const isEditing = Boolean(challengeToEdit?._id);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [difficulty, setDifficulty] = useState("medium");
+  const [category, setCategory] = useState("dsa");
+  const [executionType, setExecutionType] = useState("both");
+  const [tagsInput, setTagsInput] = useState("");
+  const [starterCode, setStarterCode] = useState("");
+  const [evaluationCriteria, setEvaluationCriteria] = useState("");
+  const [referenceSolution, setReferenceSolution] = useState("");
+  const [isPublished, setIsPublished] = useState(true);
+
+  const [testCases, setTestCases] = useState([
+    { input: "", expectedOutput: "", isHidden: false },
+  ]);
+
+  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (challengeToEdit) {
+      setTitle(challengeToEdit.title || "");
+      setDescription(challengeToEdit.description || "");
+      setDifficulty(challengeToEdit.difficulty || "medium");
+      setCategory(challengeToEdit.category || "dsa");
+      setExecutionType(challengeToEdit.executionType || "both");
+      setTagsInput(challengeToEdit.tags ? challengeToEdit.tags.join(", ") : "");
+      setStarterCode(challengeToEdit.starterCode || "");
+      setEvaluationCriteria(challengeToEdit.evaluationCriteria || "");
+      setReferenceSolution(challengeToEdit.referenceSolution || "");
+      setIsPublished(challengeToEdit.isPublished ?? true);
+
+      if (
+        challengeToEdit.testCases &&
+        Array.isArray(challengeToEdit.testCases) &&
+        challengeToEdit.testCases.length > 0
+      ) {
+        setTestCases(
+          challengeToEdit.testCases.map((tc) => ({
+            input: tc.input || "",
+            expectedOutput: tc.expectedOutput || "",
+            isHidden: Boolean(tc.isHidden),
+          }))
+        );
+      } else {
+        setTestCases([{ input: "", expectedOutput: "", isHidden: false }]);
+      }
+    } else {
+      setTitle("");
+      setDescription("");
+      setDifficulty("medium");
+      setCategory("dsa");
+      setExecutionType("both");
+      setTagsInput("");
+      setStarterCode("// Write your solution template here\n");
+      setEvaluationCriteria(
+        "Correctness, O(1) algorithmic complexity, clean OOP structure, and boundary edge case resilience."
+      );
+      setReferenceSolution("");
+      setIsPublished(true);
+      setTestCases([
+        { input: "", expectedOutput: "", isHidden: false },
+        { input: "", expectedOutput: "", isHidden: true },
+      ]);
+    }
+
+    setFormError("");
+  }, [isOpen, challengeToEdit]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && !loading) onClose();
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, loading, onClose]);
+
+  if (!isOpen) return null;
+
+  const showTestCases = executionType === "both" || executionType === "testcases";
+  const showAiCriteria = executionType === "both" || executionType === "review_only";
+
+  const handleAddTestCase = () => {
+    setTestCases([...testCases, { input: "", expectedOutput: "", isHidden: false }]);
+  };
+
+  const handleRemoveTestCase = (index) => {
+    if (testCases.length <= 1) return;
+    setTestCases(testCases.filter((_, i) => i !== index));
+  };
+
+  const handleTestCaseChange = (index, field, value) => {
+    const updated = [...testCases];
+    updated[index] = { ...updated[index], [field]: value };
+    setTestCases(updated);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+
+    if (!title.trim()) {
+      setFormError("Title is required.");
+      return;
+    }
+    if (!description.trim()) {
+      setFormError("Description is required.");
+      return;
+    }
+
+    const parsedTags = tagsInput
+      .split(",")
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
+
+    const payload = {
+      title: title.trim(),
+      description: description.trim(),
+      difficulty,
+      category,
+      executionType,
+      tags: parsedTags,
+      starterCode,
+      referenceSolution,
+      isPublished,
+    };
+
+    if (showTestCases) {
+      const validTestCases = testCases.filter((tc) => tc.expectedOutput.trim() !== "");
+      if (validTestCases.length === 0) {
+        setFormError("At least one testcase with expected output is required.");
+        return;
+      }
+      payload.testCases = validTestCases.map((tc) => ({
+        input: tc.input.trim(),
+        expectedOutput: tc.expectedOutput.trim(),
+        isHidden: Boolean(tc.isHidden),
+      }));
+    }
+
+    if (showAiCriteria) {
+      if (!evaluationCriteria.trim()) {
+        payload.evaluationCriteria =
+          "General code quality, O(1) algorithmic efficiency, and edge case resilience.";
+      } else {
+        payload.evaluationCriteria = evaluationCriteria.trim();
+      }
+    }
+
+    setLoading(true);
+    try {
+      if (isEditing) {
+        await updateChallenge(challengeToEdit._id, payload);
+      } else {
+        await createChallenge(payload);
+      }
+      onSaved();
+      onClose();
+    } catch (err) {
+      setFormError(
+        err?.response?.data?.message ||
+          err?.response?.data?.errors?.[0]?.msg ||
+          "Failed to save challenge."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !loading) onClose();
+      }}
+    >
+      <div className="relative flex flex-col w-full max-w-3xl h-[90vh] max-h-[850px] bg-[#18181F] border border-[#27272A] rounded-2xl shadow-2xl overflow-hidden font-sans">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#27272A] bg-[#14141B] select-none">
+          <div className="flex items-center gap-2">
+            <ModernCodeIcon className="h-4 w-4 text-[#A78BFA]" />
+            <span className="font-mono text-sm font-semibold text-[#FAFAFA]">
+              {isEditing ? "Edit Challenge Specification" : "Author New Challenge"}
+            </span>
+          </div>
+
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="rounded-lg p-1 text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors disabled:opacity-50"
+          >
+            <X className="h-4 w-4 stroke-[1.75]" />
+          </button>
+        </div>
+
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden bg-[#18181F]">
+          <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
+            {formError && (
+              <div className="flex items-center gap-2 rounded-[10px] border border-[#F87171]/30 bg-[#F87171]/10 p-3 text-xs font-mono text-[#F87171]">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0 stroke-[1.75]" />
+                <span>{formError}</span>
+              </div>
+            )}
+
+            {/* Title */}
+            <div>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Challenge Title <span className="text-[#F87171]">*</span>
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Distributed Token Bucket Rate Limiter"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3.5 py-2 text-sm text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
+                required
+              />
+            </div>
+
+            {/* Difficulty, Category */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">Difficulty</label>
+                <select
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                  className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none capitalize font-mono transition-colors"
+                >
+                  {DIFFICULTIES.map((d) => (
+                    <option key={d.value} value={d.value} className="bg-[#18181F] text-[#FAFAFA]">
+                      {d.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c.value} value={c.value} className="bg-[#18181F] text-[#FAFAFA]">
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Execution & Verification Mode Selector Cards */}
+            <div>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-2 font-medium">
+                Verification & Evaluation Strategy <span className="text-[#8B5CF6]">*</span>
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {EXECUTION_MODES.map((mode) => {
+                  const isSelected = executionType === mode.value;
+                  const Icon = mode.icon;
+
+                  return (
+                    <div
+                      key={mode.value}
+                      onClick={() => setExecutionType(mode.value)}
+                      className={`cursor-pointer rounded-xl border p-3 flex flex-col justify-between transition-all duration-150 ${
+                        isSelected
+                          ? "border-[#8B5CF6] bg-[#211635] ring-1 ring-[#8B5CF6]/40 shadow-sm"
+                          : "border-[#27272A] bg-[#14141B] hover:border-[#3F3F4A] hover:bg-[#18181F]"
+                      }`}
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <div
+                            className={`p-1.5 rounded-lg border ${
+                              isSelected
+                                ? "border-[#8B5CF6]/40 bg-[#38245C] text-[#C4B5FD]"
+                                : "border-[#27272A] bg-[#18181F] text-[#A1A1AA]"
+                            }`}
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                          </div>
+
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[9.5px] font-mono border ${mode.badgeColor}`}
+                          >
+                            {mode.badge}
+                          </span>
+                        </div>
+
+                        <div
+                          className={`text-xs font-mono font-semibold ${
+                            isSelected ? "text-[#FAFAFA]" : "text-[#A1A1AA]"
+                          }`}
+                        >
+                          {mode.label}
+                        </div>
+                      </div>
+
+                      <p className="text-[10.5px] font-mono text-[#71717A] mt-2 leading-relaxed">
+                        {mode.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Description & Problem Requirements <span className="text-[#F87171]">*</span>
+              </label>
+              <textarea
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Explain the problem statement, edge cases, requirements, and architectural constraints..."
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] p-3 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
+                required
+              />
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Tags (comma separated)
+              </label>
+              <input
+                type="text"
+                value={tagsInput}
+                onChange={(e) => setTagsInput(e.target.value)}
+                placeholder="redis, concurrency, rate-limiting, algorithms"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] px-3.5 py-2 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
+              />
+            </div>
+
+            {/* Starter Code */}
+            <div>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Starter Code Template
+              </label>
+              <textarea
+                rows={4}
+                value={starterCode}
+                onChange={(e) => setStarterCode(e.target.value)}
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#0D0D12] p-3 font-mono text-xs text-[#E4E4E7] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none"
+                spellCheck="false"
+              />
+            </div>
+
+            {/* AI Evaluation Criteria */}
+            {showAiCriteria && (
+              <div className="rounded-xl border border-[#8B5CF6]/30 bg-[#211635] p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#C4B5FD] font-semibold">
+                  <BrainCircuit className="h-4 w-4 text-[#A78BFA]" />
+                  <span>AI Evaluation Criteria & Rubric</span>
+                </div>
+                <p className="text-[10.5px] font-mono text-[#A1A1AA] leading-relaxed">
+                  Rules and architectural benchmarks the senior AI reviewer uses to assess code quality, Big-O complexity, and boundary hardening.
+                </p>
+                <textarea
+                  rows={3}
+                  value={evaluationCriteria}
+                  onChange={(e) => setEvaluationCriteria(e.target.value)}
+                  placeholder="e.g. Check for O(1) time complexity, mathematical token replenishment, boundary condition clamping, and clean object encapsulation..."
+                  className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] p-3 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none font-mono transition-colors"
+                  required={executionType === "review_only"}
+                />
+              </div>
+            )}
+
+            {/* Test Cases Builder */}
+            {showTestCases && (
+              <div className="rounded-xl border border-[#27272A] bg-[#14141B] p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Cpu className="h-4 w-4 text-[#34D399]" />
+                    <span className="text-xs font-mono uppercase tracking-wider text-[#FAFAFA] font-semibold">
+                      Automated Test Cases ({testCases.length})
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddTestCase}
+                    className="inline-flex items-center gap-1 rounded-[8px] border border-[#27272A] bg-[#20202A] px-2.5 py-1 text-xs font-mono text-[#FAFAFA] hover:border-[#3F3F4A] hover:bg-[#27272A] transition-colors"
+                  >
+                    <Plus className="h-3 w-3 stroke-[2]" />
+                    <span>Add Case</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {testCases.map((tc, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-lg border border-[#27272A] bg-[#111116] p-3 text-xs font-mono space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#A78BFA] font-semibold text-[11px]">
+                          CASE #{idx + 1}
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <label className="inline-flex items-center gap-1.5 text-[11px] text-[#A1A1AA] cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={tc.isHidden}
+                              onChange={(e) =>
+                                handleTestCaseChange(idx, "isHidden", e.target.checked)
+                              }
+                              className="rounded border-[#27272A] bg-[#18181F] accent-[#8B5CF6] cursor-pointer"
+                            />
+                            <span>Hidden anti-cheat case</span>
+                          </label>
+                          {testCases.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveTestCase(idx)}
+                              className="text-[#71717A] hover:text-[#F87171] transition-colors"
+                            >
+                              <Trash2 className="h-3 w-3 stroke-[1.5]" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <input
+                            type="text"
+                            value={tc.input}
+                            onChange={(e) => handleTestCaseChange(idx, "input", e.target.value)}
+                            placeholder="Input: e.g. 10, 2, 5"
+                            className="w-full rounded border border-[#27272A] bg-[#0D0D12] px-2.5 py-1 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:outline-none focus:border-[#8B5CF6]"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="text"
+                            value={tc.expectedOutput}
+                            onChange={(e) =>
+                              handleTestCaseChange(idx, "expectedOutput", e.target.value)
+                            }
+                            placeholder="Expected output: e.g. true"
+                            className="w-full rounded border border-[#27272A] bg-[#0D0D12] px-2.5 py-1 text-xs text-[#34D399] placeholder:text-[#71717A] focus:outline-none focus:border-[#8B5CF6]"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Reference Solution */}
+            <div>
+              <label className="block text-xs font-mono text-[#A1A1AA] mb-1.5 font-medium">
+                Staff Reference Solution (Confidential benchmark)
+              </label>
+              <textarea
+                rows={3}
+                value={referenceSolution}
+                onChange={(e) => setReferenceSolution(e.target.value)}
+                placeholder="// Hidden staff benchmark solution"
+                className="w-full rounded-[10px] border border-[#27272A] bg-[#0D0D12] p-3 font-mono text-xs text-[#E4E4E7] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30 focus:outline-none"
+                spellCheck="false"
+              />
+            </div>
+
+            {/* Publish Toggle */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isPublishedCheck"
+                checked={isPublished}
+                onChange={(e) => setIsPublished(e.target.checked)}
+                className="rounded border-[#27272A] bg-[#111116] accent-[#8B5CF6] cursor-pointer"
+              />
+              <label htmlFor="isPublishedCheck" className="text-xs font-mono text-[#A1A1AA] cursor-pointer">
+                Publish immediately (if unchecked, saved as draft)
+              </label>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-[#27272A] bg-[#14141B]">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              disabled={loading}
+              className="font-sans text-xs font-medium"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="verify"
+              size="sm"
+              disabled={loading}
+              className="font-sans text-xs font-medium"
+            >
+              {loading ? "Saving..." : isEditing ? "Update Challenge" : "Publish Challenge"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
