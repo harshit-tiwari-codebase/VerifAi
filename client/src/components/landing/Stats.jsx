@@ -1,34 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { Clock, Cpu, ShieldCheck, Zap } from "lucide-react";
 
 const STATS = [
   {
-    icon: Clock,
-    label: "Avg. Evaluation Turnaround",
+    label: "Avg. evaluation turnaround",
     value: 28,
     prefix: "< ",
     suffix: "s",
     detail: "From Monaco editor submit to verified badge",
   },
   {
-    icon: Zap,
-    label: "Evaluation Dimensions",
+    label: "Evaluation dimensions",
     value: 6,
     prefix: "",
-    suffix: " Metrics",
+    suffix: " metrics",
     detail: "Correctness, time complexity, safety, style",
   },
   {
-    icon: Cpu,
-    label: "Execution Sandbox Isolation",
+    label: "Execution sandbox isolation",
     value: 100,
     prefix: "",
     suffix: "%",
     detail: "Linux cgroups + seccomp micro-containers",
   },
   {
-    icon: ShieldCheck,
-    label: "Platform Infrastructure Cost",
+    label: "Platform infrastructure cost",
     value: 0,
     prefix: "₹",
     suffix: " / month",
@@ -38,20 +33,25 @@ const STATS = [
 
 function useCountUp(target, active, duration = 1400) {
   const [value, setValue] = useState(0);
-  const startRef = useRef(null);
 
   useEffect(() => {
     if (!active) return;
 
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || target === 0) {
+      setValue(target);
+      return;
+    }
+
     let frame;
+    let start = null;
+
     const step = (ts) => {
-      if (!startRef.current) startRef.current = ts;
-      const progress = Math.min((ts - startRef.current) / duration, 1);
+      if (start === null) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setValue(Math.round(eased * target));
-      if (progress < 1) {
-        frame = requestAnimationFrame(step);
-      }
+      if (progress < 1) frame = requestAnimationFrame(step);
     };
 
     frame = requestAnimationFrame(step);
@@ -61,27 +61,33 @@ function useCountUp(target, active, duration = 1400) {
   return value;
 }
 
-function StatCard({ stat, active }) {
+function Stat({ stat, active }) {
   const count = useCountUp(stat.value, active);
-  const Icon = stat.icon;
 
   return (
-    <div className="card p-6 border border-[#27272A] hover:border-[#3F3F4A] bg-[#18181F] hover:bg-[#20202A] rounded-2xl transition-all duration-200 relative overflow-hidden group">
-      <div className="flex items-center justify-between mb-3">
-        <span className="font-display text-3xl md:text-4xl font-bold tracking-tight text-[#FAFAFA]">
-          <span className="text-[#8B5CF6] font-semibold">{stat.prefix}</span>
-          {count}
-          <span className="text-[#A1A1AA] text-lg md:text-xl font-normal ml-0.5">
-            {stat.suffix}
-          </span>
-        </span>
-        <div className="h-9 w-9 rounded-xl bg-[#211635] border border-[#8B5CF6]/30 flex items-center justify-center text-[#A78BFA]">
-          <Icon className="h-4.5 w-4.5" />
-        </div>
-      </div>
+    <div className="group relative border-t border-[#27272A] pt-5">
+      {/* violet line that sweeps across the top on hover */}
+      <span
+        aria-hidden="true"
+        className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 bg-[#8B5CF6] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-x-100 motion-reduce:transition-none"
+      />
 
-      <p className="font-display font-medium text-sm text-[#FAFAFA]">{stat.label}</p>
-      <p className="text-xs text-[#71717A] mt-1 font-sans">{stat.detail}</p>
+      <p className="font-display text-4xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums transition-[transform,color] duration-300 ease-out group-hover:-translate-y-1 group-hover:text-[#C4B5FD] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 md:text-5xl">
+        <span className="whitespace-pre text-[#71717A] transition-colors duration-300 group-hover:text-[#8B5CF6]">
+          {stat.prefix}
+        </span>
+        {count}
+        <span className="whitespace-pre text-lg font-normal text-[#71717A] transition-colors duration-300 group-hover:text-[#8B5CF6] md:text-xl">
+          {stat.suffix}
+        </span>
+      </p>
+
+      <p className="mt-4 font-sans text-sm font-medium text-[#FAFAFA]">
+        {stat.label}
+      </p>
+      <p className="mt-1 font-sans text-sm leading-relaxed text-[#71717A] transition-colors duration-300 group-hover:text-[#A1A1AA]">
+        {stat.detail}
+      </p>
     </div>
   );
 }
@@ -109,10 +115,10 @@ export default function Stats() {
   }, []);
 
   return (
-    <section ref={ref} className="container-xl py-12 md:py-16">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-        {STATS.map((stat, idx) => (
-          <StatCard key={idx} stat={stat} active={active} />
+    <section ref={ref} className="container-xl py-16 md:py-20">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {STATS.map((stat) => (
+          <Stat key={stat.label} stat={stat} active={active} />
         ))}
       </div>
     </section>

@@ -1,24 +1,13 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Server,
-  Cpu,
-  ScanSearch,
-  ShieldCheck,
-  Play,
-  Pause,
-  Check,
-  ChevronDown,
-} from "lucide-react";
-import Button from "../ui/Button.jsx";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Play, Pause } from "lucide-react";
 
 const STAGES = [
   {
     id: "queue",
     number: "01",
-    title: "Instant job queuing",
-    subtitle: "Non-blocking API response",
-    icon: Server,
+    title: "Job queuing",
+    subtitle: "Instant, non-blocking API response",
     flowLabel: "POST /api/submissions → Bull Queue",
     description:
       "When a developer submits code from Monaco, the Express API never executes it synchronously. It pushes the job into a Redis-backed Bull queue and returns HTTP 202 Accepted in under 40ms, so the server is never blocked waiting on a long-running review.",
@@ -38,9 +27,8 @@ const STAGES = [
   {
     id: "sandbox",
     number: "02",
-    title: "Judge0 sandboxed execution",
+    title: "Sandboxed execution",
     subtitle: "Isolated Linux micro-container",
-    icon: Cpu,
     flowLabel: "Worker → Judge0 Sandbox",
     description:
       "A dedicated sandbox worker pops the job and submits the code to Judge0. It runs in an isolated, unprivileged Linux cgroup with memory capped at 128MB and a 5 second CPU timeout, checked against hidden test suites the developer never sees.",
@@ -58,9 +46,8 @@ const STAGES = [
   {
     id: "ai-review",
     number: "03",
-    title: "Dual AI senior review",
+    title: "AI senior review",
     subtitle: "Gemini / Groq architectural audit",
-    icon: ScanSearch,
     flowLabel: "AI Worker → Gemini 1.5 Pro",
     description:
       "Passing tests only proves the code works, not that it's well built. The AI worker streams the solution, problem context, and execution logs to Gemini and Groq against a strict rubric that scores architecture, time complexity, and edge case handling.",
@@ -78,9 +65,8 @@ const STAGES = [
   {
     id: "verify",
     number: "04",
-    title: "Real-time push & verifiable proof",
+    title: "Push & proof",
     subtitle: "Socket.io broadcast, minted credential",
-    icon: ShieldCheck,
     flowLabel: "MongoDB → Socket.io → Client",
     description:
       "The result is written to MongoDB Atlas and pushed to the client over a websocket, so the UI updates instantly with no polling. Submissions scoring 80 or above mint a tamper-evident badge, hashed and permalinked so anyone can verify it independently.",
@@ -98,24 +84,24 @@ const STAGES = [
 ];
 
 const CYCLE_MS = 3400;
+const LAST = STAGES.length - 1;
 
 export default function PipelineSimulator() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const reduce = useReducedMotion();
 
+  const stage = STAGES[activeIdx];
+
+  // autoplay: advance every CYCLE_MS, stop after the last stage has had its turn
   useEffect(() => {
     if (!isPlaying) return;
-    const timer = setInterval(() => {
-      setActiveIdx((prev) => {
-        if (prev >= STAGES.length - 1) {
-          setIsPlaying(false);
-          return prev;
-        }
-        return prev + 1;
-      });
+    const id = setTimeout(() => {
+      if (activeIdx >= LAST) setIsPlaying(false);
+      else setActiveIdx((i) => i + 1);
     }, CYCLE_MS);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
+    return () => clearTimeout(id);
+  }, [isPlaying, activeIdx]);
 
   const selectStage = (idx) => {
     setIsPlaying(false);
@@ -127,153 +113,158 @@ export default function PipelineSimulator() {
       setIsPlaying(false);
       return;
     }
-    if (activeIdx >= STAGES.length - 1) setActiveIdx(0);
+    if (activeIdx >= LAST) setActiveIdx(0);
     setIsPlaying(true);
   };
 
   return (
     <section id="architecture" className="container-xl py-24">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+      {/* header */}
+      <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[#A1A1AA] font-sans text-xs font-medium mb-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#8B5CF6]" />
-            <span>Telemetry Pipeline</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#FAFAFA] font-display">
+          <p className="mb-4 font-mono text-xs uppercase tracking-[0.14em] text-[#71717A]">
+            Pipeline
+          </p>
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-[#FAFAFA] md:text-4xl">
             One submission, four stages, a verifiable result
           </h2>
-          <p className="mt-4 text-[#A1A1AA] text-base leading-relaxed font-sans max-w-xl">
-            Open a stage to see what actually happens inside it — including
-            the real telemetry it emits along the way.
+          <p className="mt-4 max-w-xl font-sans text-base leading-relaxed text-[#A1A1AA]">
+            Pick a stage to see what happens inside it, and the telemetry it
+            emits along the way.
           </p>
         </div>
 
-        <Button variant="verify" size="sm" onClick={togglePlay}>
+        <button
+          type="button"
+          onClick={togglePlay}
+          className="inline-flex items-center gap-2 self-start rounded-md border border-[#27272A] px-3.5 py-2 font-mono text-xs text-[#FAFAFA] transition-colors hover:border-[#3F3F46] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5CF6]"
+        >
           {isPlaying ? (
             <>
-              <Pause className="h-4 w-4 mr-2" />
+              <Pause className="h-3.5 w-3.5" aria-hidden="true" />
               Pause
             </>
           ) : (
             <>
-              <Play className="h-4 w-4 mr-2 fill-current" />
+              <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
               Play through
             </>
           )}
-        </Button>
+        </button>
       </div>
 
-      <div className="relative">
-        {/* connecting rail */}
-        <div className="absolute left-[23px] top-6 bottom-6 w-px bg-[#27272A]" />
+      {/* stage selector */}
+      <div
+        role="tablist"
+        aria-label="Pipeline stages"
+        className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-4"
+      >
+        {STAGES.map((s, i) => {
+          const active = i === activeIdx;
+          const done = i < activeIdx;
+          const fill = active ? "bg-[#8B5CF6]" : "bg-[#52525B]";
 
-        <div className="flex flex-col gap-2">
-          {STAGES.map((stage, idx) => {
-            const isActive = idx === activeIdx;
-            const isDone = idx < activeIdx;
-            const Icon = stage.icon;
-
-            return (
-              <div key={stage.id}>
-                <button
-                  onClick={() => selectStage(idx)}
-                  className="w-full flex items-start gap-4 text-left py-3 group"
-                >
-                  <span
-                    className={`relative z-10 flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center border transition-colors ${
-                      isActive
-                        ? "border-[#8B5CF6] bg-[#211635] text-[#C4B5FD]"
-                        : isDone
-                        ? "border-[#34D399]/40 bg-[#14141B] text-[#34D399]"
-                        : "border-[#27272A] bg-[#14141B] text-[#71717A] group-hover:text-[#FAFAFA] group-hover:border-[#3F3F4A]"
-                    }`}
-                  >
-                    {isDone ? <Check className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
-                  </span>
-
-                  <span className="flex-1 min-w-0 pt-1.5">
-                    <span className="flex items-baseline gap-3 flex-wrap">
-                      <span className="font-mono text-xs text-[#71717A]">{stage.number}</span>
-                      <span
-                        className={`font-display font-semibold ${
-                          isActive ? "text-[#FAFAFA] text-lg" : "text-[#A1A1AA] text-base"
-                        }`}
-                      >
-                        {stage.title}
-                      </span>
-                    </span>
-                    <span className="block text-sm text-[#71717A] mt-0.5 font-sans">
-                      {stage.subtitle}
-                    </span>
-                  </span>
-
-                  <ChevronDown
-                    className={`h-4 w-4 mt-2.5 flex-shrink-0 text-[#71717A] transition-transform ${
-                      isActive ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isActive && (
-                    <motion.div
-                      key="content"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pl-16 pb-8 pr-2 grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <div className="lg:col-span-6 space-y-4">
-                          <p className="font-mono text-xs text-[#A78BFA]">
-                            {stage.flowLabel}
-                          </p>
-                          <p className="text-[#A1A1AA] text-sm leading-relaxed">
-                            {stage.description}
-                          </p>
-
-                          <dl className="text-sm border-t border-[#27272A]">
-                            <div className="grid grid-cols-[72px_1fr] gap-3 py-2.5 border-b border-[#27272A]">
-                              <dt className="font-mono text-xs text-[#71717A] pt-0.5">why</dt>
-                              <dd className="text-[#A1A1AA]">{stage.why}</dd>
-                            </div>
-                            <div className="grid grid-cols-[72px_1fr] gap-3 py-2.5 border-b border-[#27272A]">
-                              <dt className="font-mono text-xs text-[#71717A] pt-0.5">stack</dt>
-                              <dd className="text-[#C4B5FD] font-mono text-xs pt-0.5">
-                                {stage.stack}
-                              </dd>
-                            </div>
-                          </dl>
-                        </div>
-
-                        <div className="lg:col-span-6">
-                          <div className="rounded-xl border border-[#27272A] bg-[#0D0D12] overflow-hidden">
-                            <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-[#27272A] bg-[#111116]">
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
-                              <span className="ml-2 font-mono text-[11px] text-[#71717A]">
-                                telemetry — stage {stage.number}
-                              </span>
-                            </div>
-                            <pre className="p-4 font-mono text-xs text-[#34D399] leading-relaxed overflow-x-auto no-scrollbar bg-[#0D0D12]">
-                              <code>
-                                {Object.entries(stage.telemetry)
-                                  .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
-                                  .join("\n")}
-                              </code>
-                            </pre>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+          return (
+            <button
+              key={s.id}
+              type="button"
+              role="tab"
+              id={`tab-${s.id}`}
+              aria-selected={active}
+              aria-controls="pipeline-panel"
+              onClick={() => selectStage(i)}
+              className="group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8B5CF6]"
+            >
+              <div className="relative h-0.5 w-full bg-[#27272A]">
+                {(active || done) &&
+                  (active && isPlaying && !reduce ? (
+                    <motion.span
+                      key={`play-${i}`}
+                      className={`absolute inset-y-0 left-0 ${fill}`}
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: CYCLE_MS / 1000, ease: "linear" }}
+                    />
+                  ) : (
+                    <span className={`absolute inset-y-0 left-0 w-full ${fill}`} />
+                  ))}
               </div>
-            );
-          })}
-        </div>
+
+              <div className="mt-3 flex items-baseline gap-2.5">
+                <span className="font-mono text-xs text-[#52525B]">{s.number}</span>
+                <span
+                  className={`font-sans text-sm font-medium transition-colors ${
+                    active
+                      ? "text-[#FAFAFA]"
+                      : "text-[#71717A] group-hover:text-[#A1A1AA]"
+                  }`}
+                >
+                  {s.title}
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* active stage */}
+      <div
+        id="pipeline-panel"
+        role="tabpanel"
+        aria-labelledby={`tab-${stage.id}`}
+        className="mt-12 lg:min-h-[22rem]"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={stage.id}
+            initial={reduce ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16"
+          >
+            <div className="lg:col-span-6">
+              <p className="font-mono text-xs text-[#A78BFA]">{stage.flowLabel}</p>
+              <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight text-[#FAFAFA]">
+                {stage.subtitle}
+              </h3>
+              <p className="mt-4 font-sans text-[15px] leading-relaxed text-[#A1A1AA]">
+                {stage.description}
+              </p>
+
+              <dl className="mt-8 divide-y divide-[#27272A] border-y border-[#27272A] font-sans text-sm">
+                <div className="grid grid-cols-[72px_1fr] gap-4 py-3">
+                  <dt className="pt-0.5 font-mono text-xs text-[#71717A]">why</dt>
+                  <dd className="text-[#D4D4D8]">{stage.why}</dd>
+                </div>
+                <div className="grid grid-cols-[72px_1fr] gap-4 py-3">
+                  <dt className="pt-0.5 font-mono text-xs text-[#71717A]">stack</dt>
+                  <dd className="pt-0.5 font-mono text-xs text-[#D4D4D8]">
+                    {stage.stack}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="rounded-lg border border-[#27272A] bg-[#0D0D12]">
+                <p className="border-b border-[#27272A] px-5 py-3 font-mono text-[11px] uppercase tracking-[0.12em] text-[#71717A]">
+                  Telemetry · stage {stage.number}
+                </p>
+                <dl className="divide-y divide-[#1C1C22] px-5 font-mono text-[13px]">
+                  {Object.entries(stage.telemetry).map(([key, value]) => (
+                    <div key={key} className="flex justify-between gap-6 py-2.5">
+                      <dt className="shrink-0 text-[#71717A]">{key}</dt>
+                      <dd className="break-all text-right text-[#FAFAFA]">
+                        {String(value)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );
