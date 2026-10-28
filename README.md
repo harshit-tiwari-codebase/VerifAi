@@ -1,219 +1,298 @@
+<div align="center">
+
 # VerifAI
 
-**Verifiable software-engineering challenges, submissions, and skill credentials.**
+**Verifiable engineering challenges — write code, run it, earn credentials.**
 
-VerifAI is a full-stack web application where developers discover engineering challenges, write code in a browser-based editor, run solutions against challenge tests, and submit work for evaluation. The backend owns challenge test cases and scoring. AI-generated code-review feedback is advisory; it does not determine automated scores or badges.
+[![CI](https://github.com/harshit-tiwari-codebase/VerifAi/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/harshit-tiwari-codebase/VerifAi/actions)
+[![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7.0-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com)
+[![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)](https://redis.io)
+[![License](https://img.shields.io/badge/license-Educational-blue)](#license)
 
-> **Deployment status:** The repository contains CI checks, but no GitHub Actions continuous-deployment workflow. Frontend and backend hosting, managed databases, provider credentials, and production environment variables must be configured separately before deployment.
+</div>
 
-## Contents
+---
+
+VerifAI is a full-stack platform where developers solve engineering challenges, run code against test suites in a browser-based Monaco editor, and earn verifiable badges. AI-generated code review provides advisory feedback; only deterministic test results issue scores and badges — keeping evaluation honest and reproducible.
+
+---
+
+## Table of Contents
 
 - [Features](#features)
-- [Architecture and repository layout](#architecture-and-repository-layout)
-- [Technology stack](#technology-stack)
-- [Requirements](#requirements)
-- [Local development](#local-development)
-- [Environment variables](#environment-variables)
-- [API overview](#api-overview)
-- [Testing and CI](#testing-and-ci)
-- [Deployment guide](#deployment-guide)
-- [Production go-live checklist](#production-go-live-checklist)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Design Decisions & Why](#design-decisions--why)
+- [Local Development](#local-development)
+- [Environment Variables](#environment-variables)
+- [API Reference](#api-reference)
+- [CI & Testing](#ci--testing)
+- [Deployment Guide](#deployment-guide)
+- [Production Go-Live Checklist](#production-go-live-checklist)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+- [License](#license)
+
+---
 
 ## Features
 
-- React frontend with landing pages, authentication screens, dashboards, challenge pages, and a Monaco-based code editor.
-- Express API with registration, login, refresh-token, logout, email verification, and password-reset flows.
-- MongoDB persistence for users, challenges, submissions, and earned badges.
-- Challenge types:
-  - `testcases`: automated tests determine the score.
-  - `both`: automated tests determine the score; AI review provides additional advisory feedback.
-  - `review_only`: AI feedback is shown without an automated score or badge; human review is required.
-- External Judge0-compatible code execution with configured CPU, wall-time, and memory limits.
-- Redis/Bull queues for asynchronous submission and AI-evaluation jobs.
-- Socket.IO events for authenticated users' submission status.
-- Hidden test output sanitization before results are returned to clients.
-- Rate limiting on authentication, challenge writes, code runs, and submissions.
+- **Monaco Editor** — full IDE experience in the browser with syntax highlighting, autocomplete, and multi-language support
+- **Secure auth** — JWT access tokens (in-memory) + httpOnly refresh cookies; email verification and password reset flows
+- **Three challenge modes:**
+  - `testcases` — score determined purely by automated test results
+  - `both` — automated tests determine score; Gemini/Groq provides advisory AI code review
+  - `review_only` — AI feedback only; no automated score or badge (requires human review)
+- **Async job queue** — Bull + Redis queue handles code execution and AI evaluation without blocking HTTP
+- **Real-time status** — Socket.IO pushes submission state (`queued → executing → evaluating → completed`) to the authenticated client
+- **External code execution** — Judge0-compatible API; untrusted code never runs in the application process
+- **AI redundancy** — Gemini (primary) → Groq (fallback) for AI code review
+- **Rate limiting** — applied on auth endpoints, challenge writes, code runs, and submissions
+- **Hidden test sanitization** — test case output stripped from client responses to prevent cheating
 
-## Architecture and repository layout
+---
 
-```text
-.
+## Architecture
+
+```
+VerifAI/
 ├── .github/
-│   └── workflows/ci.yml       # CI checks on pushes/PRs to dev and main
-├── client/                    # React + Vite frontend
+│   └── workflows/ci.yml       # CI: build client + run server tests on dev/main
+├── client/                    # React 18 + Vite — deployed on Vercel
 │   ├── src/
-│   │   ├── api/               # API clients
-│   │   ├── components/        # Shared UI and landing-page components
-│   │   ├── features/          # Auth, challenges, and related features
-│   │   └── pages/             # Application pages
+│   │   ├── api/               # Axios API clients
+│   │   ├── components/        # Shared UI, landing page, loader, Monaco wrapper
+│   │   ├── features/          # Auth, challenge, submission Redux slices
+│   │   └── pages/             # Route-level page components
 │   └── .env.example
-├── server/                    # Express API and background workers
+├── server/                    # Node.js 20 + Express 5 — deployed via Docker on Render
 │   ├── src/
-│   │   ├── config/            # MongoDB and Redis configuration
+│   │   ├── config/            # MongoDB and Redis connection setup
 │   │   ├── controllers/       # HTTP request handlers
-│   │   ├── middlewares/       # Auth, validation, and error handling
-│   │   ├── models/            # Mongoose schemas
-│   │   ├── queues/            # Bull queues
-│   │   ├── routes/            # API routes
-│   │   ├── tests/             # Node.js test suite
-│   │   ├── utils/             # Execution, scoring, mail, and AI helpers
-│   │   └── workers/           # Execution and AI-evaluation workers
+│   │   ├── middlewares/       # Auth, validation, error handling
+│   │   ├── models/            # Mongoose schemas (User, Challenge, Submission, Badge)
+│   │   ├── queues/            # Bull queue definitions
+│   │   ├── routes/            # Express routers
+│   │   ├── tests/             # Node.js built-in test suite
+│   │   ├── utils/             # Execution, scoring, mail, AI helpers
+│   │   └── workers/           # Execution worker + AI evaluation worker
 │   ├── .env.example
 │   ├── Dockerfile
 │   └── server.js
-└── docker-compose.yml         # Local MongoDB, Redis, and backend
+└── docker-compose.yml         # Local dev: MongoDB + Redis + backend
 ```
 
-### Submission flow
+### Submission Flow
 
-1. The authenticated client creates a submission through the API.
-2. The server stores the submission and queues execution.
-3. The execution worker sends candidate code and server-owned tests to the configured external execution provider.
-4. For `testcases`, deterministic test results determine the score. For `both`, the AI reviewer also produces advisory feedback, but only test correctness determines the automated score and badge eligibility.
-5. For `review_only`, the AI feedback is saved without an automated score or badge.
-6. The server stores results and sends status updates to the owning user.
+```
+Client ──POST /submit──► Express API ──enqueue──► Bull Queue (Redis)
+                                                        │
+                                              Execution Worker
+                                                        │
+                                          Judge0-compatible API
+                                          (runs code externally)
+                                                        │
+                                          AI Worker (if applicable)
+                                          Gemini ──fallback──► Groq
+                                                        │
+                                          Results saved to MongoDB
+                                                        │
+                                    Socket.IO ──► Client (real-time)
+```
 
-**Execution safety:** The server does not run untrusted submissions in a local Node.js child process. If the external execution provider is missing or unavailable, execution fails with `provider_unavailable`. Do not deploy expecting code runs to work until the external provider has been configured and tested.
+**Execution safety:** the server never spawns untrusted code in a local child process. If the external provider is unavailable, execution fails with `provider_unavailable`.
 
-## Technology stack
+---
 
-| Area | Technologies |
-|---|---|
-| Frontend | React 18, Vite, Tailwind CSS, Monaco Editor, Redux Toolkit |
-| Backend | Node.js 20, Express 5, Mongoose, JWT, Socket.IO |
-| Data and queues | MongoDB, Redis, Bull |
-| Code execution | External Judge0-compatible API |
-| AI feedback | Gemini, with Groq as a fallback |
-| Email | Brevo transactional email API |
-| CI | GitHub Actions: frontend production build and backend tests |
+## Tech Stack
 
-## Requirements
+| Layer | Technology | Version |
+|---|---|---|
+| Frontend | React, Vite, Tailwind CSS | 18 / 5 / 3 |
+| State management | Redux Toolkit | latest |
+| Code editor | Monaco Editor | latest |
+| Animation | Framer Motion | latest |
+| Backend | Node.js, Express | 20 / 5 |
+| ORM / Database | Mongoose, MongoDB | 9 / 7.0 |
+| Auth | JWT (`jsonwebtoken`), bcryptjs | — |
+| Real-time | Socket.IO | 4 |
+| Queue | Bull, Redis | 4 / 7 |
+| Code execution | External Judge0-compatible API | — |
+| AI feedback | Gemini (primary), Groq (fallback) | — |
+| Email | Brevo transactional API | — |
+| CI | GitHub Actions | — |
+| Containerization | Docker, Docker Compose | — |
 
-- Node.js 20 (matches the GitHub Actions and Docker configuration).
-- npm.
-- MongoDB (local Docker container or managed MongoDB service).
-- Redis (local Docker container or managed Redis service).
-- A reachable Judge0-compatible execution API and credentials as required by that provider.
-- At least one AI provider key (Gemini or Groq) for production AI feedback.
-- Brevo API key and a verified sender address if registration verification and password-reset emails should be delivered.
+---
 
-## Local development
+## Design Decisions & Why
 
-### Option A: Start MongoDB, Redis, and backend using Docker Compose
+These are the deliberate choices behind the architecture — not defaults, but decisions made for specific reasons.
 
-1. Create the backend environment file:
+### 1. JWT in-memory + httpOnly Refresh Cookie
 
-   ```powershell
-   Copy-Item server\.env.example server\.env
-   ```
+Access tokens live only in JavaScript memory (Redux store) — never in `localStorage` or a cookie. Refresh tokens are stored in `httpOnly`, `Secure`, `SameSite=None` cookies, invisible to JavaScript entirely.
 
-2. Edit `server/.env`. Set strong JWT secrets and configure the execution/AI/email providers you intend to test. Docker Compose sets the backend's MongoDB and Redis URLs to internal Compose service names.
+**Why:** `localStorage` is readable by any JavaScript on the page, making XSS attacks trivially dangerous. This token strategy means even a successful XSS attack cannot steal refresh tokens. Access tokens expire in 15 minutes; refresh tokens in 7 days. It's the most XSS-resistant auth pattern for browser-based SPAs without requiring a BFF layer.
 
-3. Build and start the services from the repository root:
+---
 
-   ```powershell
-   docker compose up --build
-   ```
+### 2. Bull Queue + Redis for Async Processing
 
-   The backend is available at `http://localhost:3001`; MongoDB and Redis remain on the internal Compose network and are not published to host ports.
+Code submissions are enqueued into a Bull queue backed by Redis. Workers pick them up asynchronously — execution and AI review happen entirely outside the HTTP request cycle.
 
-4. In another terminal, install and start the frontend:
+**Why:** Code execution can take seconds or even minutes depending on the test suite. Blocking an HTTP request for that long is untenable — it ties up server connections, causes timeouts, and degrades UX for every user. The queue decouples submission acceptance from evaluation, making the system resilient to spikes and provider slowdowns. Bull also gives retry logic, job state tracking, and failure isolation for free.
 
-   ```powershell
-   cd client
-   npm ci
-   Copy-Item .env.example .env
-   npm run dev
-   ```
+---
 
-   Before starting Vite, edit `client/.env` and set `VITE_API_BASE_URL=http://localhost:3001/api` (Compose publishes the backend on port `3001`; the checked-in client example defaults to port `3000`). Open `http://localhost:5173`.
+### 3. External Judge0 — Never Execute Code Locally
 
-   If you configure a self-hosted Judge0 service for this Compose setup, `JUDGE0_API_URL` must be an address reachable **from the backend container**. `localhost` inside that container refers to the backend container itself.
+The server sends candidate code to an external Judge0-compatible API. No user code runs inside the application server process.
 
-To stop the containers, run `docker compose down`. To remove local database data as well, use `docker compose down --volumes` (this permanently deletes the Compose MongoDB and Redis volumes).
+**Why:** Running untrusted code in the same process (or even the same machine) as your database credentials, JWT secrets, and API keys is a catastrophic security risk — even in sandboxed `vm` contexts. Offloading to a purpose-built code execution sandbox (Judge0) makes the security boundary explicit and enforceable. The tradeoff is external API dependency — if the provider goes down, `provider_unavailable` is returned. That's a better failure mode than a compromised server.
 
-### Option B: Run the backend directly
+---
 
-Start MongoDB and Redis separately, then configure `MONGO_URI` and `REDIS_URL` in `server/.env` for those services.
+### 4. Gemini Primary → Groq Fallback for AI Review
+
+The AI code review pipeline tries Gemini first. If Gemini fails (rate limit, quota, network error), it automatically retries with Groq.
+
+**Why:** AI providers have outages, rate limits, and quota ceilings — especially during traffic spikes. A single-provider dependency means AI review is as reliable as that provider's uptime. The fallback adds one more dependency but buys redundancy where the failure is silent and graceful rather than a visible error to the user.
+
+---
+
+### 5. Docker Only for the Backend
+
+`docker-compose.yml` containerizes MongoDB, Redis, and the Express server. The React frontend runs directly on the host (`npm run dev`) in development and is deployed to Vercel (static CDN) in production — no Docker for the client.
+
+**Why:** The backend has stateful infrastructure dependencies (Mongo, Redis) that need consistent configuration across dev machines and deployment environments. Docker makes that reproducible. The frontend is a static build artifact — no persistent state, no platform dependencies. Vite dev server and Vercel's CDN handle it perfectly. Adding a Docker layer for a static SPA would add complexity with zero benefit.
+
+---
+
+### 6. Alpine-based Docker Images
+
+Both `mongo:7.0` and `redis:7-alpine` use minimal Alpine Linux base images.
+
+**Why:** Alpine images are drastically smaller than full Debian/Ubuntu images — Redis Alpine is ~30 MB vs ~130 MB. Smaller images mean faster pulls in CI, smaller attack surfaces (fewer installed packages = fewer CVEs), and lower container startup time. For databases in development and staging, this is a straightforward win.
+
+---
+
+### 7. Monaco Editor
+
+The code editor in the challenge UI is Microsoft's Monaco Editor — the same engine that powers VS Code.
+
+**Why:** Browser-based `<textarea>` elements are inadequate for a coding platform. Monaco provides syntax highlighting, language-aware autocomplete, multi-cursor editing, keyboard shortcuts developers already know, and proper tab/indentation handling. It signals to developers that the platform is serious about the coding experience. The bundle is heavier than a simple textarea, but for a code-evaluation platform, the UX tradeoff is clear.
+
+---
+
+### 8. NeoLeaf-style Liquid Preloader
+
+The landing page starts with a full-screen black preloader featuring the `verifai.` wordmark with a dark violet animated liquid gradient masked through the text. A smooth cross-fade reveals the actual landing page after the loader exits.
+
+**Why:** The first impression sets the tone of the entire product. An immediate hard cut to the landing page (especially on slow connections) feels unpolished. The loader serves two functions: it masks the asset loading delay naturally, and it introduces the brand identity before anything else is visible. The violet gradient inside the text mask was chosen specifically because it's subtle — it gives the wordmark life without being flashy or clashing with the predominantly black aesthetic.
+
+> **Production note:** `client/src/App.jsx` currently has `once={false}` on the `AnimatePresence` for development testing purposes. Change this to `once={true}` before deploying to production to prevent the loader from replaying on in-app navigation.
+
+---
+
+## Local Development
+
+### Option A — Docker Compose (Recommended)
+
+Starts MongoDB, Redis, and the backend in containers. Frontend runs on the host.
 
 ```powershell
+# 1. Set up backend env
+Copy-Item server\.env.example server\.env
+# Edit server/.env — add JWT secrets, Judge0 key, Gemini/Groq key, etc.
+
+# 2. Start all services
+docker compose up --build
+
+# 3. In a new terminal, start the frontend
+cd client
+npm ci
+Copy-Item .env.example .env
+# Edit client/.env → VITE_API_BASE_URL=http://localhost:3001/api
+npm run dev
+```
+
+Frontend: `http://localhost:5173` | Backend: `http://localhost:3001`
+
+To stop: `docker compose down`  
+To also wipe database volumes: `docker compose down --volumes`
+
+---
+
+### Option B — Run Directly
+
+Start MongoDB and Redis separately (local installs or cloud), then:
+
+```powershell
+# Backend
 cd server
+npm ci
+Copy-Item .env.example .env
+# Edit .env with MONGO_URI, REDIS_URL, and all other required vars
+npm run dev
+
+# Frontend (new terminal)
+cd client
 npm ci
 Copy-Item .env.example .env
 npm run dev
 ```
 
-The backend listens on `PORT` (the example uses `3000`; `server.js` defaults to `5000` if `PORT` is unset). In another terminal:
+---
 
-```powershell
-cd client
-npm ci
-Copy-Item .env.example .env
-npm run dev
-```
+### Commands Reference
 
-The client uses `VITE_API_BASE_URL`, which defaults to `http://localhost:3000/api`.
+| Directory | Command | Purpose |
+|---|---|---|
+| `server/` | `npm run dev` | Start API with nodemon (hot reload) |
+| `server/` | `npm start` | Start API (production) |
+| `server/` | `npm test` | Run backend test suite |
+| `client/` | `npm run dev` | Start Vite dev server |
+| `client/` | `npm run build` | Production build → `dist/` |
+| `client/` | `npm run preview` | Preview production build locally |
 
-### Build, test, and start commands
+---
 
-```powershell
-cd server
-npm test
-```
+## Environment Variables
 
-```powershell
-cd server
-npm start
-```
-
-```powershell
-cd client
-npm ci
-npm run build
-```
-
-```powershell
-cd client
-npm run preview
-```
-
-## Environment variables
-
-Keep actual secrets in local `.env` files or the hosting provider's secret manager. Never commit secrets, paste them into issue trackers, or put private API keys in frontend `VITE_*` variables. The checked-in `.env.example` files contain placeholders only.
+> **Never commit `.env` files.** Only `.env.example` files belong in version control.
 
 ### Backend: `server/.env`
 
 | Variable | Required | Description |
-|---|---:|---|
-| `PORT` | Hosting-dependent | HTTP port. The repository example uses `3000`; the server defaults to `5000` if omitted. Set this to the port provided by your hosting platform. |
-| `NODE_ENV` | Production | Set to `production` for deployment. Enables production cookie settings and production logging. |
-| `CLIENT_URL` | Yes | Exact frontend origin, such as `https://your-app.example.com`, with no path or trailing slash. Used by CORS, Socket.IO, and password-reset redirects. |
-| `API_URL` | Email links | Public backend origin, such as `https://your-api.example.com`, with no `/api` suffix. Used to generate verification and reset links. `BACKEND_URL` is an alternative. |
-| `MONGO_URI` | Yes | MongoDB connection string. Use a managed database with authentication/TLS in production. |
-| `REDIS_URL` | Recommended | Redis connection string for Bull queues. Use `rediss://` where the provider requires TLS. |
-| `ACCESS_TOKEN_SECRET` | Yes | Strong, unique signing secret for short-lived access JWTs. |
-| `REFRESH_TOKEN_SECRET` | Yes | Separate, strong, unique signing secret for refresh JWTs. |
-| `ACCESS_TOKEN_EXPIRY` | No | Access-token lifetime; defaults to `15m`. |
-| `REFRESH_TOKEN_EXPIRY` | No | Refresh-token lifetime; defaults to `7d`. |
-| `COOKIE_SAME_SITE` | Deployment-dependent | Override for refresh-cookie SameSite behavior. Production defaults to `none`, which requires HTTPS; select a value compatible with your frontend/backend domain setup. |
-| `JUDGE0_API_URL` | For code runs | Base URL of the reachable Judge0-compatible service. If unset, the integration defaults to Judge0 CE on RapidAPI. |
-| `RAPIDAPI_KEY` | Provider-dependent | RapidAPI key when using Judge0 through RapidAPI. |
-| `JUDGE0_API_KEY` | Provider-dependent | Alternate key variable accepted by the execution integration. |
-| `RAPIDAPI_HOST` | No | RapidAPI host override; defaults to `judge0-ce.p.rapidapi.com`. |
-| `GEMINI_API_KEY` | One AI key required in production | Primary AI evaluation provider. |
-| `GROQ_API_KEY` | One AI key required in production | Fallback AI evaluation provider. |
-| `BADGE_SCORE_THRESHOLD` | No | Score threshold for badge eligibility. The example sets `80`; code falls back to `70` if unset. Required tests must also pass. |
-| `BREVO_API_KEY` | Email delivery | Brevo API key for verification and password-reset email. |
-| `BREVO_SENDER_EMAIL` | Email delivery | Verified sender address; falls back to `FROM_EMAIL`. |
-| `BREVO_SENDER_NAME` | No | Sender display name; falls back to `FROM_NAME` and then `VerifAI`. |
-| `FROM_EMAIL` | Email delivery | Fallback sender address if `BREVO_SENDER_EMAIL` is not set. |
-| `FROM_NAME` | No | Fallback sender display name. |
+|---|:---:|---|
+| `PORT` | hosting | HTTP port. Defaults to `5000` if unset. Set to whatever your host requires. |
+| `NODE_ENV` | production | Set to `production`. Enables secure cookies and production logging. |
+| `CLIENT_URL` | ✅ | Exact frontend origin (e.g. `https://your-app.vercel.app`). No path, no trailing slash. Used for CORS, Socket.IO, and password-reset links. |
+| `API_URL` | email links | Public backend origin without `/api` suffix. Used to generate verification and reset URLs. |
+| `MONGO_URI` | ✅ | MongoDB connection string. Use a managed cluster with TLS in production. |
+| `REDIS_URL` | ✅ | Redis connection string. Use `rediss://` when the provider requires TLS. |
+| `ACCESS_TOKEN_SECRET` | ✅ | High-entropy secret for short-lived access JWTs. Must differ from refresh secret. |
+| `REFRESH_TOKEN_SECRET` | ✅ | High-entropy secret for refresh JWTs. Must differ from access secret. |
+| `ACCESS_TOKEN_EXPIRY` | — | Access token lifetime. Defaults to `15m`. |
+| `REFRESH_TOKEN_EXPIRY` | — | Refresh token lifetime. Defaults to `7d`. |
+| `COOKIE_SAME_SITE` | deployment | Override refresh-cookie SameSite. Production defaults to `none` (requires HTTPS). |
+| `JUDGE0_API_URL` | code runs | Base URL of the Judge0-compatible provider. |
+| `RAPIDAPI_KEY` | code runs | RapidAPI key if routing through RapidAPI. |
+| `JUDGE0_API_KEY` | code runs | Alternate key variable accepted by the execution layer. |
+| `RAPIDAPI_HOST` | — | Defaults to `judge0-ce.p.rapidapi.com`. |
+| `GEMINI_API_KEY` | ✅ (one AI) | Primary AI review provider. |
+| `GROQ_API_KEY` | ✅ (one AI) | Fallback AI review provider. |
+| `BADGE_SCORE_THRESHOLD` | — | Minimum score for badge eligibility. Defaults to `70`. |
+| `BREVO_API_KEY` | email | Brevo transactional email API key. |
+| `BREVO_SENDER_EMAIL` | email | Verified sender address. Falls back to `FROM_EMAIL`. |
+| `BREVO_SENDER_NAME` | — | Sender display name. Falls back to `FROM_NAME`, then `VerifAI`. |
+| `FROM_EMAIL` | email | Fallback sender address. |
+| `FROM_NAME` | — | Fallback sender display name. |
 
-`server/.env.example` also contains `RESEND_API_KEY` and `BREVO_SMTP_USER`, but the current email sender implementation uses Brevo's HTTP API and does not read those two variables.
-
-Generate two different secrets locally, then paste each output into its corresponding environment variable:
+Generate secure secrets:
 
 ```powershell
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
@@ -223,154 +302,152 @@ node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ### Frontend: `client/.env`
 
 | Variable | Required | Description |
-|---|---:|---|
-| `VITE_API_BASE_URL` | Yes for deployment | Backend API base URL. Use `https://your-api.example.com/api` in production and `http://localhost:3000/api` for direct local development. Do not include credentials or secrets. |
+|---|:---:|---|
+| `VITE_API_BASE_URL` | ✅ | Backend API base URL including `/api`. E.g. `https://your-api.render.com/api`. **Set before building.** Vite bakes this value into the static bundle. |
 
-Vite embeds `VITE_*` values into the client build. Set the correct production value **before** building/deploying the frontend.
+---
 
-## API overview
+## API Reference
 
-The API is mounted under `/api`. The main endpoints include:
+All routes are mounted under `/api`.
 
-| Method | Path | Purpose |
-|---|---|---|
-| `GET` | `/` | Basic backend liveness response. |
-| `GET` | `/api/health/diagnostics` | Service diagnostics for MongoDB, Redis, and configured providers. |
-| `POST` | `/api/auth/register` | Register a user. |
-| `POST` | `/api/auth/login` | Sign in. |
-| `POST` | `/api/auth/refresh` | Refresh access credentials using the refresh cookie. |
-| `POST` | `/api/auth/logout` | Clear auth cookies. |
-| `GET` | `/api/auth/me` | Get the authenticated user. |
-| `GET` | `/api/challenges` | List challenges. |
-| `GET` | `/api/challenges/:id` | Get a challenge. |
-| `POST` | `/api/challenges/:id/run` | Run public challenge tests; no score or badge is issued. |
-| `POST` | `/api/challenges/:id/submit` | Challenge-scoped submission route. |
-| `POST` | `/api/submissions` | Canonical authenticated submission endpoint. |
-| `GET` | `/api/submissions` | Get the authenticated user's submission history. |
-| `GET` | `/api/submissions/:id` | Get a submission if authorized. |
+| Method | Path | Auth | Description |
+|---|---|:---:|---|
+| `GET` | `/` | — | Backend liveness check |
+| `GET` | `/api/health/diagnostics` | — | MongoDB, Redis, AI, and execution provider status |
+| `POST` | `/api/auth/register` | — | Register a new user |
+| `POST` | `/api/auth/login` | — | Sign in, receive access token + set refresh cookie |
+| `POST` | `/api/auth/refresh` | cookie | Exchange refresh cookie for a new access token |
+| `POST` | `/api/auth/logout` | ✅ | Clear auth cookies |
+| `GET` | `/api/auth/me` | ✅ | Get the current authenticated user |
+| `GET` | `/api/challenges` | — | List all available challenges |
+| `GET` | `/api/challenges/:id` | — | Get challenge details |
+| `POST` | `/api/challenges/:id/run` | ✅ | Run code against public tests (no score, no badge) |
+| `POST` | `/api/challenges/:id/submit` | ✅ | Submit code for evaluation |
+| `GET` | `/api/submissions` | ✅ | Get submission history for the current user |
+| `GET` | `/api/submissions/:id` | ✅ | Get a specific submission (owner only) |
 
-Authentication uses short-lived access tokens and HTTP-only refresh cookies. The frontend sends credentials and uses the configured backend origin. Cross-origin production deployments require correct CORS, HTTPS, and cookie settings.
+For exact request/response shapes and validation rules, see `server/src/routes/` and `server/src/controllers/`.
 
-For exact validation rules and response shapes, see the route validators and controllers under `server/src`.
+---
 
-## Testing and CI
-
-Run the backend tests:
+## CI & Testing
 
 ```powershell
+# Run backend tests
 cd server
 npm test
-```
 
-Build the frontend:
-
-```powershell
+# Build frontend (mimics what CI does)
 cd client
 npm ci
 npm run build
 ```
 
-The GitHub Actions workflow at `.github/workflows/ci.yml` runs:
+The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes and PRs targeting `dev` or `main`:
 
-- Client dependency installation and production build.
-- Server dependency installation and automated tests.
+1. Install client dependencies and run a production build
+2. Install server dependencies and run the test suite
 
-The workflow triggers on pushes and pull requests targeting `dev` or `main`. **It does not trigger on `submission/UI` pushes and it does not deploy the application.** Merge or open a pull request to a configured branch to run these checks, or extend the workflow deliberately.
+**CD is not configured.** Hosting providers (Vercel for client, Render for server) are configured to deploy from `main` independently. Do not add production secrets to workflow YAML.
 
-## Deployment guide
+---
 
-This repository does not pin deployment to one host. The following is a practical split-host setup (for example: Vercel for the client, Render for the API, managed MongoDB, managed Redis, and a hosted Judge0-compatible provider). Equivalent providers can be used if they satisfy the same requirements.
+## Deployment Guide
 
-### 1. Prepare managed services
+The intended production setup: **Vercel** (frontend static CDN) + **Render** (backend, Docker) + **MongoDB Atlas** + **Managed Redis** + **external Judge0 provider**.
 
-1. Create a production MongoDB database and a database user with only the permissions the app needs.
-2. Restrict MongoDB network access to the backend host when your provider supports IP/network restrictions. Require TLS.
-3. Create a managed Redis instance. Require authentication and TLS if offered.
-4. Create/choose a Judge0-compatible execution provider. Confirm the deployed backend can reach it and that its API plan supports the submission volume and resource limits required by your challenges.
-5. Create Gemini and/or Groq credentials.
-6. Configure Brevo and verify the sender domain/address if account emails are part of launch.
+### 1. Provision Managed Services
 
-The provided Compose file is for local development. Its MongoDB and Redis services are only reachable on its private Compose network, have no authentication configured, and should not be exposed as production services.
+- MongoDB Atlas cluster — create a DB user with minimum required permissions; enable TLS and IP allowlisting
+- Managed Redis (Upstash, Redis Cloud, or Render Redis) — enable TLS
+- Judge0 provider — confirm the deployed backend can reach it and that the plan covers your expected submission volume
+- Gemini API key (Google AI Studio) + optionally Groq API key
+- Brevo account — verify sender domain/email
 
-### 2. Deploy the backend
+### 2. Deploy the Backend (Render)
 
-For a Node service on a platform such as Render:
+- **Repository:** this repo
+- **Root directory:** `server`
+- **Runtime:** Docker (Render auto-detects `Dockerfile`)
+- **Health check path:** `/`
+- Set all backend environment variables in Render's environment settings
+- Set `CLIENT_URL` to the final Vercel frontend URL
+- Set `API_URL` to the final Render backend URL (no `/api` suffix)
+- Use Atlas and managed Redis URLs — not `localhost`
 
-- Repository: this Git repository.
-- Root directory: `server`.
-- Runtime: Node.js 20.
-- Build/install command: `npm ci`.
-- Start command: `npm start`.
-- Health check path: `/`.
-- Add the backend variables from [Backend: `server/.env`](#backend-serverenv) to the host's secret/environment settings.
-- Set `PORT` to the platform-provided port if the platform requires it.
-- Set `CLIENT_URL` to the final HTTPS frontend origin.
-- Set `API_URL` to the final HTTPS backend origin, without `/api`.
-- Use managed MongoDB and Redis URLs, not `localhost`.
-- Configure Judge0 URL and key(s); the backend must be able to reach the provider from the deployed environment.
+### 3. Deploy the Frontend (Vercel)
 
-The backend starts MongoDB-backed API handling and attaches the execution and AI workers in the server process. Confirm your host supports long-running Node processes and outbound HTTPS requests. If using a serverless host, confirm it supports persistent Socket.IO connections and background workers before choosing it.
+- **Root directory:** `client`
+- **Build command:** `npm ci && npm run build`
+- **Output directory:** `dist`
+- Set `VITE_API_BASE_URL` to `https://your-api.render.com/api`
+- Enable SPA fallback to `index.html` (Vercel does this automatically via `vercel.json`)
+- Trigger a redeploy after any change to frontend environment variables
 
-### 3. Deploy the frontend
+### 4. Smoke Test
 
-For Vercel or a similar static frontend host:
+1. `GET /` → returns `VerifAI API is running`
+2. `GET /api/health/diagnostics` → all services green
+3. Register → verify email → login → navigate protected pages
+4. Submit a code solution → watch it move through `queued → executing → evaluating → completed`
+5. Verify badge issuance works on a passing, above-threshold submission
+6. Confirm AI review appears for `both`-type challenges
+7. Check Render logs and Atlas metrics under load
 
-- Root directory: `client`.
-- Build command: `npm ci && npm run build`.
-- Output directory: `dist`.
-- Set `VITE_API_BASE_URL` to `https://your-api.example.com/api`.
-- Enable SPA route rewrites/fallback to `index.html` so direct navigation to client routes works.
-- Redeploy after changing frontend environment variables; Vite values are baked into the build.
+---
 
-### 4. Connect and smoke-test
+## Production Go-Live Checklist
 
-1. Check `https://your-api.example.com/` returns `VerifAI API is running`.
-2. Open `/api/health/diagnostics` and inspect MongoDB, Redis, AI, and execution-provider statuses. Treat this as diagnostics, not a substitute for end-to-end testing.
-3. Open the frontend over HTTPS and test registration, login, refresh after reload, logout, and protected pages.
-4. Verify a test email reaches a real inbox and verification/reset links point to the deployed HTTPS backend/frontend.
-5. Run a public challenge test and confirm it returns provider results. Confirm submissions move through queued/executing/evaluating/completed states and that provider failures show as errors rather than successful scores.
-6. Confirm failed required tests cannot receive badges, and AI score changes do not change automated scores or badge decisions.
-7. Check host logs and resource usage during a few concurrent submissions.
+- [ ] Frontend and backend both served over HTTPS
+- [ ] `CLIENT_URL` matches the exact production frontend origin
+- [ ] `VITE_API_BASE_URL` points to the exact production backend `/api` URL
+- [ ] `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` are different, high-entropy values stored in the host's secret manager — never committed
+- [ ] `MONGO_URI` → Atlas (TLS + IP restrict + strong DB user password)
+- [ ] `REDIS_URL` → managed Redis (TLS where required)
+- [ ] Judge0 provider configured and a real code execution has completed successfully in the deployed environment
+- [ ] At least one AI provider key set; provider quota/billing confirmed
+- [ ] Email delivery tested — verification and password-reset links reach a real inbox
+- [ ] Refresh cookie settings work across production domains (HTTPS + `SameSite=None`)
+- [ ] `App.jsx` → `once={true}` on AnimatePresence (change from `once={false}` dev setting)
+- [ ] Database backups enabled (Atlas continuous backups recommended)
+- [ ] CI checks pass on the exact commit being deployed
+- [ ] Rollback procedure defined before go-live
 
-### CI/CD
-
-CI is present; automatic deployment is not. Configure deployment in the hosting provider (for example, deploy from a selected production branch) or add a separate deployment workflow after selecting hosts and their secret names. Do not add production credentials to workflow YAML or repository files.
-
-## Production go-live checklist
-
-- [ ] Production frontend and backend use HTTPS.
-- [ ] Backend and frontend origins are final, and `CLIENT_URL` / `VITE_API_BASE_URL` match them exactly.
-- [ ] Production `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` are different, high-entropy values, stored in the host secret manager.
-- [ ] `MONGO_URI` points to secured production MongoDB; database users have strong passwords and TLS/network restrictions are enabled.
-- [ ] `REDIS_URL` points to secured production Redis; TLS is used when required.
-- [ ] A reachable external Judge0-compatible provider is configured and an actual code execution has passed in the deployed environment. No local execution fallback exists.
-- [ ] At least one AI key is set; check provider quotas and billing.
-- [ ] Email sender is verified and verification/reset email delivery is tested.
-- [ ] `API_URL` points at the public backend origin and `CLIENT_URL` at the public frontend origin.
-- [ ] Refresh-cookie settings work across the chosen domains. Production uses secure cookies; cross-site cookies require HTTPS.
-- [ ] Database backup/restore and log access are understood.
-- [ ] CI checks have passed for the exact revision being deployed.
-- [ ] A rollback procedure and a person responsible for monitoring are agreed before launch.
+---
 
 ## Troubleshooting
 
-| Symptom | Checks |
+| Symptom | What to check |
 |---|---|
-| Frontend reports network/CORS errors | Confirm `VITE_API_BASE_URL` includes `/api`, the backend is reachable over HTTPS, and backend `CLIENT_URL` exactly matches the frontend origin. Rebuild the frontend after changing its variable. |
-| Login works, but refresh fails | Confirm HTTPS, cookie settings, credentialed CORS, and that frontend/backend domains are compatible with the configured SameSite policy. |
-| Submission returns `provider_unavailable` | Confirm `JUDGE0_API_URL` and required key/host variables. Verify outbound access from the backend host. The server intentionally does not execute submissions locally. |
-| Submission stays queued | Check Redis connectivity, Bull queue/worker logs, and the backend process. Ensure the deployment is a long-running process, not a short-lived request-only function. |
-| AI evaluation fails | Configure Gemini or Groq, check provider quotas and keys, and inspect backend logs for provider errors. |
-| Verification/reset emails do not arrive | Configure `BREVO_API_KEY`, a verified sender (`BREVO_SENDER_EMAIL` or `FROM_EMAIL`), and the public `API_URL`. |
-| Direct refresh of a frontend route returns 404 | Configure the frontend host to serve `index.html` for SPA routes. |
+| CORS errors in the browser | `VITE_API_BASE_URL` includes `/api`. `CLIENT_URL` on the backend exactly matches the frontend origin. Frontend was rebuilt after changing the variable. |
+| Login works, but refresh fails | HTTPS on both ends. `COOKIE_SAME_SITE=none` set. Credentialed CORS (`withCredentials: true`). Frontend and backend domains compatible with the SameSite policy. |
+| `provider_unavailable` on submission | `JUDGE0_API_URL` and API key correct. The backend host can make outbound HTTPS requests to the provider. |
+| Submission stuck in `queued` | Redis connected. Bull workers are running (check backend logs). Deployment must be a long-running process — serverless functions don't support persistent queue workers. |
+| AI review never appears | Gemini and/or Groq keys set. Provider quotas not exhausted. Check backend logs for AI worker errors. |
+| Emails not arriving | `BREVO_API_KEY` set. `BREVO_SENDER_EMAIL` is a verified address in your Brevo account. `API_URL` set (used to build links in emails). |
+| Direct frontend URL returns 404 | SPA fallback not configured. On Vercel, ensure `vercel.json` rewrites all paths to `index.html`. |
+
+---
 
 ## Contributing
 
-1. Create a feature branch from the current integration branch.
-2. Keep changes focused and do not commit `.env` files, API keys, or database credentials.
-3. Run `npm test` from `server` and `npm run build` from `client`.
-4. Open a pull request to `dev` or `main` so the configured CI workflow runs.
+1. Branch from `dev` (or `main` for hotfixes)
+2. Keep changes focused — one feature or fix per PR
+3. Never commit `.env` files, API keys, secrets, or `dist/`
+4. Run `npm test` from `server/` and `npm run build` from `client/` before opening a PR
+5. Open PRs to `dev` — CI runs automatically on push
+
+---
 
 ## License
 
-This project is intended for educational use. No separate license file is currently included; contact the project owners before redistributing or reusing the code.
+This project is intended for educational and portfolio use. No separate license file is included — contact the author before redistributing or reusing this code commercially.
+
+---
+
+<div align="center">
+
+Built by [Harshit Tiwari](https://github.com/harshit-tiwari-codebase)
+
+</div>
