@@ -9,6 +9,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.0-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)](https://redis.io)
+[![Docker](https://img.shields.io/badge/Docker-enabled-2496ED?logo=docker&logoColor=white)](https://www.docker.com)
 [![License](https://img.shields.io/badge/license-Educational-blue)](#license)
 
 </div>
@@ -56,50 +57,80 @@ VerifAI is a full-stack platform where developers solve engineering challenges, 
 
 ## Architecture
 
-```
-VerifAI/
-├── .github/
-│   └── workflows/ci.yml       # CI: build client + run server tests on dev/main
-├── client/                    # React 18 + Vite — deployed on Vercel
-│   ├── src/
-│   │   ├── api/               # Axios API clients
-│   │   ├── components/        # Shared UI, landing page, loader, Monaco wrapper
-│   │   ├── features/          # Auth, challenge, submission Redux slices
-│   │   └── pages/             # Route-level page components
-│   └── .env.example
-├── server/                    # Node.js 20 + Express 5 — deployed via Docker on Render
-│   ├── src/
-│   │   ├── config/            # MongoDB and Redis connection setup
-│   │   ├── controllers/       # HTTP request handlers
-│   │   ├── middlewares/       # Auth, validation, error handling
-│   │   ├── models/            # Mongoose schemas (User, Challenge, Submission, Badge)
-│   │   ├── queues/            # Bull queue definitions
-│   │   ├── routes/            # Express routers
-│   │   ├── tests/             # Node.js built-in test suite
-│   │   ├── utils/             # Execution, scoring, mail, AI helpers
-│   │   └── workers/           # Execution worker + AI evaluation worker
-│   ├── .env.example
-│   ├── Dockerfile
-│   └── server.js
-└── docker-compose.yml         # Local dev: MongoDB + Redis + backend
+```mermaid
+flowchart TD
+    subgraph Repo["📁 VerifAI Repository"]
+        GH[".github/workflows/ci.yml\nCI: build + test on dev & main"]
+
+        subgraph Client["client/  —  React 18 + Vite  —  Vercel"]
+            C1["src/api/\nAxios API clients"]
+            C2["src/components/\nUI · Landing · Loader · Monaco"]
+            C3["src/features/\nAuth · Challenges · Submissions"]
+            C4["src/pages/\nRoute-level pages"]
+            C5[".env.example"]
+        end
+
+        subgraph Server["server/  —  Node.js 20 + Express 5  —  Docker · Render"]
+            S1["src/config/\nMongoDB · Redis setup"]
+            S2["src/controllers/\nHTTP request handlers"]
+            S3["src/middlewares/\nAuth · Validation · Errors"]
+            S4["src/models/\nUser · Challenge · Submission · Badge"]
+            S5["src/queues/\nBull queue definitions"]
+            S6["src/routes/\nExpress routers"]
+            S7["src/workers/\nExecution · AI evaluation workers"]
+            S8["src/utils/\nExecution · Scoring · Mail · AI"]
+            S9["Dockerfile · server.js · .env.example"]
+        end
+
+        DC["docker-compose.yml\nLocal dev: MongoDB + Redis + Backend"]
+    end
 ```
 
 ### Submission Flow
 
-```
-Client ──POST /submit──► Express API ──enqueue──► Bull Queue (Redis)
-                                                        │
-                                              Execution Worker
-                                                        │
-                                          Judge0-compatible API
-                                          (runs code externally)
-                                                        │
-                                          AI Worker (if applicable)
-                                          Gemini ──fallback──► Groq
-                                                        │
-                                          Results saved to MongoDB
-                                                        │
-                                    Socket.IO ──► Client (real-time)
+```mermaid
+sequenceDiagram
+    actor User as 👤 User (Browser)
+    participant API as Express API
+    participant Queue as Bull Queue (Redis)
+    participant ExecW as Execution Worker
+    participant Judge0 as Judge0 API (External)
+    participant AIW as AI Worker
+    participant LLM as Gemini / Groq
+    participant DB as MongoDB
+    participant WS as Socket.IO
+
+    User->>API: POST /api/challenges/:id/submit
+    API->>DB: Save submission (status: queued)
+    API->>Queue: Enqueue execution job
+    API-->>User: 202 Accepted { submissionId }
+
+    Queue->>ExecW: Dispatch job
+    ExecW->>DB: Update status → executing
+    ExecW->>WS: Emit status update
+    WS-->>User: ⚡ executing
+
+    ExecW->>Judge0: POST code + test cases
+    Judge0-->>ExecW: Execution results
+
+    alt Challenge type = "both" or "review_only"
+        ExecW->>AIW: Enqueue AI review job
+        AIW->>DB: Update status → evaluating
+        AIW->>WS: Emit status update
+        WS-->>User: 🤖 evaluating
+
+        AIW->>LLM: Send code for review
+        alt Gemini succeeds
+            LLM-->>AIW: AI feedback
+        else Gemini fails → fallback
+            AIW->>LLM: Retry with Groq
+            LLM-->>AIW: AI feedback
+        end
+    end
+
+    ExecW->>DB: Save final score + results
+    ExecW->>WS: Emit status → completed
+    WS-->>User: ✅ completed (score + feedback)
 ```
 
 **Execution safety:** the server never spawns untrusted code in a local child process. If the external provider is unavailable, execution fails with `provider_unavailable`.
