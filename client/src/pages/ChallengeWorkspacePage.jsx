@@ -10,7 +10,6 @@ import {
   PanelLeftClose,
   PanelLeft,
   AlignLeft,
-  Bot,
   SquareTerminal,
 } from "lucide-react";
 import ProblemSpecPane from "../features/challenges/components/ProblemSpecPane.jsx";
@@ -18,7 +17,6 @@ import EditorFooterBar from "../features/challenges/components/EditorFooterBar.j
 import TestResultsConsole from "../features/challenges/components/TestResultsConsole.jsx";
 import VerificationModal from "../features/challenges/components/VerificationModal.jsx";
 import ResultScreenModal from "../features/challenges/components/ResultScreenModal.jsx";
-import AnimatedCodeCompanion from "../features/challenges/components/AnimatedCodeCompanion.jsx";
 import { DEFAULT_CHALLENGE_DATA } from "../features/challenges/data/mockChallengeData.js";
 import { getChallengeById } from "../features/challenges/api/challengeApi.js";
 import {
@@ -91,7 +89,6 @@ export default function ChallengeWorkspacePage() {
 
   // Layout toggle state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCompanionVisible, setIsCompanionVisible] = useState(true);
 
   // Typing & keystroke stats (sent with submission + used by companion)
   const [keystrokeCount, setKeystrokeCount] = useState(0);
@@ -655,17 +652,6 @@ export default function ChallengeWorkspacePage() {
 
           <button
             type="button"
-            onClick={() => setIsCompanionVisible((visible) => !visible)}
-            aria-pressed={isCompanionVisible}
-            aria-label={`${isCompanionVisible ? "Hide" : "Show"} coding companion`}
-            title={`${isCompanionVisible ? "Hide" : "Show"} coding companion`}
-            className={`${ghostBtn} ${isCompanionVisible ? "!text-[#F2EFE6]" : ""}`}
-          >
-            <Bot className="h-4 w-4 stroke-[1.5]" />
-          </button>
-
-          <button
-            type="button"
             onClick={() => {
               if (isConsoleOpen) {
                 setIsConsoleOpen(false);
@@ -857,9 +843,6 @@ export default function ChallengeWorkspacePage() {
           </div>
         </section>
       </div>
-
-      {/* Floating coding companion */}
-      {isCompanionVisible && <AnimatedCodeCompanion keystrokeCount={keystrokeCount} />}
 
       {/* Submission verification modal */}
       <VerificationModal

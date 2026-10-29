@@ -261,20 +261,6 @@
     left: 180%;
   }
 
-  .companion-float {
-    position: fixed;
-    z-index: 60;
-    cursor: grab;
-    user-select: none;
-    transform: perspective(800px) rotateY(-7deg) rotateX(3deg);
-    filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.32));
-    transition: filter 160ms ease;
-  }
-
-  .companion-float:active {
-    cursor: grabbing;
-    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.38));
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

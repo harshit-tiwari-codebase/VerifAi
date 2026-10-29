@@ -490,7 +490,7 @@ const PIPELINE_STAGES = [
   },
 ];
 
-const STAGE_PROGRESS = [0.12, 0.38, 0.64, 0.9];
+const STAGE_PROGRESS = [0.12, 0.38, 0.64, 0.82];
 
 /* ─── Main export ──────────────────────────────────────────────────────────── */
 
