@@ -133,7 +133,7 @@ export default function RegisterPage() {
         {showSuccess ? (
           <div className="space-y-4 text-center py-2">
             {/* Animated Email Success Graphic */}
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#8B5CF6]/40 bg-[#211635] text-[#A78BFA] shadow-[0_0_24px_rgba(139,92,246,0.25)]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#FF6A3D]/40 bg-[#261912] text-[#FFB08E] shadow-sm">
               <Mail className="h-7 w-7" />
             </div>
 
@@ -141,12 +141,12 @@ export default function RegisterPage() {
               <span className="font-mono text-[11px] uppercase tracking-widest text-[#34D399] font-semibold">
                 Verification Required
               </span>
-              <h2 className="text-xl font-bold font-display text-[#FAFAFA] mt-1">
+              <h2 className="text-xl font-bold font-display text-[#F2EFE6] mt-1">
                 Check your inbox
               </h2>
-              <p className="mt-1.5 text-xs text-[#A1A1AA] leading-relaxed max-w-sm mx-auto">
+              <p className="mt-1.5 text-xs text-[#AAA69B] leading-relaxed max-w-sm mx-auto">
                 We sent a verification link to{" "}
-                <span className="text-[#FAFAFA] font-medium underline underline-offset-2">
+                <span className="text-[#F2EFE6] font-medium underline underline-offset-2">
                   {registeredEmail}
                 </span>
                 . Click the link to activate your account.
@@ -154,7 +154,7 @@ export default function RegisterPage() {
             </div>
 
             {resendMessage && (
-              <div className="p-2.5 rounded-[10px] border border-[#8B5CF6]/30 bg-[#211635] font-mono text-xs text-[#C4B5FD]">
+              <div className="p-2.5 rounded-[10px] border border-[#FF6A3D]/30 bg-[#261912] font-mono text-xs text-[#FFD1BB]">
                 {resendMessage}
               </div>
             )}
@@ -188,10 +188,10 @@ export default function RegisterPage() {
           <>
             {/* Header */}
             <div className="text-center mb-4">
-              <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#FAFAFA]">
+              <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#F2EFE6]">
                 Create an account
               </h1>
-              <p className="mt-0.5 text-xs sm:text-sm text-[#A1A1AA]">
+              <p className="mt-0.5 text-xs sm:text-sm text-[#AAA69B]">
                 Sign up to start verifying your engineering craft
               </p>
             </div>
@@ -201,7 +201,7 @@ export default function RegisterPage() {
               {/* Name Input */}
               <div className="space-y-0.5">
                 <div className="relative flex items-center">
-                  <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
+                  <div className="pointer-events-none absolute left-3.5 text-[#77756D]">
                     <User className="h-4 w-4" />
                   </div>
                   <input
@@ -213,10 +213,10 @@ export default function RegisterPage() {
                     placeholder="Full Name"
                     value={form.name}
                     onChange={(e) => updateField("name", e.target.value)}
-                    className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
+                    className={`w-full rounded-[10px] border bg-[#171714] text-sm text-[#F2EFE6] placeholder:text-[#77756D] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
                       fieldErrors.name
                         ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
-                        : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
+                        : "border-[#30302B] hover:border-[#414139] focus:border-[#FF6A3D] focus:ring-1 focus:ring-[#FF6A3D]/30"
                     }`}
                   />
                 </div>
@@ -228,7 +228,7 @@ export default function RegisterPage() {
               {/* Email Input */}
               <div className="space-y-0.5">
                 <div className="relative flex items-center">
-                  <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
+                  <div className="pointer-events-none absolute left-3.5 text-[#77756D]">
                     <Mail className="h-4 w-4" />
                   </div>
                   <input
@@ -241,10 +241,10 @@ export default function RegisterPage() {
                     placeholder="developer@company.com"
                     value={form.email}
                     onChange={(e) => updateField("email", e.target.value)}
-                    className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
+                    className={`w-full rounded-[10px] border bg-[#171714] text-sm text-[#F2EFE6] placeholder:text-[#77756D] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
                       fieldErrors.email
                         ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
-                        : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
+                        : "border-[#30302B] hover:border-[#414139] focus:border-[#FF6A3D] focus:ring-1 focus:ring-[#FF6A3D]/30"
                     }`}
                   />
                 </div>
@@ -256,7 +256,7 @@ export default function RegisterPage() {
               {/* Password Input */}
               <div className="space-y-0.5">
                 <div className="relative flex items-center">
-                  <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
+                  <div className="pointer-events-none absolute left-3.5 text-[#77756D]">
                     <Lock className="h-4 w-4" />
                   </div>
                   <input
@@ -268,16 +268,16 @@ export default function RegisterPage() {
                     placeholder="Password (min. 8 characters)"
                     value={form.password}
                     onChange={(e) => updateField("password", e.target.value)}
-                    className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-10 ${
+                    className={`w-full rounded-[10px] border bg-[#171714] text-sm text-[#F2EFE6] placeholder:text-[#77756D] outline-none transition-all py-2.5 pl-10 pr-10 ${
                       fieldErrors.password
                         ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
-                        : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
+                        : "border-[#30302B] hover:border-[#414139] focus:border-[#FF6A3D] focus:ring-1 focus:ring-[#FF6A3D]/30"
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 p-1 rounded-md text-[#71717A] hover:text-[#A1A1AA] transition-colors"
+                    className="absolute right-3 p-1 rounded-md text-[#77756D] hover:text-[#AAA69B] transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -290,7 +290,7 @@ export default function RegisterPage() {
 
               {/* Terms Checkbox */}
               <div>
-                <label className="flex items-start gap-2 cursor-pointer select-none text-[11px] text-[#A1A1AA] hover:text-[#FAFAFA]">
+                <label className="flex items-start gap-2 cursor-pointer select-none text-[11px] text-[#AAA69B] hover:text-[#F2EFE6]">
                   <input
                     type="checkbox"
                     checked={agreeTerms}
@@ -298,12 +298,12 @@ export default function RegisterPage() {
                       setAgreeTerms(e.target.checked);
                       if (fieldErrors.terms) setFieldErrors({ ...fieldErrors, terms: "" });
                     }}
-                    className="mt-0.5 h-3.5 w-3.5 rounded border-[#27272A] bg-[#111116] accent-[#8B5CF6] cursor-pointer"
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-[#30302B] bg-[#171714] accent-[#FF6A3D] cursor-pointer"
                   />
                   <span className="leading-tight">
                     I agree to the{" "}
-                    <span className="text-[#A78BFA] hover:underline">Terms of Service</span> and{" "}
-                    <span className="text-[#A78BFA] hover:underline">Privacy Policy</span>.
+                    <span className="text-[#FFB08E] hover:underline">Terms of Service</span> and{" "}
+                    <span className="text-[#FFB08E] hover:underline">Privacy Policy</span>.
                   </span>
                 </label>
                 {fieldErrors.terms && (
@@ -321,8 +321,8 @@ export default function RegisterPage() {
 
               {/* Social notice feedback if clicked */}
               {socialNotice && (
-                <div className="p-2 rounded-[10px] border border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD] text-xs flex items-center gap-2">
-                  <Info className="h-3.5 w-3.5 text-[#A78BFA] shrink-0" />
+                <div className="p-2 rounded-[10px] border border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB] text-xs flex items-center gap-2">
+                  <Info className="h-3.5 w-3.5 text-[#FFB08E] shrink-0" />
                   <p className="flex-1">{socialNotice}</p>
                 </div>
               )}
@@ -341,8 +341,8 @@ export default function RegisterPage() {
 
               {/* Divider "Or" */}
               <div className="relative flex items-center justify-center my-2.5 py-0.5">
-                <div className="border-t border-[#27272A] w-full" />
-                <span className="bg-[#18181F] px-2.5 text-xs text-[#71717A] font-sans absolute">
+                <div className="border-t border-[#30302B] w-full" />
+                <span className="bg-[#171714] px-2.5 text-xs text-[#77756D] font-sans absolute">
                   Or continue with
                 </span>
               </div>
@@ -392,11 +392,11 @@ export default function RegisterPage() {
               </div>
 
               {/* Login prompt */}
-              <div className="pt-2 text-center text-xs text-[#A1A1AA]">
+              <div className="pt-2 text-center text-xs text-[#AAA69B]">
                 <span>Already have an account? </span>
                 <Link
                   to="/login"
-                  className="text-[#A78BFA] hover:text-[#C4B5FD] font-semibold underline-offset-2 hover:underline transition-colors"
+                  className="text-[#FFB08E] hover:text-[#FFD1BB] font-semibold underline-offset-2 hover:underline transition-colors"
                 >
                   Log In
                 </Link>

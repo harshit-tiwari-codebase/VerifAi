@@ -60,27 +60,27 @@ export default function DeleteChallengeModal({
         if (e.target === e.currentTarget && !loading) onClose();
       }}
     >
-      <div className="relative flex flex-col w-full max-w-md bg-[#18181F] border border-[#27272A] rounded-2xl shadow-2xl p-6">
+      <div className="relative flex flex-col w-full max-w-md bg-[#171714] border border-[#30302B] rounded-2xl shadow-2xl p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2 text-[#F87171]">
             <AlertCircle className="h-5 w-5 stroke-[1.75]" />
-            <h3 className="font-mono text-sm font-semibold text-[#FAFAFA]">
+            <h3 className="font-mono text-sm font-semibold text-[#F2EFE6]">
               Confirm Deletion
             </h3>
           </div>
           <button
             onClick={onClose}
             disabled={loading}
-            className="rounded-lg p-1 text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors disabled:opacity-50"
+            className="rounded-lg p-1 text-[#77756D] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors disabled:opacity-50"
           >
             <X className="h-4 w-4 stroke-[1.75]" />
           </button>
         </div>
 
         <div className="mt-4">
-          <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+          <p className="text-xs text-[#AAA69B] leading-relaxed font-sans">
             Permanently delete{" "}
-            <span className="font-mono font-semibold text-[#FAFAFA]">
+            <span className="font-mono font-semibold text-[#F2EFE6]">
               "{challenge.title}"
             </span>
             ? This action cannot be reversed.

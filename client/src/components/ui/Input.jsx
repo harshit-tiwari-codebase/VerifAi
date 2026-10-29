@@ -19,7 +19,7 @@ export default function Input({
       {label && (
         <label
           htmlFor={id}
-          className="font-mono text-xs text-[#A1A1AA] font-medium flex items-center justify-between"
+          className="font-mono text-xs text-[#AAA69B] font-medium flex items-center justify-between"
         >
           <span>{label}</span>
           {error && <span className="text-[11px] text-[#F87171] font-normal">{error}</span>}
@@ -28,7 +28,7 @@ export default function Input({
 
       <div className="relative flex items-center">
         {Icon && (
-          <div className="pointer-events-none absolute left-3.5 flex items-center justify-center text-[#71717A]">
+          <div className="pointer-events-none absolute left-3.5 flex items-center justify-center text-[#77756D]">
             <Icon className="h-4 w-4" />
           </div>
         )}
@@ -36,14 +36,14 @@ export default function Input({
         <input
           id={id}
           type={inputType}
-          className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all duration-150 ${
+          className={`w-full rounded-[10px] border bg-[#171714] text-sm text-[#F2EFE6] placeholder:text-[#77756D] outline-none transition-all duration-150 ${
             Icon ? "pl-10" : "pl-3.5"
           } ${
             showPasswordToggle ? "pr-10" : "pr-3.5"
           } py-2.5 ${
             error
               ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/30"
-              : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
+              : "border-[#30302B] hover:border-[#414139] focus:border-[#FF6A3D] focus:ring-1 focus:ring-[#FF6A3D]/30"
           } ${className}`}
           {...props}
         />
@@ -52,7 +52,7 @@ export default function Input({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 p-1 rounded-md text-[#71717A] hover:text-[#FAFAFA] transition-colors"
+            className="absolute right-3 p-1 rounded-md text-[#77756D] hover:text-[#F2EFE6] transition-colors"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

@@ -103,7 +103,7 @@ export default function LiveDemo() {
                         state === "pending"
                           ? "bg-ink-500"
                           : state === "active"
-                            ? "bg-violet-400 shadow-[0_0_10px_rgba(167,139,250,0.7)]"
+                            ? "bg-violet-400 shadow-sm"
                             : "bg-purple-500"
                       }`}
                     />
@@ -177,7 +177,7 @@ export default function LiveDemo() {
                   <span className="absolute inline-flex h-16 w-16 rounded-full bg-violet-500/20 animate-pulse-ring" />
 
                   {/* Purple verification circle */}
-                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full border border-violet-400 bg-violet-500/10 text-violet-400 shadow-[0_0_25px_rgba(139,92,246,0.18)]">
+                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full border border-violet-400 bg-violet-500/10 text-violet-400 shadow-sm">
                     <svg
                       width="24"
                       height="24"

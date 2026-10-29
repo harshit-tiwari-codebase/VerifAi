@@ -93,20 +93,20 @@ export default function TestResultsConsole({
 
   return (
     <div
-      className={`border-t border-[#27272A] bg-[#0D0D12] flex flex-col transition-all duration-200 ease-out relative z-30 shrink-0 select-none ${
+      className={`border-t border-[#30302B] bg-[#141412] flex flex-col transition-all duration-200 ease-out relative z-30 shrink-0 select-none ${
         isMaximized ? "h-[85%]" : "h-[48%]"
       }`}
     >
       {/* Brand Progress hairline */}
-      <div className="h-0.5 w-full bg-[#27272A] overflow-hidden shrink-0">
+      <div className="h-0.5 w-full bg-[#30302B] overflow-hidden shrink-0">
         <div
-          className="h-full bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA] transition-all duration-300"
+          className="h-full bg-gradient-to-r from-[#E9562F] via-[#FF6A3D] to-[#FFB08E] transition-all duration-300"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
       {/* Header Tabs bar */}
-      <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#09090B] border-b border-[#27272A] shrink-0 text-xs font-mono">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-[#0B0B0A] border-b border-[#30302B] shrink-0 text-xs font-mono">
         <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar">
           {/* Test cases tab */}
           <button
@@ -114,8 +114,8 @@ export default function TestResultsConsole({
             onClick={() => setActiveTab("tests")}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "tests"
-                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
-                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
+                ? "bg-[#261912] text-[#FFB08E] font-medium border border-[#FF6A3D]/30"
+                : "text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E]"
             }`}
           >
             <span>Test Cases</span>
@@ -140,11 +140,11 @@ export default function TestResultsConsole({
             onClick={() => setActiveTab("terminal")}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "terminal"
-                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
-                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
+                ? "bg-[#261912] text-[#FFB08E] font-medium border border-[#FF6A3D]/30"
+                : "text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E]"
             }`}
           >
-            <Terminal className="h-3.5 w-3.5 text-[#8B5CF6]" />
+            <Terminal className="h-3.5 w-3.5 text-[#FF6A3D]" />
             <span>Terminal</span>
             {terminalLogs.length > 0 && (
               <span className="h-1.5 w-1.5 rounded-full bg-[#34D399]" />
@@ -157,11 +157,11 @@ export default function TestResultsConsole({
             onClick={() => setActiveTab("custom")}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "custom"
-                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
-                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
+                ? "bg-[#261912] text-[#FFB08E] font-medium border border-[#FF6A3D]/30"
+                : "text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E]"
             }`}
           >
-            <Code2 className="h-3.5 w-3.5 text-[#A1A1AA]" />
+            <Code2 className="h-3.5 w-3.5 text-[#AAA69B]" />
             <span>Custom Input</span>
           </button>
 
@@ -171,11 +171,11 @@ export default function TestResultsConsole({
             onClick={() => setActiveTab("ai")}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-mono transition-colors shrink-0 ${
               activeTab === "ai"
-                ? "bg-[#211635] text-[#A78BFA] font-medium border border-[#8B5CF6]/30"
-                : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
+                ? "bg-[#261912] text-[#FFB08E] font-medium border border-[#FF6A3D]/30"
+                : "text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E]"
             }`}
           >
-            <BrainCircuit className="h-3.5 w-3.5 text-[#8B5CF6]" />
+            <BrainCircuit className="h-3.5 w-3.5 text-[#FF6A3D]" />
             <span className="hidden sm:inline">Telemetry & Insights</span>
             <span className="sm:hidden">Telemetry</span>
           </button>
@@ -194,7 +194,7 @@ export default function TestResultsConsole({
             <button
               type="button"
               onClick={onRunTests}
-              className="flex items-center gap-1 px-2 py-1 rounded-[8px] text-[11px] font-mono text-[#A1A1AA] hover:text-[#FAFAFA] bg-[#14141B] hover:bg-[#20202A] border border-[#27272A] transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded-[8px] text-[11px] font-mono text-[#AAA69B] hover:text-[#F2EFE6] bg-[#1C1C19] hover:bg-[#22221E] border border-[#30302B] transition-colors"
               title="Rerun test suites (⌘+Enter)"
             >
               <RotateCcw className="h-3 w-3 text-[#FBBF24]" />
@@ -205,7 +205,7 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={() => setIsMaximized((prev) => !prev)}
-            className="p-1 rounded-[8px] text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+            className="p-1 rounded-[8px] text-[#77756D] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
             title={isMaximized ? "Restore height" : "Maximize height"}
           >
             {isMaximized ? (
@@ -218,7 +218,7 @@ export default function TestResultsConsole({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-[8px] text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+            className="p-1 rounded-[8px] text-[#77756D] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
             title="Close test panel"
           >
             <ChevronDown className="h-4 w-4" />
@@ -227,7 +227,7 @@ export default function TestResultsConsole({
       </div>
 
       {/* Main Tab Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3 sm:p-4 bg-[#0D0D12] text-xs font-mono select-text">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3 sm:p-4 bg-[#141412] text-xs font-mono select-text">
         {/* TAB 1: TEST CASES */}
         {activeTab === "tests" && (
           <div className="space-y-2">
@@ -236,7 +236,7 @@ export default function TestResultsConsole({
                 <div className="flex items-start gap-2 min-w-0">
                   <AlertTriangle className="h-4 w-4 text-[#F87171] shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-[#FAFAFA] block mb-0.5">
+                    <span className="font-semibold text-[#F2EFE6] block mb-0.5">
                       Execution / Compilation Error
                     </span>
                     <pre className="text-[11px] font-mono text-[#F87171] whitespace-pre-wrap">
@@ -247,7 +247,7 @@ export default function TestResultsConsole({
                 <button
                   type="button"
                   onClick={() => setActiveTab("terminal")}
-                  className="px-2 py-1 rounded-[8px] bg-[#F87171]/20 hover:bg-[#F87171]/30 text-[#FAFAFA] text-[10px] shrink-0 border border-[#F87171]/30 transition-colors"
+                  className="px-2 py-1 rounded-[8px] bg-[#F87171]/20 hover:bg-[#F87171]/30 text-[#F2EFE6] text-[10px] shrink-0 border border-[#F87171]/30 transition-colors"
                 >
                   View in Terminal →
                 </button>
@@ -255,7 +255,7 @@ export default function TestResultsConsole({
             )}
 
             {testCases.length === 0 ? (
-              <div className="p-6 text-center text-[#71717A] text-xs">
+              <div className="p-6 text-center text-[#77756D] text-xs">
                 No test cases available for this challenge. Click "Run Tests" to execute against the sandbox.
               </div>
             ) : (
@@ -269,7 +269,7 @@ export default function TestResultsConsole({
                     key={tc.id || idx}
                     className={`rounded-[10px] border transition-all duration-150 overflow-hidden ${
                       !isRevealed && !isCurrent
-                        ? "border-[#27272A] bg-[#14141B] opacity-40"
+                        ? "border-[#30302B] bg-[#1C1C19] opacity-40"
                         : isCurrent
                         ? "border-[#FBBF24]/40 bg-[#FBBF24]/5 ring-1 ring-[#FBBF24]/20"
                         : tc.passed
@@ -299,17 +299,17 @@ export default function TestResultsConsole({
                             </div>
                           )
                         ) : (
-                          <div className="h-3 w-3 rounded-full bg-[#27272A] shrink-0" />
+                          <div className="h-3 w-3 rounded-full bg-[#30302B] shrink-0" />
                         )}
 
                         {/* Title */}
                         {tc.isHidden ? (
-                          <div className="flex items-center gap-1.5 text-[#A1A1AA] truncate">
+                          <div className="flex items-center gap-1.5 text-[#AAA69B] truncate">
                             <Lock className="h-3 w-3 text-[#FBBF24] shrink-0" />
                             <span className="font-semibold text-[#FBBF24]">
                               Hidden Case #{idx + 1}
                             </span>
-                            <span className="text-[10px] text-[#71717A] font-mono">
+                            <span className="text-[10px] text-[#77756D] font-mono">
                               (Anti-cheat validation)
                             </span>
                           </div>
@@ -318,9 +318,9 @@ export default function TestResultsConsole({
                             className={`truncate font-mono ${
                               isRevealed
                                 ? tc.passed
-                                  ? "text-[#FAFAFA]"
+                                  ? "text-[#F2EFE6]"
                                   : "text-[#F87171] font-medium"
-                                : "text-[#71717A]"
+                                : "text-[#77756D]"
                             }`}
                           >
                             {tc.name || `Test Case #${idx + 1}`}
@@ -330,14 +330,14 @@ export default function TestResultsConsole({
 
                       <div className="flex items-center gap-2.5 shrink-0">
                         {isRevealed && tc.runtime && (
-                          <span className="text-[10.5px] font-mono text-[#71717A] px-1.5 py-0.5 rounded bg-[#14141B] border border-[#27272A]">
+                          <span className="text-[10.5px] font-mono text-[#77756D] px-1.5 py-0.5 rounded bg-[#1C1C19] border border-[#30302B]">
                             {tc.runtime}
                           </span>
                         )}
                         {isRevealed && (
                           <button
                             type="button"
-                            className="text-[#71717A] hover:text-[#FAFAFA]"
+                            className="text-[#77756D] hover:text-[#F2EFE6]"
                             title="Toggle details"
                           >
                             {isExpanded ? (
@@ -352,9 +352,9 @@ export default function TestResultsConsole({
 
                     {/* Expanded test details */}
                     {isExpanded && isRevealed && (
-                      <div className="p-3 bg-[#111116] border-t border-[#27272A] space-y-2.5">
+                      <div className="p-3 bg-[#171714] border-t border-[#30302B] space-y-2.5">
                         {tc.isHidden ? (
-                          <div className="p-2.5 rounded-[8px] bg-[#14141B] border border-[#27272A] text-[#A1A1AA] text-[11px] leading-relaxed">
+                          <div className="p-2.5 rounded-[8px] bg-[#1C1C19] border border-[#30302B] text-[#AAA69B] text-[11px] leading-relaxed">
                             <span className="text-[#FBBF24] font-semibold">🔒 Input & expected output are masked</span> to safeguard anti-cheat validation.
                             <div className="mt-1 text-[#34D399] font-mono text-[10.5px]">
                               ✓ Runtime constraint verified in sandbox: {tc.runtime || "11ms"}
@@ -363,16 +363,16 @@ export default function TestResultsConsole({
                         ) : (
                           <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                              <div className="p-2 rounded-[8px] bg-[#14141B] border border-[#27272A]">
-                                <span className="text-[#71717A] text-[9.5px] uppercase block mb-1">
+                              <div className="p-2 rounded-[8px] bg-[#1C1C19] border border-[#30302B]">
+                                <span className="text-[#77756D] text-[9.5px] uppercase block mb-1">
                                   Input
                                 </span>
-                                <pre className="text-[#FAFAFA] whitespace-pre-wrap font-mono text-[11px]">
+                                <pre className="text-[#F2EFE6] whitespace-pre-wrap font-mono text-[11px]">
                                   {tc.input || "None"}
                                 </pre>
                               </div>
-                              <div className="p-2 rounded-[8px] bg-[#14141B] border border-[#27272A]">
-                                <span className="text-[#71717A] text-[9.5px] uppercase block mb-1">
+                              <div className="p-2 rounded-[8px] bg-[#1C1C19] border border-[#30302B]">
+                                <span className="text-[#77756D] text-[9.5px] uppercase block mb-1">
                                   Expected Output
                                 </span>
                                 <pre className="text-[#34D399] whitespace-pre-wrap font-mono text-[11px]">
@@ -407,18 +407,18 @@ export default function TestResultsConsole({
         {activeTab === "terminal" && (
           <div className="h-full flex flex-col font-mono text-xs">
             {/* Terminal Top Info Bar */}
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#27272A] text-[#71717A] text-[11px]">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#30302B] text-[#77756D] text-[11px]">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[#34D399]" />
-                <span className="text-[#FAFAFA] font-semibold">Node.js V8 Sandboxed Runtime</span>
-                <span className="text-[#3F3F4A]">|</span>
+                <span className="text-[#F2EFE6] font-semibold">Node.js V8 Sandboxed Runtime</span>
+                <span className="text-[#414139]">|</span>
                 <span>stdout & stderr stream</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleCopyTerminal}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-[8px] text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-[8px] text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
                   title="Copy terminal contents"
                 >
                   {copiedTerminal ? (
@@ -437,7 +437,7 @@ export default function TestResultsConsole({
                   <button
                     type="button"
                     onClick={onClearTerminal}
-                    className="flex items-center gap-1 px-2 py-0.5 rounded-[8px] text-[#A1A1AA] hover:text-[#F87171] hover:bg-[#20202A] transition-colors"
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-[8px] text-[#AAA69B] hover:text-[#F87171] hover:bg-[#22221E] transition-colors"
                     title="Clear console output"
                   >
                     <Trash2 className="h-3 w-3" />
@@ -448,9 +448,9 @@ export default function TestResultsConsole({
             </div>
 
             {/* Terminal Body Log Stream */}
-            <div className="flex-1 min-h-[160px] overflow-y-auto space-y-1.5 p-2 bg-[#09090B] rounded-[8px] border border-[#27272A]">
+            <div className="flex-1 min-h-[160px] overflow-y-auto space-y-1.5 p-2 bg-[#0B0B0A] rounded-[8px] border border-[#30302B]">
               {terminalLogs.length === 0 ? (
-                <div className="text-[#71717A] text-[11px] p-2 leading-relaxed">
+                <div className="text-[#77756D] text-[11px] p-2 leading-relaxed">
                   Terminal ready. Write `console.log(...)` in your code and hit "Run Tests" (⌘↵) to see live output stream here.
                   <br />
                   Or type any JavaScript expression in the REPL below.
@@ -469,7 +469,7 @@ export default function TestResultsConsole({
                   let badgeColor = "text-[#60A5FA] bg-[#60A5FA]/10 border-[#60A5FA]/30";
                   if (type === "error") badgeColor = "text-[#F87171] bg-[#F87171]/15 border-[#F87171]/30";
                   else if (type === "warn") badgeColor = "text-[#FBBF24] bg-[#FBBF24]/15 border-[#FBBF24]/30";
-                  else if (type === "info" || type === "sys") badgeColor = "text-[#A78BFA] bg-[#211635] border-[#8B5CF6]/30";
+                  else if (type === "info" || type === "sys") badgeColor = "text-[#FFB08E] bg-[#261912] border-[#FF6A3D]/30";
                   else if (type === "success") badgeColor = "text-[#34D399] bg-[#34D399]/15 border-[#34D399]/30";
 
                   return (
@@ -478,7 +478,7 @@ export default function TestResultsConsole({
                       className="flex items-start gap-2 text-[11.5px] leading-relaxed font-mono"
                     >
                       {time && (
-                        <span className="text-[#52525B] select-none shrink-0 text-[10px] mt-0.5">
+                        <span className="text-[#66645D] select-none shrink-0 text-[10px] mt-0.5">
                           {time}
                         </span>
                       )}
@@ -496,8 +496,8 @@ export default function TestResultsConsole({
                             : type === "success"
                             ? "text-[#34D399] font-semibold"
                             : type === "sys"
-                            ? "text-[#C4B5FD]"
-                            : "text-[#FAFAFA]"
+                            ? "text-[#FFD1BB]"
+                            : "text-[#F2EFE6]"
                         }`}
                       >
                         {log.text}
@@ -511,20 +511,20 @@ export default function TestResultsConsole({
 
             {/* Interactive Terminal REPL Prompt at Bottom */}
             <form onSubmit={handleReplSubmit} className="mt-2 flex items-center gap-2">
-              <div className="flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] border border-[#27272A] bg-[#111116] focus-within:border-[#8B5CF6] transition-colors">
-                <span className="text-[#8B5CF6] font-bold select-none text-xs">$</span>
+              <div className="flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] border border-[#30302B] bg-[#171714] focus-within:border-[#FF6A3D] transition-colors">
+                <span className="text-[#FF6A3D] font-bold select-none text-xs">$</span>
                 <input
                   type="text"
                   value={replInput}
                   onChange={(e) => setReplInput(e.target.value)}
                   placeholder="Evaluate expression... e.g. new TokenBucket(10, 2).allow(3)"
-                  className="w-full bg-transparent text-[#FAFAFA] placeholder:text-[#71717A] text-xs focus:outline-none font-mono"
+                  className="w-full bg-transparent text-[#F2EFE6] placeholder:text-[#77756D] text-xs focus:outline-none font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={!replInput.trim()}
-                className="bg-[#8B5CF6] hover:bg-[#7C3AED] px-3 py-1.5 rounded-[10px] text-xs font-mono font-medium text-white disabled:opacity-40 flex items-center gap-1 transition-colors"
+                className="bg-[#FF6A3D] hover:bg-[#E9562F] px-3 py-1.5 rounded-[10px] text-xs font-mono font-medium text-white disabled:opacity-40 flex items-center gap-1 transition-colors"
                 title="Execute expression in workspace sandbox"
               >
                 <Send className="h-3 w-3" />
@@ -539,10 +539,10 @@ export default function TestResultsConsole({
           <div className="space-y-4 max-w-2xl font-mono text-xs">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[#A1A1AA] text-[11px] uppercase tracking-wider block">
+                <label className="text-[#AAA69B] text-[11px] uppercase tracking-wider block">
                   Custom Input Payload
                 </label>
-                <span className="text-[#71717A] text-[10px]">
+                <span className="text-[#77756D] text-[10px]">
                   Pass arbitrary JSON or arguments to your solution
                 </span>
               </div>
@@ -551,7 +551,7 @@ export default function TestResultsConsole({
                 value={customInput}
                 onChange={(e) => setCustomInput && setCustomInput(e.target.value)}
                 placeholder='e.g. {"capacity": 20, "refillRate": 5, "tokens": 3}'
-                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] p-3 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:outline-none font-mono"
+                className="w-full rounded-[10px] border border-[#30302B] bg-[#171714] p-3 text-xs text-[#F2EFE6] placeholder:text-[#77756D] focus:border-[#FF6A3D] focus:outline-none font-mono"
               />
             </div>
 
@@ -560,7 +560,7 @@ export default function TestResultsConsole({
                 type="button"
                 onClick={onRunCustomTest}
                 disabled={isRunningCustom}
-                className="btn-secondary flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono text-[#FAFAFA] hover:text-white transition-colors disabled:opacity-50"
+                className="btn-secondary flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono text-[#F2EFE6] hover:text-white transition-colors disabled:opacity-50"
               >
                 {isRunningCustom ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FBBF24]" />
@@ -572,8 +572,8 @@ export default function TestResultsConsole({
             </div>
 
             {customOutput && (
-              <div className="rounded-[10px] border border-[#27272A] bg-[#14141B] p-3 space-y-1.5">
-                <span className="text-[#71717A] text-[10px] uppercase tracking-wider block">
+              <div className="rounded-[10px] border border-[#30302B] bg-[#1C1C19] p-3 space-y-1.5">
+                <span className="text-[#77756D] text-[10px] uppercase tracking-wider block">
                   Execution Output
                 </span>
                 <pre className="text-[#34D399] whitespace-pre-wrap font-mono text-[11.5px]">
@@ -587,32 +587,32 @@ export default function TestResultsConsole({
         {/* TAB 4: TELEMETRY & STATIC ANALYSIS */}
         {activeTab === "ai" && (
           <div className="space-y-3 font-mono text-xs max-w-2xl">
-            <div className="rounded-[12px] border border-[#8B5CF6]/30 bg-[#18181F] p-3.5 text-[#FAFAFA]">
-              <div className="flex items-center gap-2 mb-1.5 text-[#A78BFA] font-semibold">
+            <div className="rounded-[12px] border border-[#FF6A3D]/30 bg-[#171714] p-3.5 text-[#F2EFE6]">
+              <div className="flex items-center gap-2 mb-1.5 text-[#FFB08E] font-semibold">
                 <BrainCircuit className="h-4 w-4" />
                 <span className="font-mono">Real-Time AST Telemetry</span>
               </div>
-              <p className="text-[#A1A1AA] text-[11.5px] leading-relaxed">
+              <p className="text-[#AAA69B] text-[11.5px] leading-relaxed">
                 Live sandbox confirmed constant delta time arithmetic with zero unbounded loops. Formal multi-parameter scoring and rubric verification will execute when you submit your solution.
               </p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
-                <span className="text-[#71717A] text-[10px] block">Time Complexity</span>
+              <div className="p-2.5 rounded-[10px] border border-[#30302B] bg-[#1C1C19]">
+                <span className="text-[#77756D] text-[10px] block">Time Complexity</span>
                 <span className="text-[#34D399] font-semibold">O(1) Constant</span>
               </div>
-              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
-                <span className="text-[#71717A] text-[10px] block">Space Complexity</span>
+              <div className="p-2.5 rounded-[10px] border border-[#30302B] bg-[#1C1C19]">
+                <span className="text-[#77756D] text-[10px] block">Space Complexity</span>
                 <span className="text-[#34D399] font-semibold">O(1) Auxiliary</span>
               </div>
-              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
-                <span className="text-[#71717A] text-[10px] block">Syntax Status</span>
+              <div className="p-2.5 rounded-[10px] border border-[#30302B] bg-[#1C1C19]">
+                <span className="text-[#77756D] text-[10px] block">Syntax Status</span>
                 <span className="text-[#60A5FA] font-semibold">{compileError ? "Issues Found" : "Valid AST"}</span>
               </div>
-              <div className="p-2.5 rounded-[10px] border border-[#27272A] bg-[#14141B]">
-                <span className="text-[#71717A] text-[10px] block">Audit Readiness</span>
-                <span className="text-[#C4B5FD] font-semibold">Ready (~90+)</span>
+              <div className="p-2.5 rounded-[10px] border border-[#30302B] bg-[#1C1C19]">
+                <span className="text-[#77756D] text-[10px] block">Audit Readiness</span>
+                <span className="text-[#FFD1BB] font-semibold">Ready (~90+)</span>
               </div>
             </div>
           </div>

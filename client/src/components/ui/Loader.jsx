@@ -9,7 +9,7 @@ const prefersReduced = () =>
  * NeoLeaf-style fluid preloader:
  *  - Pure solid black background (#000000)
  *  - Bold "verifai." text mask
- *  - Undulating sine-wave liquid in rich dark violet (#1E0538 -> #3B0764 -> #6D28D9 -> #8B5CF6)
+ *  - Undulating sine-wave liquid in warm orange and ember tones
  *  - Telemetry: "loading... [counter]%"
  *  - Seamless camera fly-through zoom & cross-fade reveal into the application
  */
@@ -117,7 +117,7 @@ export default function Loader({
 
       if (elapsed >= 1 && ready) {
         setProgress(100);
-        // Step 1: Flash to solid violet illumination
+        // Step 1: Flash to a warm orange illumination
         setPhase("flash");
 
         setTimeout(() => {
@@ -187,40 +187,40 @@ export default function Loader({
                     fontSize="175"
                     fontWeight="800"
                     letterSpacing="-0.04em"
-                    fontFamily="'Montserrat', 'Geist', 'Poppins', system-ui, -apple-system, sans-serif"
+                    fontFamily="'Manrope', system-ui, -apple-system, sans-serif"
                   >
                     verifai.
                   </text>
                 </g>
               </mask>
 
-              {/* Dark Violet Liquid Wave Gradient */}
+              {/* Warm orange liquid wave */}
               <linearGradient
-                id="darkVioletWater"
+                id="orangeLiquid"
                 x1="0"
                 y1="192"
                 x2="0"
                 y2="0"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop offset="0%" stopColor="#1e0538" />    {/* Deep inky dark violet base */}
-                <stop offset="50%" stopColor="#3b0764" />   {/* Deep dark purple */}
-                <stop offset="85%" stopColor="#581c87" />   {/* Rich violet */}
-                <stop offset="100%" stopColor="#7c3aed" />  {/* Violet wave crest */}
+                <stop offset="0%" stopColor="#35170F" />
+                <stop offset="50%" stopColor="#B94725" />
+                <stop offset="85%" stopColor="#E9562F" />
+                <stop offset="100%" stopColor="#FF9B66" />
               </linearGradient>
 
               {/* Illumination flash gradient */}
               <linearGradient
-                id="flashVioletGrad"
+                id="flashOrangeGrad"
                 x1="0"
                 y1="0"
                 x2="965"
                 y2="192"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop offset="0%" stopColor="#6d28d9" />
-                <stop offset="50%" stopColor="#8b5cf6" />
-                <stop offset="100%" stopColor="#6d28d9" />
+                <stop offset="0%" stopColor="#E9562F" />
+                <stop offset="50%" stopColor="#FF6A3D" />
+                <stop offset="100%" stopColor="#E9562F" />
               </linearGradient>
             </defs>
 
@@ -228,17 +228,17 @@ export default function Loader({
             <rect
               width="965"
               height="192"
-              fill={isFlashing ? "url(#flashVioletGrad)" : "#ffffff"}
+              fill={isFlashing ? "url(#flashOrangeGrad)" : "#ffffff"}
               fillOpacity={isFlashing ? 1 : 0.12}
               mask="url(#neoleafVerifaiMask)"
               className="transition-[fill-opacity] duration-200"
             />
 
-            {/* Rising Dark Violet Liquid Wave */}
+            {/* Rising orange liquid wave */}
             {!isFlashing && waveD && (
               <path
                 d={waveD}
-                fill="url(#darkVioletWater)"
+                fill="url(#orangeLiquid)"
                 mask="url(#neoleafVerifaiMask)"
               />
             )}

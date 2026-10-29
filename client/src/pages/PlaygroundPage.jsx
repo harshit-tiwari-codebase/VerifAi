@@ -6,49 +6,47 @@ import Button from "../components/ui/Button.jsx";
 
 export default function PlaygroundPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#09090B] text-[#FAFAFA] selection:bg-[#38245C] selection:text-[#FAFAFA] flex flex-col justify-between font-sans">
-      <div className="relative z-10">
-        <Navbar />
+    <div className="min-h-screen bg-[#0B0B0A] text-[#F2EFE6] selection:bg-[#422316] selection:text-[#F2EFE6] flex flex-col font-sans">
+      <Navbar />
 
-        <main className="container-xl py-8 sm:py-10 space-y-8">
-          {/* Header Banner */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#27272A] pb-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="rounded-full border border-[#8B5CF6]/30 bg-[#211635] px-2.5 py-0.5 font-mono text-[11px] text-[#C4B5FD]">
-                  Isolated V8 Engine
-                </span>
-                <span className="rounded-full border border-[#34D399]/30 bg-[#34D399]/10 px-2.5 py-0.5 font-mono text-[11px] text-[#34D399]">
-                  0ms Cold Start
-                </span>
+      <main className="flex-1">
+        {/* Page Header */}
+        <div className="border-b border-[#30302B] bg-[#0B0B0A]">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#77756D] mb-3">
+                  Interactive Sandbox
+                </p>
+                <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[#F2EFE6]">
+                  Code Playground
+                </h1>
+                <p className="mt-2 text-sm font-sans text-[#77756D] max-w-xl">
+                  Test real backend algorithms — rate limiters, distributed locks, auth flows — with live Judge0 execution and AI architectural scoring.
+                </p>
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[#FAFAFA]">
-                Interactive Code Sandbox
-              </h1>
-              <p className="mt-1 text-xs font-mono text-[#A1A1AA] max-w-2xl">
-                Test algorithms, concurrency primitives, and security patterns with live execution, AST checks, and AI architectural reviews.
-              </p>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <Button
-                as={Link}
-                to="/challenges"
-                variant="verify"
-                size="sm"
-                className="font-sans text-xs font-medium"
-              >
-                Browse All Challenges →
-              </Button>
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-[4px] border border-[#4FBF94]/25 bg-[#4FBF94]/8 text-[#4FBF94]">
+                  V8 Isolated
+                </span>
+                <Button
+                  as={Link}
+                  to="/challenges"
+                  variant="verify"
+                  size="sm"
+                >
+                  Browse All Challenges →
+                </Button>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Interactive Playground Section */}
-          <div className="rounded-[14px] border border-[#27272A] bg-[#14141B] p-2 sm:p-6 shadow-2xl">
-            <InteractivePlayground />
-          </div>
-        </main>
-      </div>
+        {/* Playground Component */}
+        <InteractivePlayground />
+      </main>
+
       <Footer />
     </div>
   );

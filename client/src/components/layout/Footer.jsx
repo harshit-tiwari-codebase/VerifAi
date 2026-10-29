@@ -51,12 +51,9 @@ function XIcon({ className = "w-4.5 h-4.5" }) {
 
 export default function Footer() {
   return (
-    <footer className="relative bg-[#09090B] text-[#FAFAFA] border-t border-[#27272A] overflow-hidden select-none">
-      {/* 1. TOP WORDMARK */}
+    <footer className="relative bg-[#0B0B0A] text-[#F2EFE6] border-t border-[#30302B] overflow-hidden select-none">
       <CinematicTypography />
-
-      {/* 2. BOTTOM CONTENT SECTION */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 pt-6 pb-12">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 pt-12 pb-12">
         <div className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-16">
           {/* Left Column: Brand Logo & Social Icons */}
           <div className="space-y-6 lg:w-[28%] shrink-0">
@@ -64,18 +61,18 @@ export default function Footer() {
               <VerifaiLogo size="lg" showWordmark={true} />
             </Link>
 
-            <p className="text-xs text-[#A1A1AA] font-sans leading-relaxed max-w-xs">
+            <p className="text-xs text-[#AAA69B] font-sans leading-relaxed max-w-xs">
               Cryptographically verified proof of engineering craftsmanship. Built for production rigor, audited by Staff AI.
             </p>
 
             {/* Social Icons Row */}
-            <div className="flex items-center gap-5 text-[#71717A] pt-2">
+            <div className="flex items-center gap-5 text-[#77756D] pt-2">
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="hover:text-[#A78BFA] transition-colors duration-150"
+                className="hover:text-[#FFB08E] transition-colors duration-150"
               >
                 <InstagramIcon className="w-5 h-5" />
               </a>
@@ -85,7 +82,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
-                className="hover:text-[#A78BFA] transition-colors duration-150"
+                className="hover:text-[#FFB08E] transition-colors duration-150"
               >
                 <LinkedinIcon className="w-5 h-5" />
               </a>
@@ -95,7 +92,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Discord"
-                className="hover:text-[#A78BFA] transition-colors duration-150"
+                className="hover:text-[#FFB08E] transition-colors duration-150"
               >
                 <DiscordIcon className="w-5 h-5" />
               </a>
@@ -105,7 +102,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube"
-                className="hover:text-[#A78BFA] transition-colors duration-150"
+                className="hover:text-[#FFB08E] transition-colors duration-150"
               >
                 <YoutubeIcon className="w-5 h-5" />
               </a>
@@ -115,7 +112,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="X (Twitter)"
-                className="hover:text-[#A78BFA] transition-colors duration-150"
+                className="hover:text-[#FFB08E] transition-colors duration-150"
               >
                 <XIcon className="w-4.5 h-4.5" />
               </a>
@@ -126,27 +123,27 @@ export default function Footer() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-12 lg:gap-16 flex-1 w-full">
             {/* Column 1: ABOUT */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FAFAFA] font-sans">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#F2EFE6] font-sans">
                 About
               </h3>
-              <ul className="space-y-2.5 text-xs text-[#A1A1AA] font-sans">
+              <ul className="space-y-2.5 text-xs text-[#AAA69B] font-sans">
                 <li>
-                  <Link to="/docs" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/docs" className="hover:text-[#F2EFE6] transition-colors block">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <a href="mailto:support@verifai.io" className="hover:text-[#FAFAFA] transition-colors block">
+                  <a href="mailto:support@verifai.io" className="hover:text-[#F2EFE6] transition-colors block">
                     Support
                   </a>
                 </li>
                 <li>
-                  <Link to="/docs" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/docs" className="hover:text-[#F2EFE6] transition-colors block">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link to="/docs" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/docs" className="hover:text-[#F2EFE6] transition-colors block">
                     Terms & Conditions
                   </Link>
                 </li>
@@ -155,27 +152,27 @@ export default function Footer() {
 
             {/* Column 2: COMPANY */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FAFAFA] font-sans">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#F2EFE6] font-sans">
                 Platform
               </h3>
-              <ul className="space-y-2.5 text-xs text-[#A1A1AA] font-sans">
+              <ul className="space-y-2.5 text-xs text-[#AAA69B] font-sans">
                 <li>
-                  <Link to="/challenges" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/challenges" className="hover:text-[#F2EFE6] transition-colors block">
                     Challenge Arena
                   </Link>
                 </li>
                 <li>
-                  <Link to="/playground" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/playground" className="hover:text-[#F2EFE6] transition-colors block">
                     V8 Sandbox
                   </Link>
                 </li>
                 <li>
-                  <Link to="/leaderboard" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/leaderboard" className="hover:text-[#F2EFE6] transition-colors block">
                     Leaderboard
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard" className="hover:text-[#FAFAFA] transition-colors block">
+                  <Link to="/dashboard" className="hover:text-[#F2EFE6] transition-colors block">
                     Developer Dashboard
                   </Link>
                 </li>
@@ -184,21 +181,21 @@ export default function Footer() {
 
             {/* Column 3: CONTACT */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#FAFAFA] font-sans">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#F2EFE6] font-sans">
                 Contact
               </h3>
-              <div className="space-y-2.5 text-xs text-[#A1A1AA] font-sans leading-relaxed">
+              <div className="space-y-2.5 text-xs text-[#AAA69B] font-sans leading-relaxed">
                 <div>
-                  <span className="text-[#FAFAFA] font-medium">Support: </span>
-                  <a href="mailto:hello@verifai.io" className="text-[#A78BFA] hover:underline">
+                  <span className="text-[#F2EFE6] font-medium">Support: </span>
+                  <a href="mailto:hello@verifai.io" className="text-[#FFB08E] hover:underline">
                     hello@verifai.io
                   </a>
                 </div>
                 <div>
-                  <span className="text-[#FAFAFA] font-medium">Engineering Hub: </span>
-                  <span className="text-[#A1A1AA]">IPS Academy, Indore (MP)</span>
+                  <span className="text-[#F2EFE6] font-medium">Engineering Hub: </span>
+                  <span className="text-[#AAA69B]">IPS Academy, Indore (MP)</span>
                 </div>
-                <div className="pt-1 text-[#71717A]">
+                <div className="pt-1 text-[#77756D]">
                   Autonomous V8 sandbox evaluation & cryptographic proof-of-work.
                 </div>
               </div>
@@ -207,9 +204,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Hairline & Legal Bar */}
-        <div className="border-t border-[#27272A] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#71717A] font-sans">
+        <div className="border-t border-[#30302B] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#77756D] font-sans">
           <p>© {new Date().getFullYear()} VerifAI Inc. All rights reserved.</p>
-          <p className="text-[#52525B]">Production-grade developer verification tooling.</p>
+          <p className="text-[#66645D]">Production-grade developer verification tooling.</p>
         </div>
       </div>
     </footer>

@@ -88,14 +88,14 @@ export default function VerifyEmailPage() {
         <div
           className={`
             relative overflow-hidden rounded-2xl border
-            bg-[#18181F] p-6
+            bg-[#171714] p-6
             shadow-xl
             ${
               isSuccess
                 ? "border-[#34D399]/30"
                 : isError
                   ? "border-[#F87171]/30"
-                  : "border-[#27272A]"
+                  : "border-[#30302B]"
             }
           `}
         >
@@ -110,7 +110,7 @@ export default function VerifyEmailPage() {
                     ? "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]"
                     : isError
                       ? "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]"
-                      : "border-[#8B5CF6]/30 bg-[#211635] text-[#A78BFA]"
+                      : "border-[#FF6A3D]/30 bg-[#261912] text-[#FFB08E]"
                 }
               `}
             >
@@ -139,7 +139,7 @@ export default function VerifyEmailPage() {
                       ? "border-[#34D399]/30 bg-[#34D399]/10 text-[#34D399]"
                       : isError
                         ? "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]"
-                        : "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]"
+                        : "border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB]"
                   }
                 `}
               >
@@ -153,14 +153,14 @@ export default function VerifyEmailPage() {
           </div>
 
           {/* Message */}
-          <p className="mt-5 text-sm leading-6 text-[#A1A1AA]">
+          <p className="mt-5 text-sm leading-6 text-[#AAA69B]">
             {message}
           </p>
 
           {/* Success confirmation */}
           {isSuccess && (
-            <div className="mt-4 rounded-[10px] border border-[#8B5CF6]/20 bg-[#211635] px-4 py-3">
-              <p className="font-mono text-[11px] text-[#C4B5FD]">
+            <div className="mt-4 rounded-[10px] border border-[#FF6A3D]/20 bg-[#261912] px-4 py-3">
+              <p className="font-mono text-[11px] text-[#FFD1BB]">
                 Your profile is ready for verified engineering challenges.
               </p>
             </div>

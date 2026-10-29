@@ -132,7 +132,7 @@ export default function PublicProfileShowcase() {
                     onClick={() => setSelectedBadge(b)}
                     className={`w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between ${
                       isSelected
-                        ? "border-violet-500 bg-violet-950/30 text-mist-100 shadow-[0_0_15px_rgba(147,51,234,0.15)]"
+                        ? "border-violet-500 bg-violet-950/30 text-mist-100 shadow-sm"
                         : "border-ink-600 bg-ink-900/40 text-mist-400 hover:border-ink-500 hover:text-mist-200"
                     }`}
                   >

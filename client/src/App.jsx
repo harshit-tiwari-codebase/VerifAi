@@ -7,14 +7,12 @@ export default function App() {
 
   return (
     <>
-      {/* Set once={false} to preview on each reload; set once={true} for once-per-session */}
       <Loader
         once={false}
         minDuration={2600}
         onStartReveal={() => setPageRevealed(true)}
       />
 
-      {/* Smooth cinematic page reveal: gently unblurs, scales up, and fades into view */}
       <div
         className={`min-h-screen transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
           pageRevealed

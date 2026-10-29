@@ -1,13 +1,13 @@
 const TONES = {
   // Brand
   verify:
-    "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]",
+    "border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB]",
   violet:
-    "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]",
+    "border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB]",
   signal:
-    "border-[#A78BFA]/30 bg-[#211635] text-[#A78BFA]",
+    "border-[#FFB08E]/30 bg-[#261912] text-[#FFB08E]",
   premium:
-    "border-[#A78BFA]/30 bg-[#211635] text-[#A78BFA]",
+    "border-[#FFB08E]/30 bg-[#261912] text-[#FFB08E]",
 
   // Semantic Status
   accepted:
@@ -29,7 +29,7 @@ const TONES = {
   info:
     "border-[#60A5FA]/30 bg-[#60A5FA]/10 text-[#60A5FA]",
   pending:
-    "border-[#27272A] bg-[#14141B] text-[#A1A1AA]",
+    "border-[#30302B] bg-[#1C1C19] text-[#AAA69B]",
 
   // Difficulty Levels
   easy:
@@ -41,7 +41,7 @@ const TONES = {
 
   // Neutral
   neutral:
-    "border-[#27272A] bg-[#14141B] text-[#A1A1AA]",
+    "border-[#30302B] bg-[#1C1C19] text-[#AAA69B]",
 };
 
 export default function Badge({

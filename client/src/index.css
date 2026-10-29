@@ -4,32 +4,32 @@
 
 :root {
   /* Background Colors */
-  --background: #09090B;
-  --background-secondary: #0D0D12;
-  --surface: #14141B;
-  --surface-card: #18181F;
-  --surface-elevated: #20202A;
-  --surface-hover: #27272A;
+  --background: #0B0B0A;
+  --background-secondary: #141412;
+  --surface: #1C1C19;
+  --surface-card: #171714;
+  --surface-elevated: #22221E;
+  --surface-hover: #30302B;
 
   /* Brand Colors */
-  --primary: #8B5CF6;
-  --primary-hover: #7C3AED;
-  --accent: #A78BFA;
-  --accent-light: #C4B5FD;
-  --accent-subtle: #211635;
-  --accent-selection: #38245C;
+  --primary: #FF6A3D;
+  --primary-hover: #E9562F;
+  --accent: #FFB08E;
+  --accent-light: #FFD1BB;
+  --accent-subtle: #261912;
+  --accent-selection: #422316;
 
   /* Typography Colors */
-  --text-primary: #FAFAFA;
-  --text-secondary: #A1A1AA;
-  --text-muted: #71717A;
-  --text-disabled: #52525B;
+  --text-primary: #F2EFE6;
+  --text-secondary: #AAA69B;
+  --text-muted: #77756D;
+  --text-disabled: #66645D;
 
   /* Borders */
-  --border: #27272A;
-  --border-hover: #3F3F4A;
-  --border-focus: #8B5CF6;
-  --border-selected: #A78BFA;
+  --border: #30302B;
+  --border-hover: #414139;
+  --border-focus: #FF6A3D;
+  --border-selected: #FFB08E;
 
   /* Semantic Colors */
   --success: #34D399;
@@ -46,46 +46,43 @@
   --radius-card: 14px;
   --radius-button: 10px;
 
-  /* Visual effects */
-  --violet-glow: 0 0 24px rgba(139, 92, 246, 0.16);
-  --brand-gradient: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #A78BFA 100%);
 }
 
 @layer base {
   * {
-    border-color: #27272A;
+    border-color: #30302B;
   }
 
   html {
-    background-color: #09090B;
+    background-color: #0B0B0A;
     color-scheme: dark;
-    scrollbar-color: #27272A #09090B;
+    scrollbar-color: #30302B #0B0B0A;
     scrollbar-width: thin;
   }
 
   body {
-    background-color: #09090B;
-    color: #FAFAFA;
+    background-color: #0B0B0A;
+    color: #F2EFE6;
     min-height: 100vh;
-    font-family: "Geist", "Poppins", system-ui, -apple-system, sans-serif;
+    font-family: "Manrope", system-ui, -apple-system, sans-serif;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    font-family: "Montserrat", "Geist", system-ui, sans-serif;
-    letter-spacing: -0.02em;
-    color: #FAFAFA;
+    font-family: "Manrope", system-ui, sans-serif;
+    letter-spacing: -0.035em;
+    color: #F2EFE6;
   }
 
   ::selection {
-    background-color: #38245C;
-    color: #FAFAFA;
+    background-color: #422316;
+    color: #F2EFE6;
   }
 
   :focus-visible {
-    outline: 2px solid #8B5CF6;
+    outline: 2px solid #FF6A3D;
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -97,16 +94,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #09090B;
+    background: #0B0B0A;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #27272A;
+    background: #30302B;
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #3F3F4A;
+    background: #414139;
   }
 
   /* Remove scrollbars from compact code views and horizontal scrollers */
@@ -132,7 +129,7 @@
   /* Clean custom scrollbar for IDE panes and problem spec */
   .custom-scrollbar {
     scrollbar-width: thin !important;
-    scrollbar-color: #27272A transparent !important;
+    scrollbar-color: #30302B transparent !important;
     -ms-overflow-style: auto !important;
   }
 
@@ -147,12 +144,12 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #27272A !important;
+    background: #30302B !important;
     border-radius: 9999px !important;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #3F3F4A !important;
+    background: #414139 !important;
   }
 }
 
@@ -162,40 +159,39 @@
   }
 
   .eyebrow {
-    font-family: "Geist Mono", "JetBrains Mono", monospace;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #A78BFA;
+    color: #FFB08E;
   }
 
   .card {
-    background-color: #18181F;
-    border: 1px solid #27272A;
+    background-color: #171714;
+    border: 1px solid #30302B;
     border-radius: 14px;
     transition: background-color 150ms ease, border-color 150ms ease;
   }
 
   .card:hover {
-    background-color: #20202A;
-    border-color: #3F3F4A;
+    background-color: #22221E;
+    border-color: #414139;
   }
 
-  /* Clean Black + Violet button system */
+  /* Quiet, high-contrast button system */
   .btn-specular-primary {
-    background-color: #8B5CF6;
+    background-color: #FF6A3D;
     color: #FFFFFF;
     border-radius: 10px;
     font-weight: 500;
-    box-shadow: 0 0 24px rgba(139, 92, 246, 0.16);
     transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-specular-primary:hover {
-    background-color: #7C3AED;
+    background-color: #E9562F;
     transform: translateY(-1px);
-    box-shadow: 0 0 28px rgba(139, 92, 246, 0.28);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   }
 
   .btn-specular-primary:active {
@@ -203,33 +199,33 @@
   }
 
   .btn-secondary {
-    background-color: #20202A;
-    color: #E4E4E7;
-    border: 1px solid #30303A;
+    background-color: #22221E;
+    color: #E4E0D5;
+    border: 1px solid #37372F;
     border-radius: 10px;
     font-weight: 500;
     transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-secondary:hover {
-    background-color: #27272A;
-    border-color: #3F3F4A;
-    color: #FAFAFA;
+    background-color: #30302B;
+    border-color: #414139;
+    color: #F2EFE6;
   }
 
   .btn-frosted-glass {
-    background-color: #20202A;
-    border: 1px solid #27272A;
-    color: #A1A1AA;
+    background-color: #22221E;
+    border: 1px solid #30302B;
+    color: #AAA69B;
     border-radius: 10px;
     font-weight: 500;
     transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-frosted-glass:hover {
-    background-color: #27272A;
-    border-color: #3F3F4A;
-    color: #FAFAFA;
+    background-color: #30302B;
+    border-color: #414139;
+    color: #F2EFE6;
   }
 
   .btn-frosted-glass:active {
@@ -265,100 +261,20 @@
     left: 180%;
   }
 
-  /* Subtle violet hero background radial */
-  .circular-glow-purple {
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, rgba(124, 58, 237, 0.05) 45%, transparent 70%);
-    filter: blur(80px);
+  .companion-float {
+    position: fixed;
+    z-index: 60;
+    cursor: grab;
+    user-select: none;
+    transform: perspective(800px) rotateY(-7deg) rotateX(3deg);
+    filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.32));
+    transition: filter 160ms ease;
   }
-}
 
-/* Cinematic text animation with violet tones */
-@keyframes cinematicSweepText {
-  0% {
-    background-position: -40% 50%;
-    opacity: 0.88;
+  .companion-float:active {
+    cursor: grabbing;
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.38));
   }
-  58.6% {
-    background-position: 90% 50%;
-    opacity: 0.98;
-  }
-  69.0% {
-    background-position: 110% 50%;
-    opacity: 1;
-  }
-  82.0% {
-    background-position: 50% 50%;
-    opacity: 0.28;
-  }
-  92.0% {
-    background-position: 15% 50%;
-    opacity: 0.18;
-  }
-  100% {
-    background-position: -40% 50%;
-    opacity: 0.88;
-  }
-}
-
-.cinematic-text-base {
-  color: #09090B;
-  -webkit-text-fill-color: #09090B;
-  -webkit-text-stroke: 1.2px #27272A;
-  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-
-.cinematic-text-sweep {
-  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(124, 58, 237, 0.25) 15%,
-    #7C3AED 28%,
-    #8B5CF6 38%,
-    #A78BFA 46%,
-    #C4B5FD 50%,
-    #A78BFA 54%,
-    #8B5CF6 62%,
-    #7C3AED 72%,
-    rgba(124, 58, 237, 0.25) 85%,
-    transparent 100%
-  );
-  background-size: 260% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 1px rgba(167, 139, 250, 0.4);
-  animation: cinematicSweepText 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
-}
-
-.cinematic-text-glow {
-  font-family: 'Archivo Black', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(124, 58, 237, 0.25) 15%,
-    #7C3AED 28%,
-    #8B5CF6 38%,
-    #A78BFA 46%,
-    #C4B5FD 50%,
-    #A78BFA 54%,
-    #8B5CF6 62%,
-    #7C3AED 72%,
-    rgba(124, 58, 237, 0.25) 85%,
-    transparent 100%
-  );
-  background-size: 260% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: blur(22px);
-  animation: cinematicSweepText 5.8s cubic-bezier(0.42, 0.0, 0.28, 1.0) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

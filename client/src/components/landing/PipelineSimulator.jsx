@@ -64,7 +64,7 @@ function mulberry32(seed) {
 
 /* Organic vertical S-curve path */
 function buildPath(w, h) {
-  const mobile = w < 768;
+  const mobile = w < 1024;
   const step  = mobile ? 340 : 480;
   const count = Math.max(4, Math.round(h / step));
   const cx    = mobile ? 40 : w / 2;
@@ -246,7 +246,7 @@ export function ScrollPathAnimation({
     const msEls   = [];
     if (msGroup) {
       msGroup.replaceChildren();
-      const small = size.w < 768;
+      const small = size.w < 1024;
       JSON.parse(msKey).forEach(({ label, at }) => {
         const L     = lengthAtY(at * H);
         const p     = base.getPointAtLength(L);
@@ -680,34 +680,6 @@ export default function PipelineSimulator() {
                     {item.description}
                   </p>
 
-                  {/* Verified credential block */}
-                  {item.verified && isComplete && (
-                    <motion.div
-                      initial={shouldReduce ? {} : { opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, ease: "easeOut", delay: 0.05 }}
-                      className="mt-3 flex items-start gap-2 rounded-[4px] p-2.5"
-                      style={{
-                        border:          "1px solid rgba(255,106,61,0.3)",
-                        backgroundColor: "rgba(255,106,61,0.06)",
-                      }}
-                    >
-                      <CheckCircle2
-                        className="mt-0.5 h-3.5 w-3.5 shrink-0"
-                        style={{ color: "#FF6A3D" }}
-                        strokeWidth={1.5}
-                      />
-                      <div>
-                        <p className="text-[11px] font-medium" style={{ color: "#F2EFE6" }}>
-                          Verified credential issued
-                        </p>
-                        <p className="mt-0.5 font-mono text-[9px]" style={{ color: "#77756D" }}>
-                          VFY-2026-0418 · SHA-256 integrity verified
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-
                   {/* Telemetry rows */}
                   <dl
                     className="mt-3 grid grid-cols-1 gap-1.5 pt-2.5 min-[480px]:grid-cols-3 min-[480px]:gap-3"
@@ -738,6 +710,33 @@ export default function PipelineSimulator() {
                   </dl>
                 </motion.div>
               </AnimatePresence>
+
+              {item.verified && progress >= STAGE_PROGRESS[index] && (
+                <motion.div
+                  initial={shouldReduce ? {} : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="mt-3 flex items-start gap-2 rounded-[4px] p-2.5"
+                  style={{
+                    border: "1px solid rgba(255,106,61,0.3)",
+                    backgroundColor: "rgba(255,106,61,0.06)",
+                  }}
+                >
+                  <CheckCircle2
+                    className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                    style={{ color: "#FF6A3D" }}
+                    strokeWidth={1.5}
+                  />
+                  <div>
+                    <p className="text-[11px] font-medium" style={{ color: "#F2EFE6" }}>
+                      Verified credential issued
+                    </p>
+                    <p className="mt-0.5 font-mono text-[9px]" style={{ color: "#77756D" }}>
+                      VFY-2026-0418 · SHA-256 integrity verified
+                    </p>
+                  </div>
+                </motion.div>
+              )}
             </motion.article>
           );
         })}

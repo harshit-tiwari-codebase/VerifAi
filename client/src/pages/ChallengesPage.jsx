@@ -13,16 +13,25 @@ import ChallengeEditorModal from "../features/challenges/components/ChallengeEdi
 import DeleteChallengeModal from "../features/challenges/components/DeleteChallengeModal.jsx";
 
 const CATEGORIES = [
-  { id: "all", label: "All Categories" },
+  { id: "all", label: "All" },
   { id: "dsa", label: "DSA" },
-  { id: "bug-fix", label: "Bug Fix" },
-  { id: "api-design", label: "API Design" },
-  { id: "schema-modeling", label: "Schema Modeling" },
-  { id: "system-design", label: "System Design" },
+  { id: "bug-fix", label: "Bug fix" },
+  { id: "api-design", label: "API design" },
+  { id: "schema-modeling", label: "Schema modeling" },
+  { id: "system-design", label: "System design" },
   { id: "debugging", label: "Debugging" },
 ];
 
+const DIFFICULTIES = [
+  { id: "all", label: "Any difficulty" },
+  { id: "easy", label: "Easy" },
+  { id: "medium", label: "Medium" },
+  { id: "hard", label: "Hard" },
+];
+
 const DEBOUNCE_MS = 400;
+const PAGE_SIZE = 12;
+const EMPTY_PAGINATION = { total: 0, page: 1, limit: PAGE_SIZE, totalPages: 1 };
 
 export default function ChallengesPage() {
   const user = useSelector(selectUser);
@@ -35,13 +44,12 @@ export default function ChallengesPage() {
   const urlDifficulty = searchParams.get("difficulty") || "all";
   const urlPage = Number(searchParams.get("page")) || 1;
 
-  // Local search input
   const [searchInput, setSearchInput] = useState(urlSearch);
-
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 12, totalPages: 1 });
+  const [pagination, setPagination] = useState(EMPTY_PAGINATION);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Modals
   const [detailId, setDetailId] = useState(null);
@@ -53,35 +61,39 @@ export default function ChallengesPage() {
 
   const updateParams = useCallback(
     (updates) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        for (const [key, value] of Object.entries(updates)) {
-          if (!value || value === "all" || value === "1" || value === 1) {
-            next.delete(key);
-          } else {
-            next.set(key, String(value));
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          for (const [key, value] of Object.entries(updates)) {
+            if (!value || value === "all" || value === "1" || value === 1) {
+              next.delete(key);
+            } else {
+              next.set(key, String(value));
+            }
           }
-        }
-        return next;
-      }, { replace: true });
+          return next;
+        },
+        { replace: true }
+      );
     },
     [setSearchParams]
   );
 
+  // Debounce typing -> URL
   useEffect(() => {
     const timer = setTimeout(() => {
       const trimmed = searchInput.trim();
-      if (trimmed !== urlSearch) {
-        updateParams({ search: trimmed, page: 1 });
-      }
+      if (trimmed !== urlSearch) updateParams({ search: trimmed, page: 1 });
     }, DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, urlSearch, updateParams]);
 
+  // URL -> input (back/forward, reset) without clobbering what's being typed
   useEffect(() => {
-    setSearchInput(urlSearch);
+    setSearchInput((prev) => (prev.trim() === urlSearch ? prev : urlSearch));
   }, [urlSearch]);
 
+  // Single fetch path. `refreshKey` is how modals trigger a refetch.
   useEffect(() => {
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
@@ -90,7 +102,7 @@ export default function ChallengesPage() {
     setLoading(true);
     setError("");
 
-    const params = { page: urlPage, limit: 12 };
+    const params = { page: urlPage, limit: PAGE_SIZE };
     if (urlSearch) params.search = urlSearch;
     if (urlCategory !== "all") params.category = urlCategory;
     if (urlDifficulty !== "all") params.difficulty = urlDifficulty;
@@ -99,31 +111,24 @@ export default function ChallengesPage() {
       .then((data) => {
         if (controller.signal.aborted) return;
         setChallenges(data.challenges || []);
-        setPagination(data.pagination || { total: 0, page: 1, limit: 12, totalPages: 1 });
+        setPagination(data.pagination || EMPTY_PAGINATION);
       })
       .catch((err) => {
         if (controller.signal.aborted) return;
-        setError(err?.response?.data?.message || "Failed to load engineering challenges.");
+        setError(err?.response?.data?.message || "Couldn't load challenges.");
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
 
     return () => controller.abort();
-  }, [urlPage, urlCategory, urlDifficulty, urlSearch]);
+  }, [urlPage, urlCategory, urlDifficulty, urlSearch, refreshKey]);
+
+  const refetch = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const trimmed = searchInput.trim();
-    updateParams({ search: trimmed, page: 1 });
-  };
-
-  const handleCategoryChange = (value) => {
-    updateParams({ category: value, page: 1 });
-  };
-
-  const handleDifficultyChange = (value) => {
-    updateParams({ difficulty: value, page: 1 });
+    updateParams({ search: searchInput.trim(), page: 1 });
   };
 
   const handlePageChange = (newPage) => {
@@ -138,56 +143,26 @@ export default function ChallengesPage() {
 
   const hasActiveFilters = urlSearch || urlCategory !== "all" || urlDifficulty !== "all";
 
-  const refetch = () => {
-    if (abortRef.current) abortRef.current.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    setLoading(true);
-    setError("");
-
-    const params = { page: urlPage, limit: 12 };
-    if (urlSearch) params.search = urlSearch;
-    if (urlCategory !== "all") params.category = urlCategory;
-    if (urlDifficulty !== "all") params.difficulty = urlDifficulty;
-
-    getChallenges(params, { signal: controller.signal })
-      .then((data) => {
-        if (controller.signal.aborted) return;
-        setChallenges(data.challenges || []);
-        setPagination(data.pagination || { total: 0, page: 1, limit: 12, totalPages: 1 });
-      })
-      .catch((err) => {
-        if (controller.signal.aborted) return;
-        setError(err?.response?.data?.message || "Failed to load engineering challenges.");
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-  };
-
   return (
-    <div className="min-h-screen bg-[#09090B] text-[#FAFAFA] flex flex-col justify-between selection:bg-[#38245C]">
+    <div className="min-h-screen bg-[#0B0B0A] text-[#F2EFE6] flex flex-col justify-between selection:bg-[#422316]">
       <div>
         <Navbar />
 
-        <main className="container-xl py-8 sm:py-10 space-y-8">
-          {/* Header Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#27272A] pb-6">
-            <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <Link
-                  to="/dashboard"
-                  className="inline-flex items-center gap-1 font-mono text-xs text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors"
-                >
-                  ← Dashboard
-                </Link>
-              </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[#FAFAFA]">
-                Engineering Challenges
+        <main className="container-xl py-10 sm:py-14">
+          {/* Header */}
+          <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-xl">
+              <Link
+                to="/dashboard"
+                className="text-xs text-[#8F8B80] transition-colors hover:text-[#F2EFE6] focus-visible:text-[#F2EFE6] focus-visible:outline-none"
+              >
+                ← Dashboard
+              </Link>
+              <h1 className="mt-4 font-display text-3xl sm:text-4xl font-semibold tracking-tight">
+                Challenges
               </h1>
-              <p className="mt-1 text-xs font-mono text-[#A1A1AA]">
-                Real-world concurrency, rate limits, schema migrations, and system design audited by AI.
+              <p className="mt-2 text-sm leading-relaxed text-[#8F8B80]">
+                Concurrency, rate limits, migrations and system design. Every solution is reviewed by AI.
               </p>
             </div>
 
@@ -199,110 +174,137 @@ export default function ChallengesPage() {
                   setChallengeToEdit(null);
                   setIsEditorOpen(true);
                 }}
-                className="self-start sm:self-auto font-sans text-xs font-medium"
+                className="self-start sm:self-auto text-xs font-medium"
               >
-                Author Challenge
+                New challenge
               </Button>
             )}
-          </div>
+          </header>
 
-          {/* Filter Toolbar */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-[14px] border border-[#27272A] bg-[#14141B] p-2.5">
-            <form onSubmit={handleSearchSubmit} className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717A] stroke-[1.75]" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search challenges by title, keyword, or concept..."
-                className="w-full rounded-[10px] border border-[#27272A] bg-[#111116] pl-9 pr-8 py-2 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:outline-none transition-colors"
-                aria-label="Search challenges"
-              />
-              {searchInput && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchInput("");
-                    updateParams({ search: "", page: 1 });
-                  }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#FAFAFA] transition-colors"
-                  aria-label="Clear search"
-                >
-                  <XIcon className="h-3 w-3 stroke-[2]" />
-                </button>
-              )}
-            </form>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <select
-                value={urlCategory}
-                onChange={(e) => handleCategoryChange(e.target.value)}
-                className="rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:outline-none transition-colors cursor-pointer"
-                aria-label="Filter by category"
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
+          {/* Filters */}
+          <div className="mt-10 space-y-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <form onSubmit={handleSearchSubmit} className="relative flex-1">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5F5D56] stroke-[1.5]"
+                />
+                <input
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Search challenges"
+                  aria-label="Search challenges"
+                  className="w-full border-0 border-b border-[#262621] bg-transparent py-2.5 pl-7 pr-8 text-sm text-[#F2EFE6] placeholder:text-[#5F5D56] transition-colors focus:border-[#FF6A3D] focus:outline-none focus:ring-0"
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchInput("");
+                      updateParams({ search: "", page: 1 });
+                    }}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 p-1 text-[#5F5D56] transition-colors hover:text-[#F2EFE6] focus-visible:text-[#F2EFE6] focus-visible:outline-none"
+                    aria-label="Clear search"
+                  >
+                    <XIcon className="h-3.5 w-3.5 stroke-[1.75]" />
+                  </button>
+                )}
+              </form>
 
               <select
                 value={urlDifficulty}
-                onChange={(e) => handleDifficultyChange(e.target.value)}
-                className="rounded-[10px] border border-[#27272A] bg-[#111116] px-3 py-2 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:outline-none capitalize transition-colors cursor-pointer"
+                onChange={(e) => updateParams({ difficulty: e.target.value, page: 1 })}
                 aria-label="Filter by difficulty"
+                className="cursor-pointer border-0 border-b border-[#262621] bg-transparent py-2.5 pr-6 text-sm text-[#AAA69B] transition-colors hover:text-[#F2EFE6] focus:border-[#FF6A3D] focus:outline-none focus:ring-0 sm:w-40"
               >
-                <option value="all">All Difficulties</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
+                {DIFFICULTIES.map((d) => (
+                  <option key={d.id} value={d.id} className="bg-[#141412]">
+                    {d.label}
+                  </option>
+                ))}
               </select>
+            </div>
 
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  onClick={handleClearFilters}
-                  className="rounded-[10px] px-2.5 py-1.5 text-xs font-mono text-[#A1A1AA] hover:text-[#F87171] hover:bg-[#20202A] transition-colors"
-                >
-                  Reset
-                </button>
-              )}
+            {/* Category tabs */}
+            <div className="flex items-center justify-between gap-4">
+              <nav
+                aria-label="Category"
+                className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {CATEGORIES.map((c) => {
+                  const active = urlCategory === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => updateParams({ category: c.id, page: 1 })}
+                      aria-pressed={active}
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#FF6A3D] ${
+                        active
+                          ? "bg-[#F2EFE6] font-medium text-[#0B0B0A]"
+                          : "text-[#8F8B80] hover:text-[#F2EFE6]"
+                      }`}
+                    >
+                      {c.label}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="hidden shrink-0 items-center gap-3 text-xs text-[#5F5D56] sm:flex">
+                {!loading && !error && (
+                  <span className="tabular-nums">
+                    {pagination.total} {pagination.total === 1 ? "challenge" : "challenges"}
+                  </span>
+                )}
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={handleClearFilters}
+                    className="text-[#8F8B80] transition-colors hover:text-[#F2EFE6] focus-visible:outline-none focus-visible:text-[#F2EFE6]"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Grid */}
-          <div aria-live="polite" aria-atomic="true">
+          <div className="mt-8" aria-live="polite" aria-atomic="true">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-56 animate-pulse rounded-[14px] border border-[#27272A] bg-[#18181F] p-5 space-y-4"
+                    className="h-56 animate-pulse rounded-2xl border border-[#1F1F1B] bg-[#121210]"
                   />
                 ))}
               </div>
             ) : error ? (
-              <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-8 text-center">
-                <p className="text-xs font-mono text-[#F87171]">{error}</p>
+              <div className="py-20 text-center">
+                <p className="text-sm text-[#F87171]">{error}</p>
                 <Button variant="ghost" size="sm" onClick={refetch} className="mt-4">
-                  Retry
+                  Try again
                 </Button>
               </div>
             ) : challenges.length === 0 ? (
-              <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-12 text-center space-y-2">
-                <h3 className="font-display text-sm font-semibold text-[#FAFAFA]">
-                  No matching challenges found
+              <div className="py-20 text-center">
+                <h3 className="font-display text-base font-medium text-[#F2EFE6]">
+                  No challenges match
                 </h3>
-                <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto">
-                  Try loosening your filters or clearing search terms.
+                <p className="mx-auto mt-1.5 max-w-xs text-sm text-[#8F8B80]">
+                  Try a different keyword or remove a filter.
                 </p>
-                <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                  Clear Filters
-                </Button>
+                {hasActiveFilters && (
+                  <Button variant="ghost" size="sm" onClick={handleClearFilters} className="mt-4">
+                    Clear filters
+                  </Button>
+                )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {challenges.map((challenge) => (
                   <ChallengeCard
                     key={challenge._id}
@@ -321,13 +323,15 @@ export default function ChallengesPage() {
           </div>
 
           {/* Pagination */}
-          {!loading && !error && (
-            <Pagination
-              page={urlPage}
-              totalPages={pagination.totalPages}
-              total={pagination.total}
-              onPageChange={handlePageChange}
-            />
+          {!loading && !error && challenges.length > 0 && (
+            <div className="mt-10">
+              <Pagination
+                page={urlPage}
+                totalPages={pagination.totalPages}
+                total={pagination.total}
+                onPageChange={handlePageChange}
+              />
+            </div>
           )}
         </main>
       </div>

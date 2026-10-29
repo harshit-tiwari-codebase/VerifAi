@@ -6,41 +6,67 @@ export default {
     extend: {
       colors: {
         // --- 1. Backgrounds ---
-        app: "#09090B",
-        "bg-secondary": "#0D0D12",
+        app: "#0B0B0A",
+        "bg-secondary": "#141412",
 
         // --- 2. Surfaces ---
         surface: {
-          DEFAULT: "#14141B",
-          app: "#09090B",
-          secondary: "#0D0D12",
-          card: "#18181F",
-          elevated: "#20202A",
-          hover: "#27272A",
+          DEFAULT: "#1C1C19",
+          app: "#0B0B0A",
+          secondary: "#141412",
+          card: "#171714",
+          elevated: "#22221E",
+          hover: "#30302B",
         },
 
-        // --- 3. Brand Colors (Black + Electric Violet) ---
+        // --- 3. Brand Colors (Charcoal + Terracotta) ---
         brand: {
-          DEFAULT: "#8B5CF6", // primary violet
-          hover: "#7C3AED",   // primary violet hover
-          lavender: "#A78BFA",// secondary lavender
-          light: "#C4B5FD",   // light lavender
-          subtle: "#211635",  // subtle violet background
-          selection: "#38245C",// violet selection background
+          DEFAULT: "#FF6A3D",
+          hover: "#E9562F",
+          lavender: "#FFB08E",
+          light: "#FFD1BB",
+          subtle: "#261912",
+          selection: "#422316",
+        },
+        violet: {
+          50: "#FFF4EF",
+          100: "#FFE5D9",
+          200: "#FFD1BB",
+          300: "#FFB08E",
+          400: "#FF946B",
+          500: "#FF6A3D",
+          600: "#E9562F",
+          700: "#C94827",
+          800: "#9E3A23",
+          900: "#6F2C1D",
+          950: "#422316",
+        },
+        purple: {
+          50: "#FFF4EF",
+          100: "#FFE5D9",
+          200: "#FFD1BB",
+          300: "#FFB08E",
+          400: "#FF946B",
+          500: "#FF6A3D",
+          600: "#E9562F",
+          700: "#C94827",
+          800: "#9E3A23",
+          900: "#6F2C1D",
+          950: "#422316",
         },
 
         // --- 4. Typography Scale ---
-        primary: "#FAFAFA",
-        secondary: "#A1A1AA",
-        muted: "#71717A",
-        disabled: "#52525B",
+        primary: "#F2EFE6",
+        secondary: "#AAA69B",
+        muted: "#77756D",
+        disabled: "#66645D",
 
         // --- 5. Borders ---
         border: {
-          DEFAULT: "#27272A",
-          hover: "#3F3F4A",
-          focus: "#8B5CF6",
-          selected: "#A78BFA",
+          DEFAULT: "#30302B",
+          hover: "#414139",
+          focus: "#FF6A3D",
+          selected: "#FFB08E",
         },
 
         // --- 6. Semantic Status Colors ---
@@ -54,7 +80,7 @@ export default {
           tle: "#FBBF24",
           info: "#60A5FA",
           running: "#60A5FA",
-          pending: "#A1A1AA",
+          pending: "#AAA69B",
           easy: "#4ADE80",
           medium: "#FBBF24",
           hard: "#F87171",
@@ -62,41 +88,41 @@ export default {
 
         // --- Compatibility Tokens (Mapped to exact new Black + Violet system) ---
         ink: {
-          500: "#3F3F4A", // hover border
-          600: "#27272A", // default border
-          700: "#20202A", // elevated surface
-          800: "#18181F", // card background
-          850: "#14141B", // standard surface
-          900: "#0D0D12", // secondary background
-          950: "#09090B", // main application background
+          500: "#414139", // hover border
+          600: "#30302B", // default border
+          700: "#22221E", // elevated surface
+          800: "#171714", // card background
+          850: "#1C1C19", // standard surface
+          900: "#141412", // secondary background
+          950: "#0B0B0A", // main application background
         },
         verify: {
-          DEFAULT: "#8B5CF6",
-          hover: "#7C3AED",
+          DEFAULT: "#FF6A3D",
+          hover: "#E9562F",
         },
         signal: {
-          DEFAULT: "#A78BFA",
-          light: "#C4B5FD",
+          DEFAULT: "#FFB08E",
+          light: "#FFD1BB",
         },
         mist: {
-          100: "#FAFAFA", // primary text
-          200: "#FAFAFA",
-          300: "#A1A1AA", // secondary text
-          400: "#A1A1AA",
-          500: "#71717A", // muted text
-          600: "#71717A",
-          700: "#52525B", // disabled text
+          100: "#F2EFE6", // primary text
+          200: "#F2EFE6",
+          300: "#AAA69B", // secondary text
+          400: "#AAA69B",
+          500: "#77756D", // muted text
+          600: "#77756D",
+          700: "#66645D", // disabled text
         },
       },
       fontFamily: {
-        sans: ['"Geist"', '"Poppins"', "system-ui", "-apple-system", "sans-serif"],
-        display: ['"Montserrat"', '"Geist"', '"Poppins"', "system-ui", "sans-serif"],
-        mono: ['"Geist Mono"', '"JetBrains Mono"', "ui-monospace", "monospace"],
+        sans: ['"Manrope"', "system-ui", "-apple-system", "sans-serif"],
+        display: ['"Manrope"', "system-ui", "sans-serif"],
+        mono: ['"IBM Plex Mono"', "ui-monospace", "monospace"],
       },
       boxShadow: {
-        violet: "0 0 24px rgba(139, 92, 246, 0.16)",
-        "violet-subtle": "0 0 16px rgba(139, 92, 246, 0.10)",
-        "violet-strong": "0 0 32px rgba(139, 92, 246, 0.25)",
+        violet: "0 2px 8px rgba(0, 0, 0, 0.18)",
+        "violet-subtle": "0 1px 4px rgba(0, 0, 0, 0.14)",
+        "violet-strong": "0 4px 12px rgba(0, 0, 0, 0.2)",
       },
       borderRadius: {
         card: "14px",

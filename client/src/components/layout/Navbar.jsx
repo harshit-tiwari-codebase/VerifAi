@@ -65,7 +65,7 @@ export default function Navbar({ showNavigation = true }) {
     <header
       className={`sticky top-0 z-50 transition-all duration-200 ${
         scrolled
-          ? "border-b border-[#27272A] bg-[#0D0D12]/90 backdrop-blur-xl py-3 shadow-lg shadow-black/60"
+          ? "border-b border-[#30302B] bg-[#141412] py-3 shadow-sm shadow-black/40"
           : "bg-transparent py-4"
       }`}
     >
@@ -80,7 +80,7 @@ export default function Navbar({ showNavigation = true }) {
 
         {/* Center Navigation: Floating pill container */}
         {showNavigation && (
-          <div className="hidden md:flex items-center rounded-xl border border-[#27272A] bg-[#14141B]/90 backdrop-blur-md px-1.5 py-1">
+          <div className="hidden md:flex items-center rounded-xl border border-[#30302B] bg-[#1C1C19] px-1.5 py-1">
             <div
               className="flex items-center gap-1"
               onMouseLeave={() => setHoveredIdx(null)}
@@ -95,29 +95,29 @@ export default function Navbar({ showNavigation = true }) {
                     onMouseEnter={() => setHoveredIdx(idx)}
                     className="relative px-3.5 py-1.5 text-xs font-sans font-medium block transition-colors duration-150"
                   >
-                    {/* Active Pill: #211635 with subtle violet border */}
+                    {/* Active link indicator */}
                     {isActive && (
                       <motion.span
                         layoutId="navbarActivePill"
                         transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                        className="absolute inset-0 rounded-[8px] bg-[#211635] border border-[#8B5CF6]/30"
+                        className="absolute inset-0 rounded-[8px] bg-[#261912] border border-[#FF6A3D]/30"
                       />
                     )}
                     {hoveredIdx === idx && !isActive && (
                       <motion.span
                         layoutId="navbarHoverPill"
                         transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                        className="absolute inset-0 rounded-[8px] bg-[#20202A]"
+                        className="absolute inset-0 rounded-[8px] bg-[#22221E]"
                       />
                     )}
 
                     <span
                       className={`relative z-10 transition-colors ${
                         isActive
-                          ? "text-[#A78BFA] font-semibold"
+                          ? "text-[#FFB08E] font-semibold"
                           : hoveredIdx === idx
-                          ? "text-[#FAFAFA]"
-                          : "text-[#A1A1AA]"
+                          ? "text-[#F2EFE6]"
+                          : "text-[#AAA69B]"
                       }`}
                     >
                       {link.label}
@@ -133,7 +133,7 @@ export default function Navbar({ showNavigation = true }) {
         <div className="flex items-center gap-3 shrink-0">
           {isAuthenticated ? (
             <div className="flex items-center gap-2.5">
-              {/* Violet Circle Avatar with Initial */}
+              {/* Initial avatar */}
               <div className="relative">
                 <button
                   type="button"
@@ -141,13 +141,13 @@ export default function Navbar({ showNavigation = true }) {
                   aria-label="Open profile menu"
                   aria-expanded={profileMenuOpen}
                   onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
-                  className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[#8B5CF6]/50 transition-all group"
+                  className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[#FF6A3D]/50 transition-all group"
                 >
-                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA] text-white font-bold text-xs border border-[#8B5CF6]/40 shadow-[0_0_16px_rgba(139,92,246,0.25)] group-hover:scale-105 transition-transform">
+                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#FF6A3D] text-white font-bold text-xs border border-[#FF6A3D]/40 group-hover:scale-105 transition-transform">
                     {userInitial}
-                    <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#34D399] ring-2 ring-[#0D0D12]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#34D399] ring-2 ring-[#141412]" />
                   </span>
-                  <ChevronDown className="h-3.5 w-3.5 text-[#71717A] group-hover:text-[#FAFAFA] transition-colors hidden sm:inline" />
+                  <ChevronDown className="h-3.5 w-3.5 text-[#77756D] group-hover:text-[#F2EFE6] transition-colors hidden sm:inline" />
                 </button>
 
                 <AnimatePresence>
@@ -156,17 +156,17 @@ export default function Navbar({ showNavigation = true }) {
                       initial={{ opacity: 0, y: -6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                      className="absolute right-0 top-12 z-50 w-52 overflow-hidden rounded-xl border border-[#27272A] bg-[#18181F] shadow-2xl shadow-black/80"
+                      className="absolute right-0 top-12 z-50 w-52 overflow-hidden rounded-xl border border-[#30302B] bg-[#171714] shadow-2xl shadow-black/80"
                     >
-                      <div className="flex items-center gap-3 border-b border-[#27272A] px-4 py-3 bg-[#14141B]">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] text-sm font-bold text-white shadow-[0_0_12px_rgba(139,92,246,0.3)]">
+                      <div className="flex items-center gap-3 border-b border-[#30302B] px-4 py-3 bg-[#1C1C19]">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FF6A3D] text-sm font-bold text-white">
                           {userInitial}
                         </span>
                         <div className="min-w-0">
-                          <span className="truncate text-sm font-medium text-[#FAFAFA] block">
+                          <span className="truncate text-sm font-medium text-[#F2EFE6] block">
                             {user?.name || "Developer"}
                           </span>
-                          <span className="truncate text-xs text-[#71717A] block">
+                          <span className="truncate text-xs text-[#77756D] block">
                             {user?.email || ""}
                           </span>
                         </div>
@@ -175,16 +175,16 @@ export default function Navbar({ showNavigation = true }) {
                       <Link
                         to="/dashboard"
                         onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-xs text-[#A1A1AA] transition-colors hover:bg-[#20202A] hover:text-[#FAFAFA]"
+                        className="flex items-center gap-3 px-4 py-2.5 text-xs text-[#AAA69B] transition-colors hover:bg-[#22221E] hover:text-[#F2EFE6]"
                       >
-                        <CircleUserRound className="h-4 w-4 text-[#A78BFA]" />
+                        <CircleUserRound className="h-4 w-4 text-[#FFB08E]" />
                         Dashboard Profile
                       </Link>
 
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-3 border-t border-[#27272A] px-4 py-2.5 text-left text-xs text-[#A1A1AA] transition-colors hover:bg-[#F87171]/10 hover:text-[#F87171]"
+                        className="flex w-full items-center gap-3 border-t border-[#30302B] px-4 py-2.5 text-left text-xs text-[#AAA69B] transition-colors hover:bg-[#F87171]/10 hover:text-[#F87171]"
                       >
                         <LogOut className="h-4 w-4 text-[#F87171]" />
                         Sign Out
@@ -198,7 +198,7 @@ export default function Navbar({ showNavigation = true }) {
             <div className="hidden sm:flex items-center gap-2 font-sans text-xs font-medium">
               <Link
                 to="/login"
-                className="px-3 py-1.5 text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors"
+                className="px-3 py-1.5 text-[#AAA69B] hover:text-[#F2EFE6] transition-colors"
               >
                 Sign in
               </Link>
@@ -212,7 +212,7 @@ export default function Navbar({ showNavigation = true }) {
           {showNavigation && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 rounded-[10px] border border-[#27272A] bg-[#14141B] text-[#A1A1AA] hover:text-[#FAFAFA] hover:border-[#8B5CF6]/50"
+              className="md:hidden p-1.5 rounded-[10px] border border-[#30302B] bg-[#1C1C19] text-[#AAA69B] hover:text-[#F2EFE6] hover:border-[#FF6A3D]/50"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -228,7 +228,7 @@ export default function Navbar({ showNavigation = true }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-[#27272A] bg-[#0D0D12]/98 backdrop-blur-xl px-6 py-6 space-y-3 font-sans text-xs"
+            className="md:hidden border-b border-[#30302B] bg-[#141412] px-6 py-6 space-y-3 font-sans text-xs"
           >
             <div className="flex flex-col space-y-1">
               {navLinks.map((link) => (
@@ -238,8 +238,8 @@ export default function Navbar({ showNavigation = true }) {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`rounded-[10px] px-3 py-2 transition-all ${
                     link.active
-                      ? "bg-[#211635] text-[#A78BFA] border border-[#8B5CF6]/30 font-medium"
-                      : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
+                      ? "bg-[#261912] text-[#FFB08E] border border-[#FF6A3D]/30 font-medium"
+                      : "text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E]"
                   }`}
                 >
                   {link.label}
@@ -247,20 +247,20 @@ export default function Navbar({ showNavigation = true }) {
               ))}
             </div>
 
-            <div className="pt-2 border-t border-[#27272A]">
+            <div className="pt-2 border-t border-[#30302B]">
               {isAuthenticated ? (
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between rounded-[10px] bg-[#18181F] p-2.5 border border-[#27272A]"
+                  className="flex items-center justify-between rounded-[10px] bg-[#171714] p-2.5 border border-[#30302B]"
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#8B5CF6] text-white font-bold text-xs">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FF6A3D] text-white font-bold text-xs">
                       {userInitial}
                     </span>
-                    <span className="text-[#FAFAFA] font-medium text-xs">{user?.name || "Dashboard"}</span>
+                    <span className="text-[#F2EFE6] font-medium text-xs">{user?.name || "Dashboard"}</span>
                   </div>
-                  <span className="text-[11px] text-[#A78BFA] font-medium">Open →</span>
+                  <span className="text-[11px] text-[#FFB08E] font-medium">Open →</span>
                 </Link>
               ) : (
                 <div className="flex flex-col gap-2 pt-1">

@@ -41,29 +41,29 @@ function formatJoinDate(isoString) {
 
 function DashboardSkeleton() {
   return (
-    <div className="h-screen max-h-screen overflow-hidden bg-[#09090B] text-[#FAFAFA] flex flex-col font-sans">
+    <div className="h-screen max-h-screen overflow-hidden bg-[#0B0B0A] text-[#F2EFE6] flex flex-col font-sans">
       <Navbar />
       <main className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 flex-1 min-h-0 flex flex-col overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch flex-1 min-h-0 h-full w-full overflow-hidden">
-          <div className="lg:col-span-4 xl:col-span-3 rounded-[14px] border border-[#27272A] bg-[#14141B] p-4 sm:p-5 space-y-4 animate-pulse h-full flex flex-col justify-between overflow-hidden">
+          <div className="lg:col-span-4 xl:col-span-3 rounded-[14px] border border-[#30302B] bg-[#1C1C19] p-4 sm:p-5 space-y-4 animate-pulse h-full flex flex-col justify-between overflow-hidden">
             <div className="space-y-3">
-              <div className="h-6 w-32 rounded bg-[#20202A]" />
-              <div className="w-18 h-18 rounded-full mx-auto bg-[#20202A]" />
-              <div className="h-4 w-28 mx-auto rounded bg-[#20202A]" />
-              <div className="h-11 rounded-[10px] bg-[#18181F]" />
-              <div className="h-11 rounded-[10px] bg-[#18181F]" />
+              <div className="h-6 w-32 rounded bg-[#22221E]" />
+              <div className="w-18 h-18 rounded-full mx-auto bg-[#22221E]" />
+              <div className="h-4 w-28 mx-auto rounded bg-[#22221E]" />
+              <div className="h-11 rounded-[10px] bg-[#171714]" />
+              <div className="h-11 rounded-[10px] bg-[#171714]" />
             </div>
-            <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-[#27272A]">
-              <div className="h-14 rounded-[10px] bg-[#18181F]" />
-              <div className="h-14 rounded-[10px] bg-[#18181F]" />
+            <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-[#30302B]">
+              <div className="h-14 rounded-[10px] bg-[#171714]" />
+              <div className="h-14 rounded-[10px] bg-[#171714]" />
             </div>
           </div>
-          <div className="lg:col-span-8 xl:col-span-9 rounded-[14px] border border-[#27272A] bg-[#14141B] p-5 sm:p-6 space-y-4 animate-pulse h-full flex flex-col justify-between overflow-hidden">
-            <div className="h-8 w-64 rounded bg-[#20202A]" />
-            <div className="h-10 rounded-[10px] bg-[#18181F]" />
+          <div className="lg:col-span-8 xl:col-span-9 rounded-[14px] border border-[#30302B] bg-[#1C1C19] p-5 sm:p-6 space-y-4 animate-pulse h-full flex flex-col justify-between overflow-hidden">
+            <div className="h-8 w-64 rounded bg-[#22221E]" />
+            <div className="h-10 rounded-[10px] bg-[#171714]" />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pt-2 flex-1 overflow-hidden">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-40 rounded-[10px] bg-[#18181F]" />
+                <div key={i} className="h-40 rounded-[10px] bg-[#171714]" />
               ))}
             </div>
           </div>
@@ -201,28 +201,28 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden bg-[#09090B] text-[#FAFAFA] flex flex-col font-sans selection:bg-[#38245C]">
+    <div className="h-screen max-h-screen overflow-hidden bg-[#0B0B0A] text-[#F2EFE6] flex flex-col font-sans selection:bg-[#422316]">
       <Navbar />
 
       <main className="w-full max-w-[100vw] px-4 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 flex-1 min-h-0 flex flex-col overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch flex-1 min-h-0 h-full w-full overflow-hidden">
           {/* LEFT SIDEBAR: User Profile & Navigation */}
-          <aside className="lg:col-span-4 xl:col-span-3 rounded-[14px] border border-[#27272A] bg-[#14141B] p-4 sm:p-5 flex flex-col justify-between shadow-2xl h-full overflow-hidden">
+          <aside className="lg:col-span-4 xl:col-span-3 rounded-[14px] border border-[#30302B] bg-[#1C1C19] p-4 sm:p-5 flex flex-col justify-between shadow-2xl h-full overflow-hidden">
             <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar pr-1 space-y-4">
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#71717A] font-semibold">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#77756D] font-semibold">
                   Developer Profile
                 </span>
 
                 {/* Profile Card Center */}
                 <div className="mt-3 flex flex-col items-center text-center pb-3">
                   <div className="relative">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA] text-white font-bold text-xl sm:text-2xl flex items-center justify-center border-2 border-[#8B5CF6]/50 shadow-[0_0_24px_rgba(139,92,246,0.25)]">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#E9562F] via-[#FF6A3D] to-[#FFB08E] text-white font-bold text-xl sm:text-2xl flex items-center justify-center border-2 border-[#FF6A3D]/50 shadow-sm">
                       {initial}
                     </div>
                     {user?.isVerified && (
                       <div
-                        className="absolute -bottom-1 -right-1 bg-[#34D399] text-[#09090B] rounded-full p-1 border-2 border-[#14141B]"
+                        className="absolute -bottom-1 -right-1 bg-[#34D399] text-[#0B0B0A] rounded-full p-1 border-2 border-[#1C1C19]"
                         title="Verified Engineer"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -230,12 +230,12 @@ export default function DashboardPage() {
                     )}
                   </div>
 
-                  <h3 className="mt-2.5 text-base font-semibold text-[#FAFAFA] tracking-tight">
+                  <h3 className="mt-2.5 text-base font-semibold text-[#F2EFE6] tracking-tight">
                     {name}
                   </h3>
 
                   <div className="mt-1 flex items-center gap-1.5">
-                    <span className="rounded-full border border-[#8B5CF6]/30 bg-[#211635] px-2.5 py-0.5 text-[11px] font-mono uppercase tracking-wider text-[#C4B5FD]">
+                    <span className="rounded-full border border-[#FF6A3D]/30 bg-[#261912] px-2.5 py-0.5 text-[11px] font-mono uppercase tracking-wider text-[#FFD1BB]">
                       {role}
                     </span>
                     {isPrivileged && (
@@ -245,42 +245,42 @@ export default function DashboardPage() {
                     )}
                   </div>
 
-                  <p className="mt-1.5 text-xs text-[#71717A] font-mono truncate max-w-[220px]">
+                  <p className="mt-1.5 text-xs text-[#77756D] font-mono truncate max-w-[220px]">
                     {user?.email}
                   </p>
                   {joined && (
-                    <p className="text-[11px] text-[#52525B] font-mono mt-0.5">
+                    <p className="text-[11px] text-[#66645D] font-mono mt-0.5">
                       Joined {joined}
                     </p>
                   )}
                 </div>
 
                 {/* Vertical Navigation Tab Stack */}
-                <nav className="space-y-1.5 pt-2 border-t border-[#27272A]">
+                <nav className="space-y-1.5 pt-2 border-t border-[#30302B]">
                   {/* Arena Tab */}
                   <button
                     onClick={() => setActiveViewTab("arena")}
                     className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-[10px] transition-all text-left group ${
                       activeViewTab === "arena"
-                        ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/40 shadow-[0_0_16px_rgba(139,92,246,0.16)] font-medium"
-                        : "bg-[#18181F] hover:bg-[#20202A] border border-[#27272A] text-[#A1A1AA] hover:text-[#FAFAFA]"
+                        ? "bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/40 shadow-sm font-medium"
+                        : "bg-[#171714] hover:bg-[#22221E] border border-[#30302B] text-[#AAA69B] hover:text-[#F2EFE6]"
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-8 h-8 rounded-[8px] flex items-center justify-center transition-colors ${
                           activeViewTab === "arena"
-                            ? "bg-[#38245C] text-[#C4B5FD]"
-                            : "bg-[#14141B] text-[#71717A] group-hover:text-[#FAFAFA]"
+                            ? "bg-[#422316] text-[#FFD1BB]"
+                            : "bg-[#1C1C19] text-[#77756D] group-hover:text-[#F2EFE6]"
                         }`}
                       >
-                        <Terminal className="w-4 h-4 text-[#8B5CF6]" />
+                        <Terminal className="w-4 h-4 text-[#FF6A3D]" />
                       </div>
                       <div>
                         <div className="text-xs font-semibold">Practice Arena</div>
                         <div
                           className={`text-[10px] ${
-                            activeViewTab === "arena" ? "text-[#A78BFA]" : "text-[#71717A]"
+                            activeViewTab === "arena" ? "text-[#FFB08E]" : "text-[#77756D]"
                           }`}
                         >
                           Browse & solve challenges
@@ -290,8 +290,8 @@ export default function DashboardPage() {
                     <span
                       className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                         activeViewTab === "arena"
-                          ? "bg-[#38245C] text-[#C4B5FD]"
-                          : "bg-[#14141B] text-[#71717A]"
+                          ? "bg-[#422316] text-[#FFD1BB]"
+                          : "bg-[#1C1C19] text-[#77756D]"
                       }`}
                     >
                       {challenges.length}
@@ -303,25 +303,25 @@ export default function DashboardPage() {
                     onClick={() => setActiveViewTab("badges")}
                     className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-[10px] transition-all text-left group ${
                       activeViewTab === "badges"
-                        ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/40 shadow-[0_0_16px_rgba(139,92,246,0.16)] font-medium"
-                        : "bg-[#18181F] hover:bg-[#20202A] border border-[#27272A] text-[#A1A1AA] hover:text-[#FAFAFA]"
+                        ? "bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/40 shadow-sm font-medium"
+                        : "bg-[#171714] hover:bg-[#22221E] border border-[#30302B] text-[#AAA69B] hover:text-[#F2EFE6]"
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-8 h-8 rounded-[8px] flex items-center justify-center transition-colors ${
                           activeViewTab === "badges"
-                            ? "bg-[#38245C] text-[#C4B5FD]"
-                            : "bg-[#14141B] text-[#71717A] group-hover:text-[#FAFAFA]"
+                            ? "bg-[#422316] text-[#FFD1BB]"
+                            : "bg-[#1C1C19] text-[#77756D] group-hover:text-[#F2EFE6]"
                         }`}
                       >
-                        <Award className="w-4 h-4 text-[#8B5CF6]" />
+                        <Award className="w-4 h-4 text-[#FF6A3D]" />
                       </div>
                       <div>
                         <div className="text-xs font-semibold">Verified Badges</div>
                         <div
                           className={`text-[10px] ${
-                            activeViewTab === "badges" ? "text-[#A78BFA]" : "text-[#71717A]"
+                            activeViewTab === "badges" ? "text-[#FFB08E]" : "text-[#77756D]"
                           }`}
                         >
                           Cryptographic proof records
@@ -331,8 +331,8 @@ export default function DashboardPage() {
                     <span
                       className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                         activeViewTab === "badges"
-                          ? "bg-[#38245C] text-[#C4B5FD]"
-                          : "bg-[#14141B] text-[#71717A]"
+                          ? "bg-[#422316] text-[#FFD1BB]"
+                          : "bg-[#1C1C19] text-[#77756D]"
                       }`}
                     >
                       {userBadges.length}
@@ -345,25 +345,25 @@ export default function DashboardPage() {
                       onClick={() => setActiveViewTab("my-created")}
                       className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-[10px] transition-all text-left group ${
                         activeViewTab === "my-created"
-                          ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/40 shadow-[0_0_16px_rgba(139,92,246,0.16)] font-medium"
-                          : "bg-[#18181F] hover:bg-[#20202A] border border-[#27272A] text-[#A1A1AA] hover:text-[#FAFAFA]"
+                          ? "bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/40 shadow-sm font-medium"
+                          : "bg-[#171714] hover:bg-[#22221E] border border-[#30302B] text-[#AAA69B] hover:text-[#F2EFE6]"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-8 h-8 rounded-[8px] flex items-center justify-center transition-colors ${
                             activeViewTab === "my-created"
-                              ? "bg-[#38245C] text-[#C4B5FD]"
-                              : "bg-[#14141B] text-[#71717A] group-hover:text-[#FAFAFA]"
+                              ? "bg-[#422316] text-[#FFD1BB]"
+                              : "bg-[#1C1C19] text-[#77756D] group-hover:text-[#F2EFE6]"
                           }`}
                         >
-                          <Code2 className="w-4 h-4 text-[#8B5CF6]" />
+                          <Code2 className="w-4 h-4 text-[#FF6A3D]" />
                         </div>
                         <div>
                           <div className="text-xs font-semibold">My Authored</div>
                           <div
                             className={`text-[10px] ${
-                              activeViewTab === "my-created" ? "text-[#A78BFA]" : "text-[#71717A]"
+                              activeViewTab === "my-created" ? "text-[#FFB08E]" : "text-[#77756D]"
                             }`}
                           >
                             Manage author test suites
@@ -373,8 +373,8 @@ export default function DashboardPage() {
                       <span
                         className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                           activeViewTab === "my-created"
-                            ? "bg-[#38245C] text-[#C4B5FD]"
-                            : "bg-[#14141B] text-[#71717A]"
+                            ? "bg-[#422316] text-[#FFD1BB]"
+                            : "bg-[#1C1C19] text-[#77756D]"
                         }`}
                       >
                         {myCreatedChallenges.length}
@@ -388,25 +388,25 @@ export default function DashboardPage() {
                       onClick={() => setActiveViewTab("audited")}
                       className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-[10px] transition-all text-left group ${
                         activeViewTab === "audited"
-                          ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/40 shadow-[0_0_16px_rgba(139,92,246,0.16)] font-medium"
-                          : "bg-[#18181F] hover:bg-[#20202A] border border-[#27272A] text-[#A1A1AA] hover:text-[#FAFAFA]"
+                          ? "bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/40 shadow-sm font-medium"
+                          : "bg-[#171714] hover:bg-[#22221E] border border-[#30302B] text-[#AAA69B] hover:text-[#F2EFE6]"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-8 h-8 rounded-[8px] flex items-center justify-center transition-colors ${
                             activeViewTab === "audited"
-                              ? "bg-[#38245C] text-[#C4B5FD]"
-                              : "bg-[#14141B] text-[#71717A] group-hover:text-[#FAFAFA]"
+                              ? "bg-[#422316] text-[#FFD1BB]"
+                              : "bg-[#1C1C19] text-[#77756D] group-hover:text-[#F2EFE6]"
                           }`}
                         >
-                          <BrainCircuit className="w-4 h-4 text-[#8B5CF6]" />
+                          <BrainCircuit className="w-4 h-4 text-[#FF6A3D]" />
                         </div>
                         <div>
                           <div className="text-xs font-semibold">Audited Challenges</div>
                           <div
                             className={`text-[10px] ${
-                              activeViewTab === "audited" ? "text-[#A78BFA]" : "text-[#71717A]"
+                              activeViewTab === "audited" ? "text-[#FFB08E]" : "text-[#77756D]"
                             }`}
                           >
                             Review, edit, or remove
@@ -416,8 +416,8 @@ export default function DashboardPage() {
                       <span
                         className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                           activeViewTab === "audited"
-                            ? "bg-[#38245C] text-[#C4B5FD]"
-                            : "bg-[#14141B] text-[#71717A]"
+                            ? "bg-[#422316] text-[#FFD1BB]"
+                            : "bg-[#1C1C19] text-[#77756D]"
                         }`}
                       >
                         {auditedChallenges.length}
@@ -428,21 +428,21 @@ export default function DashboardPage() {
               </div>
 
               {/* Bottom Mini Stat Cards */}
-              <div className="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-[#27272A] shrink-0 mt-auto">
-                <div className="rounded-[10px] border border-[#27272A] bg-[#18181F] p-2.5 sm:p-3">
-                  <div className="text-lg sm:text-xl font-bold font-mono text-[#FAFAFA]">
+              <div className="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-[#30302B] shrink-0 mt-auto">
+                <div className="rounded-[10px] border border-[#30302B] bg-[#171714] p-2.5 sm:p-3">
+                  <div className="text-lg sm:text-xl font-bold font-mono text-[#F2EFE6]">
                     {userBadges.length}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#A1A1AA] font-sans mt-0.5">
+                  <div className="text-[10px] sm:text-[11px] text-[#AAA69B] font-sans mt-0.5">
                     Verified Badges
                   </div>
                 </div>
 
-                <div className="rounded-[10px] border border-[#27272A] bg-[#18181F] p-2.5 sm:p-3">
-                  <div className="text-lg sm:text-xl font-bold font-mono text-[#FAFAFA]">
+                <div className="rounded-[10px] border border-[#30302B] bg-[#171714] p-2.5 sm:p-3">
+                  <div className="text-lg sm:text-xl font-bold font-mono text-[#F2EFE6]">
                     {badgeChallengeIdSet.size}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#A1A1AA] font-sans mt-0.5">
+                  <div className="text-[10px] sm:text-[11px] text-[#AAA69B] font-sans mt-0.5">
                     Solved Arena
                   </div>
                 </div>
@@ -451,17 +451,17 @@ export default function DashboardPage() {
           </aside>
 
           {/* RIGHT MAIN CONTENT PANEL */}
-          <section className="lg:col-span-8 xl:col-span-9 rounded-[14px] border border-[#27272A] bg-[#14141B] p-4 sm:p-6 shadow-2xl h-full flex flex-col overflow-hidden min-h-0">
+          <section className="lg:col-span-8 xl:col-span-9 rounded-[14px] border border-[#30302B] bg-[#1C1C19] p-4 sm:p-6 shadow-2xl h-full flex flex-col overflow-hidden min-h-0">
             {/* Header Row */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0 pb-2.5">
               <div>
-                <h1 className="text-lg sm:text-xl font-bold text-[#FAFAFA] tracking-tight">
+                <h1 className="text-lg sm:text-xl font-bold text-[#F2EFE6] tracking-tight">
                   {activeViewTab === "arena" && "Engineering Practice Arena"}
                   {activeViewTab === "badges" && "Cryptographic Proof Credentials"}
                   {activeViewTab === "my-created" && "Authored Production Challenges"}
                   {activeViewTab === "audited" && "Audited Challenge Management"}
                 </h1>
-                <p className="text-xs text-[#A1A1AA] mt-0.5">
+                <p className="text-xs text-[#AAA69B] mt-0.5">
                   {activeViewTab === "arena" &&
                     "Explore real-world challenges, run test suites in isolated sandboxes, and mint zk-proof credentials."}
                   {activeViewTab === "badges" &&
@@ -495,7 +495,7 @@ export default function DashboardPage() {
                   size="sm"
                   onClick={handleLogout}
                   title="Sign out of your account"
-                  className="text-xs font-sans text-[#A1A1AA] hover:text-[#F87171] hover:bg-[#F87171]/10 border border-transparent hover:border-[#F87171]/20 flex items-center gap-1.5"
+                  className="text-xs font-sans text-[#AAA69B] hover:text-[#F87171] hover:bg-[#F87171]/10 border border-transparent hover:border-[#F87171]/20 flex items-center gap-1.5"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   Sign out
@@ -504,14 +504,14 @@ export default function DashboardPage() {
             </div>
 
             {/* Section Pill Header */}
-            <div className="flex items-center gap-2.5 pt-2.5 pb-2.5 border-t border-[#27272A] shrink-0">
-              <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-[8px] bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/30 shadow-sm">
-                {activeViewTab === "arena" && <Terminal className="h-3.5 w-3.5 text-[#8B5CF6]" />}
-                {activeViewTab === "badges" && <Award className="h-3.5 w-3.5 text-[#8B5CF6]" />}
-                {activeViewTab === "my-created" && <Code2 className="h-3.5 w-3.5 text-[#8B5CF6]" />}
-                {activeViewTab === "audited" && <BrainCircuit className="h-3.5 w-3.5 text-[#8B5CF6]" />}
+            <div className="flex items-center gap-2.5 pt-2.5 pb-2.5 border-t border-[#30302B] shrink-0">
+              <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-[8px] bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/30 shadow-sm">
+                {activeViewTab === "arena" && <Terminal className="h-3.5 w-3.5 text-[#FF6A3D]" />}
+                {activeViewTab === "badges" && <Award className="h-3.5 w-3.5 text-[#FF6A3D]" />}
+                {activeViewTab === "my-created" && <Code2 className="h-3.5 w-3.5 text-[#FF6A3D]" />}
+                {activeViewTab === "audited" && <BrainCircuit className="h-3.5 w-3.5 text-[#FF6A3D]" />}
               </div>
-              <span className="text-xs sm:text-sm font-semibold text-[#FAFAFA] tracking-wide">
+              <span className="text-xs sm:text-sm font-semibold text-[#F2EFE6] tracking-wide">
                 {activeViewTab === "arena" && "Active Challenges & Sandboxes"}
                 {activeViewTab === "badges" && "Earned Verification Badges"}
                 {activeViewTab === "my-created" && "Managed Engineering Challenges"}
@@ -533,8 +533,8 @@ export default function DashboardPage() {
                       }}
                       className={`relative rounded-[8px] px-2.5 py-1 font-sans text-xs transition-all whitespace-nowrap font-medium ${
                         selectedCategory === tab.id
-                          ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/40 shadow-[0_0_12px_rgba(139,92,246,0.16)]"
-                          : "border border-[#27272A] bg-[#18181F] text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A]"
+                          ? "bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/40 shadow-sm"
+                          : "border border-[#30302B] bg-[#171714] text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E]"
                       }`}
                     >
                       {tab.label}
@@ -543,15 +543,15 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Minimal Search & Filter Bar */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 rounded-[10px] border border-[#27272A] bg-[#18181F] p-1.5 shrink-0">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 rounded-[10px] border border-[#30302B] bg-[#171714] p-1.5 shrink-0">
                   <form onSubmit={handleSearchSubmit} className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717A] stroke-[1.75]" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#77756D] stroke-[1.75]" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search by title, tags, or concepts..."
-                      className="w-full rounded-[8px] border border-[#27272A] bg-[#111116] pl-8 pr-4 py-1.5 text-xs text-[#FAFAFA] placeholder:text-[#71717A] focus:border-[#8B5CF6] focus:outline-none transition-colors"
+                      className="w-full rounded-[8px] border border-[#30302B] bg-[#171714] pl-8 pr-4 py-1.5 text-xs text-[#F2EFE6] placeholder:text-[#77756D] focus:border-[#FF6A3D] focus:outline-none transition-colors"
                     />
                   </form>
 
@@ -562,7 +562,7 @@ export default function DashboardPage() {
                         setSelectedDifficulty(e.target.value);
                         setPage(1);
                       }}
-                      className="rounded-[8px] border border-[#27272A] bg-[#111116] px-2.5 py-1.5 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:outline-none capitalize font-sans cursor-pointer"
+                      className="rounded-[8px] border border-[#30302B] bg-[#171714] px-2.5 py-1.5 text-xs text-[#F2EFE6] focus:border-[#FF6A3D] focus:outline-none capitalize font-sans cursor-pointer"
                     >
                       <option value="all">All Difficulties</option>
                       <option value="easy">Easy</option>
@@ -576,7 +576,7 @@ export default function DashboardPage() {
                         setSelectedExecutionType(e.target.value);
                         setPage(1);
                       }}
-                      className="rounded-[8px] border border-[#27272A] bg-[#111116] px-2.5 py-1.5 text-xs text-[#FAFAFA] focus:border-[#8B5CF6] focus:outline-none font-sans cursor-pointer"
+                      className="rounded-[8px] border border-[#30302B] bg-[#171714] px-2.5 py-1.5 text-xs text-[#F2EFE6] focus:border-[#FF6A3D] focus:outline-none font-sans cursor-pointer"
                     >
                       <option value="all">All Types</option>
                       <option value="testcases">Test Cases</option>
@@ -589,7 +589,7 @@ export default function DashboardPage() {
                       selectedExecutionType !== "all") && (
                       <button
                         onClick={handleClearFilters}
-                        className="rounded-[8px] px-2 py-1 font-sans text-xs text-[#A1A1AA] hover:text-[#F87171] hover:bg-[#20202A] transition-colors"
+                        className="rounded-[8px] px-2 py-1 font-sans text-xs text-[#AAA69B] hover:text-[#F87171] hover:bg-[#22221E] transition-colors"
                       >
                         Reset
                       </button>
@@ -604,12 +604,12 @@ export default function DashboardPage() {
                       {[1, 2, 3, 4, 5, 6].map((i) => (
                         <div
                           key={i}
-                          className="h-48 animate-pulse rounded-[14px] border border-[#27272A] bg-[#18181F] p-4 space-y-3"
+                          className="h-48 animate-pulse rounded-[14px] border border-[#30302B] bg-[#171714] p-4 space-y-3"
                         />
                       ))}
                     </div>
                   ) : challengesError ? (
-                    <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-6 text-center">
+                    <div className="rounded-[14px] border border-[#30302B] bg-[#171714] p-6 text-center">
                       <p className="text-xs text-[#F87171]">{challengesError}</p>
                       <Button
                         variant="ghost"
@@ -621,11 +621,11 @@ export default function DashboardPage() {
                       </Button>
                     </div>
                   ) : challenges.length === 0 ? (
-                    <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-10 text-center space-y-2">
-                      <h3 className="text-sm font-semibold text-[#FAFAFA]">
+                    <div className="rounded-[14px] border border-[#30302B] bg-[#171714] p-10 text-center space-y-2">
+                      <h3 className="text-sm font-semibold text-[#F2EFE6]">
                         No matching challenges
                       </h3>
-                      <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto">
+                      <p className="text-xs text-[#AAA69B] max-w-sm mx-auto">
                         Try loosening your search filters or check another discipline.
                       </p>
                       <Button
@@ -659,9 +659,9 @@ export default function DashboardPage() {
 
                 {/* Pagination */}
                 {pagination.totalPages > 1 && (
-                  <div className="flex items-center justify-between border-t border-[#27272A] pt-2.5 mt-auto shrink-0 text-xs text-[#71717A] font-sans">
+                  <div className="flex items-center justify-between border-t border-[#30302B] pt-2.5 mt-auto shrink-0 text-xs text-[#77756D] font-sans">
                     <span>
-                      Page <strong className="text-[#FAFAFA]">{pagination.page}</strong> / {pagination.totalPages} ({pagination.total} total)
+                      Page <strong className="text-[#F2EFE6]">{pagination.page}</strong> / {pagination.totalPages} ({pagination.total} total)
                     </span>
                     <div className="flex items-center gap-1.5">
                       <Button
@@ -693,10 +693,10 @@ export default function DashboardPage() {
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
                   {userBadges.length === 0 ? (
-                    <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] px-6 py-12 text-center space-y-2">
-                      <ShieldCheck className="mx-auto h-9 w-9 text-[#71717A]" />
-                      <h3 className="text-sm font-semibold text-[#FAFAFA]">No badges earned yet</h3>
-                      <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto">
+                    <div className="rounded-[14px] border border-[#30302B] bg-[#171714] px-6 py-12 text-center space-y-2">
+                      <ShieldCheck className="mx-auto h-9 w-9 text-[#77756D]" />
+                      <h3 className="text-sm font-semibold text-[#F2EFE6]">No badges earned yet</h3>
+                      <p className="text-xs text-[#AAA69B] max-w-sm mx-auto">
                         Solve an engineering challenge to mint your first verified cryptographic badge.
                       </p>
                       <Button
@@ -724,10 +724,10 @@ export default function DashboardPage() {
                         return (
                           <div
                             key={b.challengeId?._id || b.challengeId || i}
-                            className="rounded-[14px] border border-[#8B5CF6]/30 bg-[#18181F] p-4 transition-all hover:bg-[#20202A] hover:border-[#8B5CF6]/50 shadow-[0_0_16px_rgba(139,92,246,0.10)]"
+                            className="rounded-[14px] border border-[#FF6A3D]/30 bg-[#171714] p-4 transition-all hover:bg-[#22221E] hover:border-[#FF6A3D]/50 shadow-sm"
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <span className="font-mono text-[10px] text-[#A78BFA] uppercase tracking-wider font-semibold">
+                              <span className="font-mono text-[10px] text-[#FFB08E] uppercase tracking-wider font-semibold">
                                 VERIFIED BADGE
                               </span>
                               <span className="rounded-full border border-[#34D399]/30 bg-[#34D399]/10 px-2 py-0.5 font-mono text-[11px] text-[#34D399]">
@@ -735,14 +735,14 @@ export default function DashboardPage() {
                               </span>
                             </div>
 
-                            <h3 className="text-sm font-semibold text-[#FAFAFA] line-clamp-1">
+                            <h3 className="text-sm font-semibold text-[#F2EFE6] line-clamp-1">
                               {challengeTitle}
                             </h3>
-                            <p className="mt-0.5 font-mono text-[10px] text-[#71717A] uppercase">
+                            <p className="mt-0.5 font-mono text-[10px] text-[#77756D] uppercase">
                               {challengeCategory}
                             </p>
 
-                            <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-[#27272A] font-mono text-[10px] text-[#71717A]">
+                            <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-[#30302B] font-mono text-[10px] text-[#77756D]">
                               <span>
                                 {b.earnedAt ? new Date(b.earnedAt).toLocaleDateString() : "Active"}
                               </span>
@@ -767,11 +767,11 @@ export default function DashboardPage() {
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
                   {myCreatedChallenges.length === 0 ? (
-                    <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-10 text-center space-y-2">
-                      <h3 className="text-sm font-semibold text-[#FAFAFA]">
+                    <div className="rounded-[14px] border border-[#30302B] bg-[#171714] p-10 text-center space-y-2">
+                      <h3 className="text-sm font-semibold text-[#F2EFE6]">
                         No authored challenges yet
                       </h3>
-                      <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto">
+                      <p className="text-xs text-[#AAA69B] max-w-sm mx-auto">
                         Create production challenges for candidates to solve in the isolated sandbox.
                       </p>
                       <Button
@@ -812,10 +812,10 @@ export default function DashboardPage() {
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
                   {auditedChallenges.length === 0 ? (
-                    <div className="rounded-[14px] border border-[#27272A] bg-[#18181F] p-10 text-center space-y-2">
-                      <BrainCircuit className="mx-auto h-9 w-9 text-[#71717A]" />
-                      <h3 className="text-sm font-semibold text-[#FAFAFA]">No audited challenges yet</h3>
-                      <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto">
+                    <div className="rounded-[14px] border border-[#30302B] bg-[#171714] p-10 text-center space-y-2">
+                      <BrainCircuit className="mx-auto h-9 w-9 text-[#77756D]" />
+                      <h3 className="text-sm font-semibold text-[#F2EFE6]">No audited challenges yet</h3>
+                      <p className="text-xs text-[#AAA69B] max-w-sm mx-auto">
                         Create a review-only challenge to start building your audited challenge library.
                       </p>
                       <Button
@@ -832,8 +832,8 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="space-y-3 pb-2">
-                      <div className="rounded-[10px] border border-[#8B5CF6]/20 bg-[#211635]/40 px-4 py-3">
-                        <p className="text-xs text-[#C4B5FD]">
+                      <div className="rounded-[10px] border border-[#FF6A3D]/20 bg-[#261912]/40 px-4 py-3">
+                        <p className="text-xs text-[#FFD1BB]">
                           These review-only challenges use AI audit criteria. Use the card actions to edit or delete your own challenge.
                         </p>
                       </div>

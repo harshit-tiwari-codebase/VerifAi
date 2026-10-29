@@ -385,7 +385,7 @@ export default function Hero() {
               Start a challenge
               <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
-            <Button as="a" href="#playground" variant="ghost" size="lg" className="group">
+            <Button as={Link} to="/playground" variant="ghost" size="lg" className="group">
               <Play className="mr-1.5 h-4 w-4 fill-current text-[#FF6A3D]" />
               Try the playground
             </Button>

@@ -111,10 +111,10 @@ export default function LoginPage() {
       <div className="w-full">
         {/* Header */}
         <div className="text-center mb-5">
-          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#FAFAFA]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#F2EFE6]">
             Welcome back
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-[#A1A1AA]">
+          <p className="mt-1 text-xs sm:text-sm text-[#AAA69B]">
             Log in to continue your verified journey
           </p>
         </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
           {/* Email Input */}
           <div className="space-y-1">
             <div className="relative flex items-center">
-              <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
+              <div className="pointer-events-none absolute left-3.5 text-[#77756D]">
                 <User className="h-4 w-4" />
               </div>
               <input
@@ -140,10 +140,10 @@ export default function LoginPage() {
                   setForm({ ...form, email: e.target.value });
                   if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: "" });
                 }}
-                className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
+                className={`w-full rounded-[10px] border bg-[#171714] text-sm text-[#F2EFE6] placeholder:text-[#77756D] outline-none transition-all py-2.5 pl-10 pr-3.5 ${
                   fieldErrors.email
                     ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
-                    : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
+                    : "border-[#30302B] hover:border-[#414139] focus:border-[#FF6A3D] focus:ring-1 focus:ring-[#FF6A3D]/30"
                 }`}
               />
             </div>
@@ -155,7 +155,7 @@ export default function LoginPage() {
           {/* Password Input */}
           <div className="space-y-1">
             <div className="relative flex items-center">
-              <div className="pointer-events-none absolute left-3.5 text-[#71717A]">
+              <div className="pointer-events-none absolute left-3.5 text-[#77756D]">
                 <Lock className="h-4 w-4" />
               </div>
               <input
@@ -170,16 +170,16 @@ export default function LoginPage() {
                   setForm({ ...form, password: e.target.value });
                   if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: "" });
                 }}
-                className={`w-full rounded-[10px] border bg-[#111116] text-sm text-[#FAFAFA] placeholder:text-[#71717A] outline-none transition-all py-2.5 pl-10 pr-10 ${
+                className={`w-full rounded-[10px] border bg-[#171714] text-sm text-[#F2EFE6] placeholder:text-[#77756D] outline-none transition-all py-2.5 pl-10 pr-10 ${
                   fieldErrors.password
                     ? "border-[#F87171] focus:border-[#F87171] focus:ring-1 focus:ring-[#F87171]/20"
-                    : "border-[#27272A] hover:border-[#3F3F4A] focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6]/30"
+                    : "border-[#30302B] hover:border-[#414139] focus:border-[#FF6A3D] focus:ring-1 focus:ring-[#FF6A3D]/30"
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 p-1 rounded-md text-[#71717A] hover:text-[#A1A1AA] transition-colors"
+                className="absolute right-3 p-1 rounded-md text-[#77756D] hover:text-[#AAA69B] transition-colors"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -192,19 +192,19 @@ export default function LoginPage() {
 
           {/* Remember me & Forgot password row */}
           <div className="flex items-center justify-between text-xs py-0.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-[#A1A1AA] hover:text-[#FAFAFA]">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-[#AAA69B] hover:text-[#F2EFE6]">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-3.5 w-3.5 rounded border-[#27272A] bg-[#111116] accent-[#8B5CF6] cursor-pointer"
+                className="h-3.5 w-3.5 rounded border-[#30302B] bg-[#171714] accent-[#FF6A3D] cursor-pointer"
               />
               <span>Remember me</span>
             </label>
 
             <Link
               to="/forgot-password"
-              className="text-[#A78BFA] hover:text-[#C4B5FD] transition-colors"
+              className="text-[#FFB08E] hover:text-[#FFD1BB] transition-colors"
             >
               Forgot password?
             </Link>
@@ -224,7 +224,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={handleResendVerification}
                     disabled={resending}
-                    className="px-2.5 py-1 rounded-[8px] border border-[#8B5CF6]/40 bg-[#211635] text-[#C4B5FD] hover:bg-[#38245C] transition-colors flex items-center gap-1.5 text-[11px]"
+                    className="px-2.5 py-1 rounded-[8px] border border-[#FF6A3D]/40 bg-[#261912] text-[#FFD1BB] hover:bg-[#422316] transition-colors flex items-center gap-1.5 text-[11px]"
                   >
                     <RefreshCw className={`h-3 w-3 ${resending ? "animate-spin" : ""}`} />
                     {resending ? "Resending..." : "Resend link"}
@@ -241,8 +241,8 @@ export default function LoginPage() {
 
           {/* Social notice feedback if clicked */}
           {socialNotice && (
-            <div className="p-2.5 rounded-[10px] border border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD] text-xs flex items-center gap-2">
-              <Info className="h-3.5 w-3.5 text-[#A78BFA] shrink-0" />
+            <div className="p-2.5 rounded-[10px] border border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB] text-xs flex items-center gap-2">
+              <Info className="h-3.5 w-3.5 text-[#FFB08E] shrink-0" />
               <p className="flex-1">{socialNotice}</p>
             </div>
           )}
@@ -261,8 +261,8 @@ export default function LoginPage() {
 
           {/* Divider "Or" */}
           <div className="relative flex items-center justify-center my-3 py-1">
-            <div className="border-t border-[#27272A] w-full" />
-            <span className="bg-[#18181F] px-3 text-xs text-[#71717A] font-sans absolute">
+            <div className="border-t border-[#30302B] w-full" />
+            <span className="bg-[#171714] px-3 text-xs text-[#77756D] font-sans absolute">
               Or continue with
             </span>
           </div>
@@ -312,11 +312,11 @@ export default function LoginPage() {
           </div>
 
           {/* Sign up prompt */}
-          <div className="pt-3 text-center text-xs text-[#A1A1AA]">
+          <div className="pt-3 text-center text-xs text-[#AAA69B]">
             <span>Don't have an account? </span>
             <Link
               to="/register"
-              className="text-[#A78BFA] hover:text-[#C4B5FD] font-semibold underline-offset-2 hover:underline transition-colors"
+              className="text-[#FFB08E] hover:text-[#FFD1BB] font-semibold underline-offset-2 hover:underline transition-colors"
             >
               Sign Up
             </Link>

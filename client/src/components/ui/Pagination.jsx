@@ -36,11 +36,11 @@ export default function Pagination({ page, totalPages, total, onPageChange }) {
   return (
     <nav
       aria-label="Page navigation"
-      className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#27272A] pt-5"
+      className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#30302B] pt-5"
     >
-      <p className="text-xs font-mono text-[#71717A]">
-        Page <span className="text-[#FAFAFA] font-medium">{page}</span> of{" "}
-        <span className="text-[#FAFAFA] font-medium">{totalPages}</span> ({total} total)
+      <p className="text-xs font-mono text-[#77756D]">
+        Page <span className="text-[#F2EFE6] font-medium">{page}</span> of{" "}
+        <span className="text-[#F2EFE6] font-medium">{totalPages}</span> ({total} total)
       </p>
 
       <div className="flex items-center gap-1">
@@ -49,7 +49,7 @@ export default function Pagination({ page, totalPages, total, onPageChange }) {
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
           aria-label="Go to previous page"
-          className="inline-flex items-center gap-1 rounded-[10px] px-2.5 py-1.5 text-xs font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] border border-transparent hover:border-[#27272A] transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#A1A1AA]"
+          className="inline-flex items-center gap-1 rounded-[10px] px-2.5 py-1.5 text-xs font-mono text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] border border-transparent hover:border-[#30302B] transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#AAA69B]"
         >
           <ChevronLeft className="h-3 w-3 stroke-[2]" />
           Prev
@@ -60,7 +60,7 @@ export default function Pagination({ page, totalPages, total, onPageChange }) {
           p === "..." ? (
             <span
               key={`ellipsis-${idx}`}
-              className="px-1.5 text-xs font-mono text-[#71717A] select-none"
+              className="px-1.5 text-xs font-mono text-[#77756D] select-none"
             >
               …
             </span>
@@ -73,8 +73,8 @@ export default function Pagination({ page, totalPages, total, onPageChange }) {
               aria-current={p === page ? "page" : undefined}
               className={`min-w-[30px] rounded-[10px] px-2 py-1.5 text-xs font-mono transition-colors ${
                 p === page
-                  ? "bg-[#211635] text-[#C4B5FD] border border-[#8B5CF6]/40 font-medium cursor-default"
-                  : "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] border border-transparent hover:border-[#27272A]"
+                  ? "bg-[#261912] text-[#FFD1BB] border border-[#FF6A3D]/40 font-medium cursor-default"
+                  : "text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] border border-transparent hover:border-[#30302B]"
               }`}
             >
               {p}
@@ -87,7 +87,7 @@ export default function Pagination({ page, totalPages, total, onPageChange }) {
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
           aria-label="Go to next page"
-          className="inline-flex items-center gap-1 rounded-[10px] px-2.5 py-1.5 text-xs font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] border border-transparent hover:border-[#27272A] transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#A1A1AA]"
+          className="inline-flex items-center gap-1 rounded-[10px] px-2.5 py-1.5 text-xs font-mono text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] border border-transparent hover:border-[#30302B] transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#AAA69B]"
         >
           Next
           <ChevronRight className="h-3 w-3 stroke-[2]" />

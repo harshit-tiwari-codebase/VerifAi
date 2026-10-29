@@ -6,14 +6,12 @@ import {
   Check,
   RotateCcw,
   Play,
-  Send,
   Loader2,
-  Terminal,
-  FileCode,
   PanelLeftClose,
   PanelLeft,
-  Code2,
   AlignLeft,
+  Bot,
+  SquareTerminal,
 } from "lucide-react";
 import ProblemSpecPane from "../features/challenges/components/ProblemSpecPane.jsx";
 import EditorFooterBar from "../features/challenges/components/EditorFooterBar.jsx";
@@ -70,6 +68,16 @@ if (typeof module !== "undefined") {
 `;
 }
 
+const DIFFICULTY_DOT = {
+  Easy: "bg-[#4ADE80]",
+  Medium: "bg-[#FBBF24]",
+  Hard: "bg-[#F87171]",
+};
+
+// Shared look for quiet, text-style controls
+const ghostBtn =
+  "flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs text-[#8F8B80] transition-colors hover:bg-[#1C1C19] hover:text-[#F2EFE6] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#FF6A3D]";
+
 export default function ChallengeWorkspacePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -81,13 +89,12 @@ export default function ChallengeWorkspacePage() {
   const [formattedCode, setFormattedCode] = useState(false);
   const [loadingChallenge, setLoadingChallenge] = useState(false);
 
-  // Zen mode & layout toggle state
+  // Layout toggle state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isCompanionVisible, setIsCompanionVisible] = useState(true);
 
-  // Typing & Keystroke stats for companion
+  // Typing & keystroke stats (sent with submission + used by companion)
   const [keystrokeCount, setKeystrokeCount] = useState(0);
-  const [isTyping, setIsTyping] = useState(false);
-  const typingTimerRef = useRef(null);
 
   // Timer in header
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -114,12 +121,12 @@ export default function ChallengeWorkspacePage() {
   const [terminalLogs, setTerminalLogs] = useState([
     {
       type: "sys",
-      text: "VerifAI V8 Sandboxed Runtime initialized (Node.js v20.11 / ES2023).",
+      text: "VerifAI sandbox ready (Node.js v20.11 / ES2023).",
       timestamp: Date.now(),
     },
     {
       type: "info",
-      text: "¡Hola buddy! Ready to code. Press ⌘↵ to execute tests or ⌘` to open Terminal.",
+      text: "⌘↵ run tests · ⌘⇧↵ submit · ⌘` toggle terminal",
       timestamp: Date.now(),
     },
   ]);
@@ -245,12 +252,6 @@ export default function ChallengeWorkspacePage() {
     setLastSavedSecondsAgo(0);
 
     setKeystrokeCount((prev) => prev + 1);
-    setIsTyping(true);
-
-    clearTimeout(typingTimerRef.current);
-    typingTimerRef.current = setTimeout(() => {
-      setIsTyping(false);
-    }, 1500);
   };
 
   // Copy code handler
@@ -336,7 +337,7 @@ export default function ChallengeWorkspacePage() {
       const evaluated = execResult.testCases || baseTestCases;
       setCurrentTestCases(evaluated);
 
-      // Fast, snappy staggered reveal (60ms per case for hyper-responsive feel)
+      // Fast, snappy staggered reveal (60ms per case)
       let current = 0;
       const interval = setInterval(() => {
         current++;
@@ -609,240 +610,176 @@ export default function ChallengeWorkspacePage() {
   // Active AI review data (from real submission or mock fallback)
   const activeAiReview = submissionResult?.evaluation || challenge.aiReview;
 
+  const busy = isRunningTests || isVerificationOpen || isSubmitting;
+  const difficulty = challenge?.difficulty || "Medium";
+
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#09090B] text-[#FAFAFA] flex flex-col selection:bg-[#38245C] font-sans">
-      {/* Top Workspace Header Bar */}
-      <header className="h-14 bg-[#0D0D12] border-b border-[#27272A] px-4 flex items-center justify-between gap-3 shrink-0 select-none z-10">
-        {/* Left: Brand / Back to Challenges / Challenge Details */}
+    <div className="h-screen w-screen overflow-hidden bg-[#0B0B0A] text-[#F2EFE6] flex flex-col selection:bg-[#422316] font-sans">
+      {/* Header */}
+      <header className="h-12 px-4 flex items-center justify-between gap-4 shrink-0 select-none border-b border-[#1F1F1B]">
+        {/* Left: breadcrumb */}
         <div className="flex items-center gap-3 min-w-0">
-          <Link to="/" className="flex items-center gap-2 group mr-1">
-            <VerifaiLogo size={24} />
+          <Link to="/" className="shrink-0" aria-label="VerifAI home">
+            <VerifaiLogo size={22} />
           </Link>
 
-          <span className="text-[#3F3F4A]">/</span>
+          <span className="text-[#35352F]" aria-hidden="true">/</span>
 
           <Link
             to="/challenges"
-            className="flex items-center gap-1 font-mono text-xs text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors shrink-0"
-            title="Return to Challenges"
+            className="shrink-0 text-xs text-[#8F8B80] transition-colors hover:text-[#F2EFE6] focus-visible:outline-none focus-visible:text-[#F2EFE6]"
           >
-            <span>Challenges</span>
+            Challenges
           </Link>
 
-          <span className="text-[#3F3F4A] hidden md:inline">/</span>
+          <span className="hidden md:inline text-[#35352F]" aria-hidden="true">/</span>
 
-          <div className="flex items-center gap-2 min-w-0">
-            <h1 className="font-display text-xs sm:text-sm font-semibold text-[#FAFAFA] truncate">
-              {challenge?.title || "Distributed Token Bucket Rate Limiter"}
-            </h1>
+          <h1 className="hidden md:block truncate font-display text-sm font-medium text-[#F2EFE6]">
+            {challenge?.title || "Distributed Token Bucket Rate Limiter"}
+          </h1>
 
-            {/* Difficulty Pill */}
-            <span
-              className={`rounded-full px-2.5 py-0.5 text-[10.5px] font-mono font-medium border shrink-0 capitalize ${
-                challenge?.difficulty === "Hard"
-                  ? "border-[#F87171]/30 bg-[#F87171]/10 text-[#F87171]"
-                  : challenge?.difficulty === "Easy"
-                  ? "border-[#4ADE80]/30 bg-[#4ADE80]/10 text-[#4ADE80]"
-                  : "border-[#FBBF24]/30 bg-[#FBBF24]/10 text-[#FBBF24]"
-              }`}
-            >
-              {challenge?.difficulty || "Medium"}
-            </span>
-          </div>
+          <span className="hidden sm:flex shrink-0 items-center gap-1.5 text-xs text-[#8F8B80]">
+            <span className={`h-1.5 w-1.5 rounded-full ${DIFFICULTY_DOT[difficulty] || DIFFICULTY_DOT.Medium}`} />
+            {difficulty}
+          </span>
         </div>
 
-        {/* Right: Keystroke Metric / Timer / Console / Action Buttons */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* Keystrokes counter */}
-          {keystrokeCount > 0 && (
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[11px] font-mono text-[#A1A1AA]">
-              <span className="text-[#FAFAFA] font-semibold">{keystrokeCount}</span>
-              <span className="text-[#71717A]">keys</span>
-            </div>
-          )}
-
-          {/* Elapsed Timer Chip */}
-          <div
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[11px] font-mono text-[#A1A1AA]"
-            title="Time elapsed on problem"
+        {/* Right: tools + actions */}
+        <div className="flex items-center gap-1 shrink-0">
+          <span
+            className="px-2 text-xs tabular-nums font-mono text-[#5F5D56]"
+            title={`Time on problem · ${keystrokeCount} keystrokes`}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-[#8B5CF6]" />
-            <span>{formatTimer(elapsedSeconds)}</span>
-          </div>
+            {formatTimer(elapsedSeconds)}
+          </span>
 
-          {/* Toggle Terminal */}
           <button
             type="button"
-            onClick={() => {
-              if (isConsoleOpen && consoleTab === "terminal") {
-                setIsConsoleOpen(false);
-              } else {
-                setIsConsoleOpen(true);
-                setConsoleTab("terminal");
-              }
-            }}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] text-xs font-mono transition-colors border ${
-              isConsoleOpen && consoleTab === "terminal"
-                ? "text-[#C4B5FD] border-[#8B5CF6]/50 bg-[#211635]"
-                : "text-[#A1A1AA] border-[#27272A] bg-[#14141B] hover:text-[#FAFAFA] hover:bg-[#20202A]"
-            }`}
-            title="Toggle terminal & execution logs (⌘+`)"
+            onClick={() => setIsCompanionVisible((visible) => !visible)}
+            aria-pressed={isCompanionVisible}
+            aria-label={`${isCompanionVisible ? "Hide" : "Show"} coding companion`}
+            title={`${isCompanionVisible ? "Hide" : "Show"} coding companion`}
+            className={`${ghostBtn} ${isCompanionVisible ? "!text-[#F2EFE6]" : ""}`}
           >
-            <Terminal className="h-3.5 w-3.5 text-[#8B5CF6]" />
-            <span className="hidden sm:inline">Terminal</span>
+            <Bot className="h-4 w-4 stroke-[1.5]" />
           </button>
 
-          {/* Toggle Test Console */}
           <button
             type="button"
             onClick={() => {
-              if (isConsoleOpen && consoleTab === "tests") {
+              if (isConsoleOpen) {
                 setIsConsoleOpen(false);
               } else {
                 setIsConsoleOpen(true);
                 setConsoleTab("tests");
               }
             }}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] text-xs font-mono transition-colors border ${
-              isConsoleOpen && consoleTab === "tests"
-                ? "text-[#C4B5FD] border-[#8B5CF6]/50 bg-[#211635]"
-                : "text-[#A1A1AA] border-[#27272A] bg-[#14141B] hover:text-[#FAFAFA] hover:bg-[#20202A]"
-            }`}
-            title="Toggle test cases panel"
+            aria-pressed={isConsoleOpen}
+            title="Toggle console (⌘`)"
+            className={`${ghostBtn} ${isConsoleOpen ? "!text-[#F2EFE6] bg-[#1C1C19]" : ""}`}
           >
-            <Code2 className="h-3.5 w-3.5 text-[#A1A1AA]" />
-            <span className="hidden sm:inline">Tests</span>
+            <SquareTerminal className="h-4 w-4 stroke-[1.5]" />
+            <span className="hidden sm:inline">Console</span>
           </button>
 
-          {/* Run Tests Button */}
+          <div className="mx-2 h-4 w-px bg-[#262621]" aria-hidden="true" />
+
           <button
             type="button"
             onClick={handleRunTests}
-            disabled={isRunningTests || isVerificationOpen || isSubmitting}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-mono text-[#E4E4E7] hover:text-white bg-[#20202A] hover:bg-[#27272A] border border-[#30303A] transition-all disabled:opacity-50"
-            title="Run tests in sandbox (⌘+Enter)"
+            disabled={busy}
+            title="Run tests (⌘↵)"
+            className="flex items-center gap-1.5 rounded-lg border border-[#2E2E28] px-3 py-1.5 text-xs font-medium text-[#E4E0D5] transition-colors hover:bg-[#1C1C19] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#FF6A3D] disabled:opacity-40 disabled:hover:bg-transparent"
           >
             {isRunningTests ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-[#FBBF24]" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Play className="h-3.5 w-3.5 text-[#FBBF24] fill-current" />
+              <Play className="h-3 w-3 fill-current" />
             )}
-            <span className="hidden sm:inline">Run</span>
+            <span>Run</span>
           </button>
 
-          {/* Submit Solution Button */}
           <button
             type="button"
             onClick={handleSubmitSolution}
-            disabled={isRunningTests || isVerificationOpen || isSubmitting}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] shadow-[0_0_24px_rgba(139,92,246,0.16)] transition-all disabled:opacity-50"
-            title="Submit solution for verified evaluation (⌘+Shift+Enter)"
+            disabled={busy}
+            title="Submit solution (⌘⇧↵)"
+            className="ml-1 flex items-center gap-1.5 rounded-lg bg-[#FF6A3D] px-3.5 py-1.5 text-xs font-medium text-[#0B0B0A] transition-colors hover:bg-[#FF7F58] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6A3D]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0A] disabled:opacity-40"
           >
             {isSubmitting || isVerificationOpen ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
-            ) : (
-              <Send className="h-3.5 w-3.5 text-white" />
-            )}
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : null}
             <span>Submit</span>
           </button>
         </div>
       </header>
 
-      {/* Main Workspace Split Grid */}
-      <div className="flex-1 min-h-0 w-full flex gap-3 p-3 overflow-hidden bg-[#09090B]">
-        {/* Left Pane: Problem Spec & Rubric */}
+      {/* Workspace */}
+      <div className="flex-1 min-h-0 w-full flex gap-2 p-2 overflow-hidden">
+        {/* Left: Problem */}
         {isSidebarOpen && (
           <section
-            aria-label="Problem Specification"
-            className="w-full lg:w-[42%] h-full flex flex-col min-h-0 rounded-[14px] border border-[#27272A] bg-[#0D0D12] overflow-hidden shadow-2xl transition-all"
+            aria-label="Problem specification"
+            className="w-full lg:w-[42%] h-full flex flex-col min-h-0 rounded-xl border border-[#1F1F1B] bg-[#101010] overflow-hidden"
           >
             <ProblemSpecPane challenge={challenge} />
           </section>
         )}
 
-        {/* Right Pane: Code Editor + Test Console */}
+        {/* Right: Editor + console */}
         <section
-          aria-label="Code Editor"
-          className="flex-1 h-full flex flex-col min-h-0 rounded-[14px] border border-[#27272A] bg-[#0D0D12] overflow-hidden relative shadow-2xl"
+          aria-label="Code editor"
+          className="flex-1 h-full flex flex-col min-h-0 rounded-xl border border-[#1F1F1B] bg-[#101010] overflow-hidden relative"
         >
-          {/* Editor Header Bar */}
-          <div className="h-10 px-4 bg-[#111116] border-b border-[#27272A] flex items-center justify-between shrink-0 select-none text-xs font-mono">
-            {/* Left: Sidebar toggle + file tab */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setIsSidebarOpen((prev) => !prev)}
-                className="p-1 rounded text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
-                title={isSidebarOpen ? "Collapse problem spec (⌘+B)" : "Expand problem spec (⌘+B)"}
-              >
-                {isSidebarOpen ? (
-                  <PanelLeftClose className="h-4 w-4" />
-                ) : (
-                  <PanelLeft className="h-4 w-4" />
-                )}
-              </button>
-
-              <div className="hidden sm:flex items-center gap-1.5 pr-2 border-r border-[#27272A]">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
-              </div>
-
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0D0D12] text-[#FAFAFA] border border-[#27272A] text-[11px] font-medium">
-                <FileCode className="h-3.5 w-3.5 text-[#8B5CF6]" />
-                <span>solution.js</span>
-              </div>
-
-              <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-[#34D399] bg-[#34D399]/10 border border-[#34D399]/20 hidden sm:inline">
-                sandbox-ready
-              </span>
-            </div>
-
-            {/* Quick editor actions */}
+          {/* Editor bar */}
+          <div className="h-10 px-2 flex items-center justify-between shrink-0 select-none border-b border-[#1F1F1B]">
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={handleFormatCode}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors text-[11px]"
-                title="Format / Beautify code"
+                onClick={() => setIsSidebarOpen((prev) => !prev)}
+                className="rounded-lg p-1.5 text-[#5F5D56] transition-colors hover:bg-[#1C1C19] hover:text-[#F2EFE6] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#FF6A3D]"
+                aria-label={isSidebarOpen ? "Collapse problem spec" : "Expand problem spec"}
+                title={isSidebarOpen ? "Collapse problem spec (⌘B)" : "Expand problem spec (⌘B)"}
               >
-                <AlignLeft className="h-3 w-3" />
-                <span>{formattedCode ? "Formatted" : "Format"}</span>
+                {isSidebarOpen ? (
+                  <PanelLeftClose className="h-4 w-4 stroke-[1.5]" />
+                ) : (
+                  <PanelLeft className="h-4 w-4 stroke-[1.5]" />
+                )}
               </button>
 
-              <button
-                type="button"
-                onClick={handleResetStarterCode}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors text-[11px]"
-                title="Reset to starter code"
-              >
-                <RotateCcw className="h-3 w-3" />
-                <span>Reset</span>
+              <span className="font-mono text-xs text-[#AAA69B]">solution.js</span>
+            </div>
+
+            <div className="flex items-center gap-0.5">
+              <button type="button" onClick={handleFormatCode} className={ghostBtn} title="Format code">
+                <AlignLeft className="h-3.5 w-3.5 stroke-[1.5]" />
+                <span className="hidden sm:inline">{formattedCode ? "Formatted" : "Format"}</span>
               </button>
 
-              <button
-                type="button"
-                onClick={handleCopyCode}
-                className="flex items-center gap-1 px-2.5 py-1 rounded text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors text-[11px]"
-                title="Copy code"
-              >
+              <button type="button" onClick={handleResetStarterCode} className={ghostBtn} title="Reset to starter code">
+                <RotateCcw className="h-3.5 w-3.5 stroke-[1.5]" />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+
+              <button type="button" onClick={handleCopyCode} className={ghostBtn} title="Copy code">
                 {copiedCode ? (
                   <>
-                    <Check className="h-3 w-3 text-[#34D399]" />
-                    <span className="text-[#34D399]">Copied</span>
+                    <Check className="h-3.5 w-3.5 text-[#34D399]" />
+                    <span className="hidden sm:inline text-[#34D399]">Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3 w-3" />
-                    <span>Copy</span>
+                    <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+                    <span className="hidden sm:inline">Copy</span>
                   </>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Monaco Editor Canvas (Background #0D0D12) */}
-          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-[#0D0D12]">
+          {/* Monaco */}
+          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-[#141412]">
             <Editor
               height="100%"
               width="100%"
@@ -852,7 +789,7 @@ export default function ChallengeWorkspacePage() {
               onMount={handleEditorDidMount}
               theme="verifai-dark"
               options={{
-                fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontFamily: '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
                 fontSize: 13,
                 lineHeight: 22,
                 minimap: { enabled: false },
@@ -861,14 +798,16 @@ export default function ChallengeWorkspacePage() {
                 cursorBlinking: "smooth",
                 cursorSmoothCaretAnimation: "on",
                 bracketPairColorization: { enabled: true },
-                renderLineHighlight: "all",
+                renderLineHighlight: "line",
                 lineNumbersMinChars: 3,
-                padding: { top: 14, bottom: 14 },
+                padding: { top: 16, bottom: 16 },
                 automaticLayout: true,
                 tabSize: 2,
+                overviewRulerLanes: 0,
+                hideCursorInOverviewRuler: true,
                 scrollbar: {
-                  vertical: "visible",
-                  horizontal: "visible",
+                  vertical: "auto",
+                  horizontal: "auto",
                   verticalScrollbarSize: 8,
                   horizontalScrollbarSize: 8,
                   useShadows: false,
@@ -876,7 +815,6 @@ export default function ChallengeWorkspacePage() {
               }}
             />
 
-            {/* Sliding Test Results Console with Custom Input & Interactive Terminal */}
             <TestResultsConsole
               isOpen={isConsoleOpen}
               onClose={() => setIsConsoleOpen(false)}
@@ -900,7 +838,7 @@ export default function ChallengeWorkspacePage() {
             />
           </div>
 
-          {/* Editor Footer Bar */}
+          {/* Footer */}
           <div className="shrink-0">
             <EditorFooterBar
               cursorPosition={cursorPosition}
@@ -920,20 +858,10 @@ export default function ChallengeWorkspacePage() {
         </section>
       </div>
 
-      {/* Floating Draggable Animated AI Code Companion ("Hola Buddy") */}
-      <AnimatedCodeCompanion
-        isTyping={isTyping}
-        keystrokeCount={keystrokeCount}
-        isRunningTests={isRunningTests}
-        testsPassed={testsPassed}
-        onOpenTerminal={() => {
-          setIsConsoleOpen(true);
-          setConsoleTab("terminal");
-        }}
-        onRunTests={handleRunTests}
-      />
+      {/* Floating coding companion */}
+      {isCompanionVisible && <AnimatedCodeCompanion keystrokeCount={keystrokeCount} />}
 
-      {/* SUBMISSION VERIFICATION SEQUENCE MODAL */}
+      {/* Submission verification modal */}
       <VerificationModal
         isOpen={isVerificationOpen}
         submission={submissionResult}
@@ -944,7 +872,7 @@ export default function ChallengeWorkspacePage() {
         onRetry={handleSubmitSolution}
       />
 
-      {/* FINAL RESULT SCREEN MODAL */}
+      {/* Final result modal */}
       <ResultScreenModal
         isOpen={isResultOpen}
         aiReviewData={submissionResult}

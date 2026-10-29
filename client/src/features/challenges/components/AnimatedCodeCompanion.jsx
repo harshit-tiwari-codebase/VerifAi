@@ -1,285 +1,162 @@
-/**
- * Pixel coding boy. Pure SVG, no image asset, no text, no effects.
- * Each keystroke makes one hand tap the keyboard, alternating left / right.
- * Props: keystrokeCount (number) - increments on every keystroke.
- */
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const PX = 3; // size of one "pixel" (smaller = smaller boy)
-const W = 32;
-const H = 30;
-const STORAGE_KEY = "verifai_minimal_boy_pos";
-const HIDDEN_KEY = "verifai_minimal_boy_hidden";
-const ICON_W = 12; // mini "peek" icon grid (shown when hidden)
-const ICON_H = 8;
+const WIDTH = 112;
+const HEIGHT = 140;
+const POSITION_KEY = "verifai_companion_position";
 
-const C = {
-  line: "#14151f",
-  skin: "#f2c29b",
-  skinShade: "#d9a07a",
-  blush: "#f0907f",
-  hair: "#3b3057",
-  hairHi: "#6a58a8",
-  hood: "#7c5cff",
-  hoodShade: "#5b3fd6",
-  sleeve: "#9378ff",
-  string: "#e8e8f5",
-  phone: "#38bdf8",
-  phoneDark: "#0ea5e9",
-  glass: "#dbeafe",
-  white: "#ffffff",
-  desk: "#23263a",
-  key: "#3a3e5a",
-};
-
-const R = ({ x, y, w, h, c }) => <rect x={x} y={y} width={w} height={h} fill={c} />;
-
-function tap(el) {
-  if (!el || !el.animate) return;
-  el.getAnimations().forEach((a) => a.cancel()); // restart cleanly on fast typing
-  el.animate(
-    [
-      { transform: "translateY(0px)" },
-      { transform: "translateY(-2px)", offset: 0.4 },
-      { transform: "translateY(0px)" },
-    ],
-    { duration: 110, easing: "ease-out" }
-  );
+function clampPosition(position) {
+  return {
+    x: Math.max(12, Math.min(window.innerWidth - WIDTH - 12, position.x)),
+    y: Math.max(68, Math.min(window.innerHeight - HEIGHT - 12, position.y)),
+  };
 }
 
-const clampPos = (p) => ({
-  x: Math.min(window.innerWidth - W * PX - 6, Math.max(6, p.x)),
-  y: Math.min(window.innerHeight - H * PX - 6, Math.max(50, p.y)),
-});
+function readSavedPosition() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(POSITION_KEY));
+    if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+      return clampPosition(saved);
+    }
+  } catch {
+    // Position persistence is optional; use the default placement when storage is unavailable.
+  }
+
+  return clampPosition({
+    x: window.innerWidth - WIDTH - 20,
+    y: window.innerHeight - HEIGHT - 20,
+  });
+}
 
 export default function AnimatedCodeCompanion({ keystrokeCount = 0 }) {
-  const leftHand = useRef(null);
-  const rightHand = useRef(null);
-  const prevCount = useRef(keystrokeCount);
-  const nextIsLeft = useRef(true);
-
-  // Tap exactly once per new keystroke, alternating hands
-  useLayoutEffect(() => {
-    if (keystrokeCount === prevCount.current) return;
-    prevCount.current = keystrokeCount;
-    tap(nextIsLeft.current ? leftHand.current : rightHand.current);
-    nextIsLeft.current = !nextIsLeft.current;
-  }, [keystrokeCount]);
-
-  // Draggable, position remembered
-  const [pos, setPos] = useState(() => {
-    if (typeof window === "undefined") return { x: 800, y: 500 };
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
-        return clampPos(saved);
-      }
-    } catch (_) {}
-    return clampPos({ x: window.innerWidth - 130, y: window.innerHeight - 120 });
-  });
+  const [position, setPosition] = useState(readSavedPosition);
   const drag = useRef(null);
 
-  // Click the boy to hide him, click the tiny icon to bring him back
-  const [hidden, setHidden] = useState(() => {
-    try {
-      return localStorage.getItem(HIDDEN_KEY) === "1";
-    } catch (_) {
-      return false;
-    }
-  });
-  const setHiddenSaved = (v) => {
-    setHidden(v);
-    try {
-      localStorage.setItem(HIDDEN_KEY, v ? "1" : "0");
-    } catch (_) {}
-  };
-
   useEffect(() => {
-    const onResize = () => setPos((p) => clampPos(p));
+    const onResize = () => setPosition((current) => clampPosition(current));
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const onPointerDown = (e) => {
-    if (e.button !== 0) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = { mx: e.clientX, my: e.clientY, sx: pos.x, sy: pos.y, moved: false };
+  const handlePointerDown = (event) => {
+    if (event.button !== 0) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = {
+      pointerX: event.clientX,
+      pointerY: event.clientY,
+      startX: position.x,
+      startY: position.y,
+    };
   };
-  const onPointerMove = (e) => {
+
+  const handlePointerMove = (event) => {
     if (!drag.current) return;
-    if (Math.abs(e.clientX - drag.current.mx) > 4 || Math.abs(e.clientY - drag.current.my) > 4) {
-      drag.current.moved = true;
-    }
-    setPos(
-      clampPos({
-        x: drag.current.sx + e.clientX - drag.current.mx,
-        y: drag.current.sy + e.clientY - drag.current.my,
+    setPosition(
+      clampPosition({
+        x: drag.current.startX + event.clientX - drag.current.pointerX,
+        y: drag.current.startY + event.clientY - drag.current.pointerY,
       })
     );
   };
-  const onPointerUp = () => {
+
+  const handlePointerUp = () => {
     if (!drag.current) return;
-    const wasClick = !drag.current.moved;
     drag.current = null;
-    if (wasClick) {
-      setHiddenSaved(true);
-      return;
-    }
-    setPos((p) => {
+    setPosition((current) => {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
-      } catch (_) {}
-      return p;
+        localStorage.setItem(POSITION_KEY, JSON.stringify(current));
+      } catch {
+        // Position persistence is optional; dragging still works for this session.
+      }
+      return current;
     });
   };
-
-  if (hidden) {
-    return (
-      <button
-        type="button"
-        aria-label="Show coding boy"
-        onClick={() => setHiddenSaved(false)}
-        style={{
-          position: "fixed",
-          left: pos.x + (W * PX - ICON_W * PX) / 2,
-          top: pos.y + H * PX - ICON_H * PX,
-          zIndex: 60,
-          padding: 0,
-          border: 0,
-          background: "transparent",
-          cursor: "pointer",
-          lineHeight: 0,
-        }}
-      >
-        <svg
-          width={ICON_W * PX}
-          height={ICON_H * PX}
-          viewBox={`0 0 ${ICON_W} ${ICON_H}`}
-          shapeRendering="crispEdges"
-          style={{ display: "block" }}
-        >
-          <R x={4} y={0} w={4} h={1} c={C.hair} />
-          <R x={2} y={1} w={8} h={2} c={C.hair} />
-          <R x={2} y={3} w={8} h={5} c={C.skin} />
-          <R x={0} y={3} w={2} h={4} c={C.phone} />
-          <R x={10} y={3} w={2} h={4} c={C.phone} />
-          <R x={3} y={4} w={2} h={2} c={C.line} />
-          <R x={7} y={4} w={2} h={2} c={C.line} />
-          <R x={5} y={4} w={2} h={1} c={C.line} />
-        </svg>
-      </button>
-    );
-  }
 
   return (
     <div
       aria-hidden="true"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
+      className="companion-float"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
       style={{
-        position: "fixed",
-        left: pos.x,
-        top: pos.y,
-        zIndex: 60,
-        cursor: "grab",
-        userSelect: "none",
+        left: position.x,
+        top: position.y,
         touchAction: "none",
       }}
+      title={`Coding companion · ${keystrokeCount} keystrokes`}
     >
       <svg
-        width={W * PX}
-        height={H * PX}
-        viewBox={`0 0 ${W} ${H}`}
-        shapeRendering="crispEdges"
-        style={{ display: "block", imageRendering: "pixelated" }}
+        width={WIDTH}
+        height={HEIGHT}
+        viewBox="0 0 112 140"
+        role="presentation"
+        style={{ display: "block", overflow: "visible" }}
       >
-        {/* Hoodie body */}
-        <R x={5} y={17} w={22} h={8} c={C.line} />
-        <R x={6} y={18} w={20} h={7} c={C.hood} />
-        <R x={10} y={17} w={12} h={2} c={C.hoodShade} />
-        <R x={13} y={19} w={1} h={3} c={C.string} />
-        <R x={18} y={19} w={1} h={3} c={C.string} />
+        <defs>
+          <linearGradient id="companion-head-top" x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor="#FFB08E" />
+            <stop offset="1" stopColor="#FF6A3D" />
+          </linearGradient>
+          <linearGradient id="companion-head-front" x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor="#383832" />
+            <stop offset="1" stopColor="#22221E" />
+          </linearGradient>
+          <linearGradient id="companion-body-front" x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor="#30302B" />
+            <stop offset="1" stopColor="#171714" />
+          </linearGradient>
+        </defs>
 
-        {/* Neck */}
-        <R x={14} y={16} w={4} h={2} c={C.skinShade} />
-        <R x={15} y={18} w={2} h={1} c={C.skinShade} />
+        <ellipse cx="57" cy="128" rx="33" ry="5" fill="#000000" opacity=".42" />
 
-        {/* Head */}
-        <R x={8} y={4} w={16} h={13} c={C.line} />
-        <R x={9} y={5} w={14} h={11} c={C.skin} />
+        <path d="M56 19v-7" stroke="#AAA69B" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="56" cy="10" r="4" fill="#FF6A3D" />
 
-        {/* Hair */}
-        <R x={10} y={1} w={3} h={2} c={C.hair} />
-        <R x={14} y={0} w={4} h={3} c={C.hair} />
-        <R x={19} y={1} w={3} h={2} c={C.hair} />
-        <R x={15} y={0} w={2} h={1} c={C.hairHi} />
-        <R x={10} y={1} w={1} h={1} c={C.hairHi} />
-        <R x={9} y={3} w={14} h={4} c={C.hair} />
-        <R x={9} y={7} w={2} h={3} c={C.hair} />
-        <R x={21} y={7} w={2} h={3} c={C.hair} />
-        <R x={12} y={7} w={2} h={1} c={C.hair} />
-        <R x={16} y={7} w={1} h={1} c={C.hair} />
-        <R x={18} y={7} w={2} h={1} c={C.hair} />
-        <R x={12} y={5} w={4} h={1} c={C.hairHi} />
-        <R x={18} y={6} w={2} h={1} c={C.hairHi} />
+        <path
+          d="m37 28 19-11 20 9v27L57 65 37 54Z"
+          fill="#171714"
+          stroke="#414139"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path d="m37 28 19-11 20 9-19 11Z" fill="url(#companion-head-top)" />
+        <path d="m37 28 20 9v28L37 54Z" fill="#414139" />
+        <path d="m57 37 19-11v27L57 65Z" fill="url(#companion-head-front)" />
+        <path
+          d="m61 43 4-2v7l-4 2Zm9-5 3-2v7l-3 2Z"
+          fill="#FFB08E"
+          stroke="#FF6A3D"
+          strokeWidth="1"
+          strokeLinejoin="round"
+        />
+        <path d="m62 55 9-5" stroke="#AAA69B" strokeWidth="1.5" strokeLinecap="round" />
 
-        {/* Headphones */}
-        <R x={7} y={3} w={18} h={1} c={C.phoneDark} />
-        <R x={7} y={3} w={1} h={6} c={C.phoneDark} />
-        <R x={24} y={3} w={1} h={6} c={C.phoneDark} />
-        <R x={5} y={8} w={4} h={7} c={C.line} />
-        <R x={6} y={9} w={2} h={5} c={C.phone} />
-        <R x={6} y={9} w={1} h={1} c={C.white} />
-        <R x={23} y={8} w={4} h={7} c={C.line} />
-        <R x={24} y={9} w={2} h={5} c={C.phone} />
-        <R x={25} y={9} w={1} h={1} c={C.white} />
+        <path d="M49 63v7h15v-7" fill="#22221E" stroke="#414139" strokeWidth="2" />
+        <path
+          d="m31 77 25-13 25 12v32l-25 16-25-14Z"
+          fill="#171714"
+          stroke="#414139"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path d="m31 77 25-13 25 12-25 13Z" fill="#414139" />
+        <path d="m31 77 25 12v35l-25-14Z" fill="#22221E" />
+        <path d="m56 89 25-13v32l-25 16Z" fill="url(#companion-body-front)" />
 
-        {/* Glasses + face */}
-        <R x={10} y={9} w={5} h={4} c={C.line} />
-        <R x={11} y={10} w={3} h={2} c={C.glass} />
-        <R x={12} y={10} w={2} h={2} c={C.line} />
-        <R x={11} y={10} w={1} h={1} c={C.white} />
-        <R x={17} y={9} w={5} h={4} c={C.line} />
-        <R x={18} y={10} w={3} h={2} c={C.glass} />
-        <R x={18} y={10} w={2} h={2} c={C.line} />
-        <R x={20} y={10} w={1} h={1} c={C.white} />
-        <R x={15} y={10} w={2} h={1} c={C.line} />
-        <R x={15} y={12} w={2} h={1} c={C.skinShade} />
-        <R x={10} y={14} w={2} h={1} c={C.blush} />
-        <R x={20} y={14} w={2} h={1} c={C.blush} />
-        <R x={14} y={14} w={1} h={1} c={C.line} />
-        <R x={17} y={14} w={1} h={1} c={C.line} />
-        <R x={15} y={15} w={2} h={1} c={C.line} />
+        <path
+          d="m40 91 16-8 16 8-16 9Z"
+          fill="#1C1C19"
+          stroke="#414139"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <path d="m49 91 7-4 7 4-7 4Z" fill="#FF6A3D" />
+        <path d="M56 95v-5" stroke="#FFD1BB" strokeWidth="1.5" strokeLinecap="round" />
 
-        {/* Sleeves (arms reach to the keyboard) */}
-        <R x={6} y={18} w={5} h={8} c={C.line} />
-        <R x={7} y={18} w={3} h={7} c={C.sleeve} />
-        <R x={21} y={18} w={5} h={8} c={C.line} />
-        <R x={22} y={18} w={3} h={7} c={C.sleeve} />
-
-        {/* Keyboard */}
-        <R x={2} y={24} w={28} h={6} c={C.desk} />
-        <R x={2} y={24} w={28} h={1} c={C.key} />
-        {[4, 7, 10, 13, 16, 19, 22, 25].map((x) => (
-          <R key={`a${x}`} x={x} y={26} w={2} h={1} c={C.key} />
-        ))}
-        {[5, 8, 11, 14, 17, 20, 23].map((x) => (
-          <R key={`b${x}`} x={x} y={28} w={2} h={1} c={C.key} />
-        ))}
-
-        {/* Hands: the only moving parts */}
-        <g ref={leftHand}>
-          <R x={10} y={22} w={5} h={4} c={C.line} />
-          <R x={11} y={23} w={3} h={2} c={C.skin} />
-          <R x={12} y={24} w={1} h={1} c={C.skinShade} />
-        </g>
-        <g ref={rightHand}>
-          <R x={17} y={22} w={5} h={4} c={C.line} />
-          <R x={18} y={23} w={3} h={2} c={C.skin} />
-          <R x={19} y={24} w={1} h={1} c={C.skinShade} />
-        </g>
+        <path d="m28 81-7 5v19l8 3m55-31 8 4v18l-9 5" fill="none" stroke="#AAA69B" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="m34 113 8 5m28 0 8-5" stroke="#414139" strokeWidth="5" strokeLinecap="round" />
+        <path d="M47 125h-8m28 0h8" stroke="#AAA69B" strokeWidth="4" strokeLinecap="round" />
       </svg>
     </div>
   );

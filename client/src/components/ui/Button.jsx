@@ -2,31 +2,31 @@ import { Loader2 } from "lucide-react";
 
 /**
  * Premium Developer-Focused Button System
- * Built on Black + Electric Violet design tokens
+ * Built on charcoal and terracotta design tokens
  * 10px radius, 150-200ms smooth transitions
  */
 
 const VARIANTS = {
   verify:
-    "bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-[0_0_24px_rgba(139,92,246,0.16)] hover:shadow-[0_0_28px_rgba(139,92,246,0.28)] border border-transparent font-medium",
+    "bg-[#FF6A3D] hover:bg-[#E9562F] text-white border border-transparent font-medium",
 
   primary:
-    "bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-[0_0_24px_rgba(139,92,246,0.16)] hover:shadow-[0_0_28px_rgba(139,92,246,0.28)] border border-transparent font-medium",
+    "bg-[#FF6A3D] hover:bg-[#E9562F] text-white border border-transparent font-medium",
 
   secondary:
-    "bg-[#20202A] hover:bg-[#27272A] text-[#E4E4E7] hover:text-[#FAFAFA] border border-[#30303A] hover:border-[#3F3F4A] font-medium",
+    "bg-[#22221E] hover:bg-[#30302B] text-[#E4E0D5] hover:text-[#F2EFE6] border border-[#37372F] hover:border-[#414139] font-medium",
 
   ghost:
-    "bg-transparent hover:bg-[#20202A] text-[#A1A1AA] hover:text-[#FAFAFA] border border-transparent font-medium",
+    "bg-transparent hover:bg-[#22221E] text-[#AAA69B] hover:text-[#F2EFE6] border border-transparent font-medium",
 
   signal:
-    "bg-[#211635] hover:bg-[#38245C] text-[#C4B5FD] hover:text-white border border-[#8B5CF6]/30 font-medium",
+    "bg-[#261912] hover:bg-[#422316] text-[#FFD1BB] hover:text-white border border-[#FF6A3D]/30 font-medium",
 
   danger:
     "bg-[#F87171]/15 hover:bg-[#F87171]/25 text-[#F87171] hover:text-white border border-[#F87171]/30 font-medium",
 
   link:
-    "bg-transparent text-[#A78BFA] hover:text-[#C4B5FD] underline-offset-4 hover:underline p-0 font-medium border-0",
+    "bg-transparent text-[#FFB08E] hover:text-[#FFD1BB] underline-offset-4 hover:underline p-0 font-medium border-0",
 };
 
 const SIZES = {

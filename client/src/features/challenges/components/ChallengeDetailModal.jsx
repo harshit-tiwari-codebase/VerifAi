@@ -72,19 +72,19 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative flex flex-col w-full max-w-5xl h-[90vh] max-h-[850px] bg-[#18181F] border border-[#27272A] rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative flex flex-col w-full max-w-5xl h-[90vh] max-h-[850px] bg-[#171714] border border-[#30302B] rounded-2xl shadow-2xl overflow-hidden">
         {/* Modern Window Title Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#27272A] bg-[#14141B]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#30302B] bg-[#1C1C19]">
           <div className="flex items-center gap-3">
             {/* macOS-style window dots */}
-            <div className="flex items-center gap-1.5 pr-2 border-r border-[#27272A]">
+            <div className="flex items-center gap-1.5 pr-2 border-r border-[#30302B]">
               <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-semibold text-[#FAFAFA]">
+              <span className="font-mono text-xs font-semibold text-[#F2EFE6]">
                 {challenge?.title || "Challenge Specification"}
               </span>
               {challenge?.difficulty && (
@@ -101,7 +101,7 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-[#71717A] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+            className="rounded-lg p-1 text-[#77756D] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
             aria-label="Close modal"
           >
             <X className="h-4 w-4 stroke-[1.75]" />
@@ -110,17 +110,17 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
 
         {/* Modal Body */}
         {loading ? (
-          <div className="flex-1 flex flex-col items-center justify-center space-y-3 bg-[#14141B]">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#8B5CF6] border-t-transparent" />
-            <p className="text-xs font-mono text-[#A1A1AA]">Loading sandbox environment...</p>
+          <div className="flex-1 flex flex-col items-center justify-center space-y-3 bg-[#1C1C19]">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#FF6A3D] border-t-transparent" />
+            <p className="text-xs font-mono text-[#AAA69B]">Loading sandbox environment...</p>
           </div>
         ) : error ? (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#14141B]">
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#1C1C19]">
             <AlertCircle className="h-8 w-8 text-[#F87171] mb-2 stroke-[1.5]" />
             <p className="text-xs font-mono text-[#F87171]">{error}</p>
             <button
               onClick={onClose}
-              className="mt-4 rounded-lg px-3 py-1.5 text-xs font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+              className="mt-4 rounded-lg px-3 py-1.5 text-xs font-mono text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
             >
               Close
             </button>
@@ -128,26 +128,26 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
         ) : (
           <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
             {/* Left Column: Problem Brief */}
-            <div className="flex flex-col border-b lg:border-b-0 lg:border-r border-[#27272A] overflow-y-auto p-6 bg-[#14141B] space-y-6">
+            <div className="flex flex-col border-b lg:border-b-0 lg:border-r border-[#30302B] overflow-y-auto p-6 bg-[#1C1C19] space-y-6">
               <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[#71717A] block mb-2 font-semibold">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#77756D] block mb-2 font-semibold">
                   Problem Specification
                 </span>
-                <div className="text-xs text-[#A1A1AA] whitespace-pre-line leading-relaxed">
+                <div className="text-xs text-[#AAA69B] whitespace-pre-line leading-relaxed">
                   {challenge.description}
                 </div>
               </div>
 
               {challenge.tags && challenge.tags.length > 0 && (
                 <div>
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#71717A] block mb-2 font-semibold">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#77756D] block mb-2 font-semibold">
                     Key Topics
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {challenge.tags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="rounded border border-[#27272A] bg-[#0D0D12] px-2 py-0.5 font-mono text-[11px] text-[#A1A1AA]"
+                        className="rounded border border-[#30302B] bg-[#141412] px-2 py-0.5 font-mono text-[11px] text-[#AAA69B]"
                       >
                         #{tag}
                       </span>
@@ -160,10 +160,10 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
               {(challenge.executionType === "both" || challenge.executionType === "testcases" || !challenge.executionType) && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-[#71717A] font-semibold">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-[#77756D] font-semibold">
                       Public Test Cases ({challenge.testCases?.length || 0})
                     </span>
-                    <span className="text-[10px] font-mono text-[#71717A]">
+                    <span className="text-[10px] font-mono text-[#77756D]">
                       Hidden tests run during verification
                     </span>
                   </div>
@@ -173,24 +173,24 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
                       {challenge.testCases.map((tc, idx) => (
                         <div
                           key={tc._id || idx}
-                          className="rounded-lg border border-[#27272A] bg-[#0D0D12] p-3 text-xs font-mono"
+                          className="rounded-lg border border-[#30302B] bg-[#141412] p-3 text-xs font-mono"
                         >
-                          <div className="text-[10px] text-[#71717A] mb-1 font-semibold">CASE #{idx + 1}</div>
+                          <div className="text-[10px] text-[#77756D] mb-1 font-semibold">CASE #{idx + 1}</div>
                           {tc.input && (
-                            <div className="text-[#A1A1AA] mb-1">
-                              <span className="text-[#71717A]">Input: </span>
-                              <span className="text-[#FAFAFA]">{tc.input}</span>
+                            <div className="text-[#AAA69B] mb-1">
+                              <span className="text-[#77756D]">Input: </span>
+                              <span className="text-[#F2EFE6]">{tc.input}</span>
                             </div>
                           )}
-                          <div className="text-[#A1A1AA]">
-                            <span className="text-[#71717A]">Expected: </span>
+                          <div className="text-[#AAA69B]">
+                            <span className="text-[#77756D]">Expected: </span>
                             <span className="text-[#34D399] font-semibold">{tc.expectedOutput}</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs font-mono text-[#71717A]">No public test cases.</p>
+                    <p className="text-xs font-mono text-[#77756D]">No public test cases.</p>
                   )}
                 </div>
               )}
@@ -198,10 +198,10 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
               {/* AI Evaluation Rubric (shown for 'both' and 'review_only') */}
               {(challenge.executionType === "both" || challenge.executionType === "review_only") && challenge.evaluationCriteria && (
                 <div>
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#71717A] block mb-2 font-semibold">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#77756D] block mb-2 font-semibold">
                     AI Evaluation Rubric
                   </span>
-                  <div className="rounded-lg border border-[#8B5CF6]/30 bg-[#211635] p-3.5 text-xs text-[#C4B5FD] font-mono whitespace-pre-line leading-relaxed">
+                  <div className="rounded-lg border border-[#FF6A3D]/30 bg-[#261912] p-3.5 text-xs text-[#FFD1BB] font-mono whitespace-pre-line leading-relaxed">
                     {challenge.evaluationCriteria}
                   </div>
                 </div>
@@ -209,18 +209,18 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
             </div>
 
             {/* Right Column: Starter Code Preview */}
-            <div className="flex flex-col h-full bg-[#0D0D12] overflow-hidden">
+            <div className="flex flex-col h-full bg-[#141412] overflow-hidden">
               {/* Editor Header */}
-              <div className="flex items-center justify-between px-4 py-2 border-b border-[#27272A] bg-[#111116]">
+              <div className="flex items-center justify-between px-4 py-2 border-b border-[#30302B] bg-[#171714]">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs text-[#A1A1AA]">starter_code.js</span>
-                  <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-[#71717A] border border-[#27272A] bg-[#14141B]">
+                  <span className="font-mono text-xs text-[#AAA69B]">starter_code.js</span>
+                  <span className="rounded px-1.5 py-0.5 text-[10px] font-mono text-[#77756D] border border-[#30302B] bg-[#1C1C19]">
                     read-only
                   </span>
                 </div>
                 <button
                   onClick={handleCopyCode}
-                  className="inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[11px] font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[11px] font-mono text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
                 >
                   {copied ? (
                     <>
@@ -237,23 +237,23 @@ export default function ChallengeDetailModal({ challengeId, isOpen, onClose }) {
               </div>
 
               {/* Starter Code Preview */}
-              <div className="flex-1 overflow-auto p-4 bg-[#0D0D12]">
-                <pre className="font-mono text-xs text-[#E4E4E7] leading-relaxed whitespace-pre-wrap">
+              <div className="flex-1 overflow-auto p-4 bg-[#141412]">
+                <pre className="font-mono text-xs text-[#E4E0D5] leading-relaxed whitespace-pre-wrap">
                   {challenge.starterCode || "// No starter code provided for this challenge."}
                 </pre>
               </div>
 
               {/* Status Bar / Workspace CTA */}
-              <div className="border-t border-[#27272A] bg-[#14141B] px-4 py-3 flex items-center justify-between gap-3">
+              <div className="border-t border-[#30302B] bg-[#1C1C19] px-4 py-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#34D399] shrink-0" />
-                  <span className="text-[11px] font-mono text-[#A1A1AA]">
+                  <span className="text-[11px] font-mono text-[#AAA69B]">
                     Judge0 Isolated Sandbox & AI Review active.
                   </span>
                 </div>
                 <Link
                   to={`/challenges/${challenge?.slug || challenge?._id || "rate-limiter"}`}
-                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#8B5CF6] hover:bg-[#7C3AED] px-4 py-2 font-mono text-xs font-semibold text-white transition-all shadow-md active:scale-95"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#FF6A3D] hover:bg-[#E9562F] px-4 py-2 font-mono text-xs font-semibold text-white transition-all shadow-md active:scale-95"
                 >
                   <span>Open Interactive Workspace</span>
                   <ArrowUpRight className="h-3.5 w-3.5" />

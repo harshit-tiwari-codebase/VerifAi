@@ -57,7 +57,7 @@ function IconActionButton({ label, onClick, hoverClass, children }) {
         onClick();
       }}
       aria-label={label}
-      className={`rounded-[8px] p-2 text-[#71717A] transition-colors duration-150 hover:bg-[#27272A] hover:text-[#FAFAFA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] ${hoverClass}`}
+      className={`rounded-[8px] p-2 text-[#77756D] transition-colors duration-150 hover:bg-[#30302B] hover:text-[#F2EFE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6A3D] ${hoverClass}`}
     >
       {children}
     </button>
@@ -98,7 +98,7 @@ export default function ChallengeCard({
     <article
       aria-labelledby={`challenge-title-${challengeId}`}
       onClick={() => onView(challenge)}
-      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[14px] border border-[#27272A] bg-[#18181F] p-4 transition-all duration-150 ease-out hover:bg-[#20202A] hover:border-[#3F3F4A] hover:shadow-[0_0_24px_rgba(139,92,246,0.12)] motion-reduce:transform-none motion-reduce:transition-none"
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[14px] border border-[#30302B] bg-[#171714] p-4 transition-all duration-150 ease-out hover:bg-[#22221E] hover:border-[#414139] hover:shadow-sm motion-reduce:transform-none motion-reduce:transition-none"
     >
       <div className="flex h-full flex-col justify-between gap-4">
         <div>
@@ -109,7 +109,7 @@ export default function ChallengeCard({
                 <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${diffConfig.dot}`} />
                 <span className="capitalize">{challenge?.difficulty || "easy"}</span>
               </Badge>
-              <Badge className="min-w-0 truncate border-[#27272A] bg-[#14141B] text-[#A1A1AA]">
+              <Badge className="min-w-0 truncate border-[#30302B] bg-[#1C1C19] text-[#AAA69B]">
                 {categoryName}
               </Badge>
             </div>
@@ -117,15 +117,15 @@ export default function ChallengeCard({
             <Badge
               className={`shrink-0 ${
                 challenge?.executionType === "both"
-                  ? "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]"
+                  ? "border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB]"
                   : isTestCase
                   ? "border-[#60A5FA]/30 bg-[#60A5FA]/10 text-[#60A5FA]"
-                  : "border-[#8B5CF6]/30 bg-[#211635] text-[#C4B5FD]"
+                  : "border-[#FF6A3D]/30 bg-[#261912] text-[#FFD1BB]"
               }`}
               aria-label={`Execution type: ${challenge?.executionType || "both"}`}
             >
               {challenge?.executionType === "both" ? (
-                <BrainCircuit aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2] text-[#8B5CF6]" />
+                <BrainCircuit aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2] text-[#FF6A3D]" />
               ) : isTestCase ? (
                 <TestTube2 aria-hidden="true" className="h-3 w-3 shrink-0 stroke-[2]" />
               ) : (
@@ -150,12 +150,12 @@ export default function ChallengeCard({
 
           <h3
             id={`challenge-title-${challengeId}`}
-            className="line-clamp-1 text-[15px] font-semibold leading-snug tracking-tight text-[#FAFAFA] transition-colors duration-150 group-hover:text-[#C4B5FD]"
+            className="line-clamp-1 text-[15px] font-semibold leading-snug tracking-tight text-[#F2EFE6] transition-colors duration-150 group-hover:text-[#FFD1BB]"
           >
             {challengeTitle}
           </h3>
 
-          <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-relaxed text-[#A1A1AA]">
+          <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-relaxed text-[#AAA69B]">
             {challenge?.description || "No description provided."}
           </p>
 
@@ -164,13 +164,13 @@ export default function ChallengeCard({
               {challenge.tags.slice(0, 3).map((tag, idx) => (
                 <span
                   key={`${tag}-${idx}`}
-                  className="rounded-[6px] border border-[#27272A] bg-[#14141B] px-2 py-0.5 text-[10.5px] font-mono text-[#71717A] transition-colors group-hover:text-[#A1A1AA]"
+                  className="rounded-[6px] border border-[#30302B] bg-[#1C1C19] px-2 py-0.5 text-[10.5px] font-mono text-[#77756D] transition-colors group-hover:text-[#AAA69B]"
                 >
                   #{tag}
                 </span>
               ))}
               {challenge.tags.length > 3 && (
-                <span className="text-[10.5px] font-mono text-[#52525B]" aria-label={`${challenge.tags.length - 3} additional tags`}>
+                <span className="text-[10.5px] font-mono text-[#66645D]" aria-label={`${challenge.tags.length - 3} additional tags`}>
                   +{challenge.tags.length - 3}
                 </span>
               )}
@@ -179,11 +179,11 @@ export default function ChallengeCard({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 border-t border-[#27272A] pt-3">
-          <div className="flex min-w-0 items-center gap-2 text-[11px] text-[#71717A]">
+        <div className="flex items-center justify-between gap-3 border-t border-[#30302B] pt-3">
+          <div className="flex min-w-0 items-center gap-2 text-[11px] text-[#77756D]">
             <span
               aria-hidden="true"
-              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#211635] text-[9.5px] font-semibold text-[#C4B5FD] border border-[#8B5CF6]/30"
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#261912] text-[9.5px] font-semibold text-[#FFD1BB] border border-[#FF6A3D]/30"
             >
               {(challenge?.createdBy?.name || "V")[0].toUpperCase()}
             </span>
@@ -196,7 +196,7 @@ export default function ChallengeCard({
                 <IconActionButton
                   label={`Edit challenge: ${challengeTitle}`}
                   onClick={() => onEdit(challenge)}
-                  hoverClass="hover:text-[#FAFAFA] focus-visible:ring-[#8B5CF6]"
+                  hoverClass="hover:text-[#F2EFE6] focus-visible:ring-[#FF6A3D]"
                 >
                   <Edit2 aria-hidden="true" className="h-3.5 w-3.5 stroke-[1.5]" />
                 </IconActionButton>

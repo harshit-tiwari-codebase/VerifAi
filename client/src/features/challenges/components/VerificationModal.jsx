@@ -97,31 +97,31 @@ export default function VerificationModal({
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
     >
-      <div className="w-full max-w-lg bg-[#18181F] border border-[#27272A] rounded-[14px] shadow-[0_0_24px_rgba(139,92,246,0.16)] overflow-hidden font-sans text-[#FAFAFA]">
+      <div className="w-full max-w-lg bg-[#171714] border border-[#30302B] rounded-[14px] shadow-sm overflow-hidden font-sans text-[#F2EFE6]">
         {/* Subtle linear progress bar with brand gradient */}
-        <div className="w-full bg-[#14141B] h-1 overflow-hidden">
+        <div className="w-full bg-[#1C1C19] h-1 overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ease-out ${
               isFailed
                 ? "bg-[#F87171]"
-                : "bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#A78BFA]"
+                : "bg-gradient-to-r from-[#E9562F] via-[#FF6A3D] to-[#FFB08E]"
             }`}
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#27272A] bg-[#14141B]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#30302B] bg-[#1C1C19]">
           <div className="flex items-center gap-2">
             {!isCompleted && !isFailed && (
-              <Loader2 className="h-4 w-4 text-[#8B5CF6] animate-spin" />
+              <Loader2 className="h-4 w-4 text-[#FF6A3D] animate-spin" />
             )}
             {isCompleted && (
               <CheckCircle2 className="h-4 w-4 text-[#34D399]" />
             )}
             {isFailed && <XCircle className="h-4 w-4 text-[#F87171]" />}
 
-            <h3 className="text-sm font-semibold text-[#FAFAFA]">
+            <h3 className="text-sm font-semibold text-[#F2EFE6]">
               {isCompleted
                 ? "Submission Result"
                 : isFailed
@@ -132,7 +132,7 @@ export default function VerificationModal({
 
           <button
             onClick={onCancel}
-            className="p-1 rounded text-[#71717A] hover:text-[#FAFAFA] transition-colors"
+            className="p-1 rounded text-[#77756D] hover:text-[#F2EFE6] transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -142,14 +142,14 @@ export default function VerificationModal({
         <div className="p-5 space-y-4">
           {/* Outcome Banner */}
           {isCompleted && (
-            <div className="space-y-3 pb-2 border-b border-[#27272A]">
+            <div className="space-y-3 pb-2 border-b border-[#30302B]">
               <div className="flex items-center justify-between">
                 <span className="text-xl font-bold text-[#34D399]">
                   Accepted
                 </span>
-                <span className="text-sm font-mono text-[#A1A1AA]">
+                <span className="text-sm font-mono text-[#AAA69B]">
                   Score:{" "}
-                  <strong className="text-[#FAFAFA] text-base">
+                  <strong className="text-[#F2EFE6] text-base">
                     {finalScore === null ? "Manual review required" : finalScore}
                   </strong>
                   {finalScore !== null && "/100"}
@@ -157,16 +157,16 @@ export default function VerificationModal({
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                <div className="p-2.5 rounded-[10px] bg-[#14141B] border border-[#27272A]">
-                  <span className="text-[#71717A] block text-[11px]">
+                <div className="p-2.5 rounded-[10px] bg-[#1C1C19] border border-[#30302B]">
+                  <span className="text-[#77756D] block text-[11px]">
                     Test Cases
                   </span>
-                  <span className="text-[#FAFAFA] font-semibold text-sm">
+                  <span className="text-[#F2EFE6] font-semibold text-sm">
                     {passedCount} / {totalCount} Passed
                   </span>
                 </div>
-                <div className="p-2.5 rounded-[10px] bg-[#14141B] border border-[#27272A]">
-                  <span className="text-[#71717A] block text-[11px]">
+                <div className="p-2.5 rounded-[10px] bg-[#1C1C19] border border-[#30302B]">
+                  <span className="text-[#77756D] block text-[11px]">
                     Verification
                   </span>
                   <span className="text-[#34D399] font-semibold text-sm">
@@ -196,7 +196,7 @@ export default function VerificationModal({
                     : "Evaluation Error"}
                 </span>
               </div>
-              <div className="p-3 rounded-[10px] bg-[#14141B] border border-[#27272A] text-xs font-mono text-[#F87171] whitespace-pre-wrap max-h-44 overflow-y-auto leading-relaxed">
+              <div className="p-3 rounded-[10px] bg-[#1C1C19] border border-[#30302B] text-xs font-mono text-[#F87171] whitespace-pre-wrap max-h-44 overflow-y-auto leading-relaxed">
                 {submission?.errorMessage ||
                   submission?.executionResult?.compileOutput ||
                   error ||
@@ -219,28 +219,28 @@ export default function VerificationModal({
                     </div>
                   ) : stage.isActive ? (
                     <div className="h-4 w-4 flex items-center justify-center">
-                      <Loader2 className="h-3.5 w-3.5 text-[#8B5CF6] animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 text-[#FF6A3D] animate-spin" />
                     </div>
                   ) : (
                     <div className="h-4 w-4 rounded-full flex items-center justify-center">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#52525B]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#66645D]" />
                     </div>
                   )}
 
                   <span
                     className={`${
                       stage.isDone
-                        ? "text-[#FAFAFA]"
+                        ? "text-[#F2EFE6]"
                         : stage.isActive
-                        ? "text-[#A78BFA] font-medium"
-                        : "text-[#71717A]"
+                        ? "text-[#FFB08E] font-medium"
+                        : "text-[#77756D]"
                     }`}
                   >
                     {stage.label}
                   </span>
                 </div>
 
-                <span className="font-mono text-[11px] text-[#71717A]">
+                <span className="font-mono text-[11px] text-[#77756D]">
                   {stage.isDone
                     ? "Passed"
                     : stage.isActive
@@ -252,12 +252,12 @@ export default function VerificationModal({
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-3 border-t border-[#27272A] flex items-center justify-end gap-2.5">
+          <div className="pt-3 border-t border-[#30302B] flex items-center justify-end gap-2.5">
             {isFailed && (
               <button
                 type="button"
                 onClick={onRetry}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] text-xs font-mono font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] text-xs font-mono font-medium bg-[#FF6A3D] hover:bg-[#E9562F] text-white transition-colors"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 <span>Retry Submission</span>
@@ -268,7 +268,7 @@ export default function VerificationModal({
               <button
                 type="button"
                 onClick={() => onComplete && onComplete(submission)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-mono font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-colors shadow-[0_0_24px_rgba(139,92,246,0.16)]"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-mono font-medium bg-[#FF6A3D] hover:bg-[#E9562F] text-white transition-colors shadow-sm"
               >
                 <span>View Full AI Breakdown</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -279,7 +279,7 @@ export default function VerificationModal({
               <button
                 type="button"
                 onClick={onCancel}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#20202A] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-xs font-mono text-[#AAA69B] hover:text-[#F2EFE6] hover:bg-[#22221E] transition-colors"
               >
                 Cancel
               </button>

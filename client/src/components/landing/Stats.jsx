@@ -65,27 +65,27 @@ function Stat({ stat, active }) {
   const count = useCountUp(stat.value, active);
 
   return (
-    <div className="group relative border-t border-[#27272A] pt-5">
+    <div className="group relative border-t border-[#30302B] pt-5">
       {/* violet line that sweeps across the top on hover */}
       <span
         aria-hidden="true"
-        className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 bg-[#8B5CF6] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-x-100 motion-reduce:transition-none"
+        className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 bg-[#FF6A3D] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-x-100 motion-reduce:transition-none"
       />
 
-      <p className="font-display text-4xl font-semibold tracking-tight text-[#FAFAFA] tabular-nums transition-[transform,color] duration-300 ease-out group-hover:-translate-y-1 group-hover:text-[#C4B5FD] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 md:text-5xl">
-        <span className="whitespace-pre text-[#71717A] transition-colors duration-300 group-hover:text-[#8B5CF6]">
+      <p className="font-display text-4xl font-semibold tracking-tight text-[#F2EFE6] tabular-nums transition-[transform,color] duration-300 ease-out group-hover:-translate-y-1 group-hover:text-[#FFD1BB] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 md:text-5xl">
+        <span className="whitespace-pre text-[#77756D] transition-colors duration-300 group-hover:text-[#FF6A3D]">
           {stat.prefix}
         </span>
         {count}
-        <span className="whitespace-pre text-lg font-normal text-[#71717A] transition-colors duration-300 group-hover:text-[#8B5CF6] md:text-xl">
+        <span className="whitespace-pre text-lg font-normal text-[#77756D] transition-colors duration-300 group-hover:text-[#FF6A3D] md:text-xl">
           {stat.suffix}
         </span>
       </p>
 
-      <p className="mt-4 font-sans text-sm font-medium text-[#FAFAFA]">
+      <p className="mt-4 font-sans text-sm font-medium text-[#F2EFE6]">
         {stat.label}
       </p>
-      <p className="mt-1 font-sans text-sm leading-relaxed text-[#71717A] transition-colors duration-300 group-hover:text-[#A1A1AA]">
+      <p className="mt-1 font-sans text-sm leading-relaxed text-[#77756D] transition-colors duration-300 group-hover:text-[#AAA69B]">
         {stat.detail}
       </p>
     </div>

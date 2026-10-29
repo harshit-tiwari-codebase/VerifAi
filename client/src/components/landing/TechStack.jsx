@@ -51,14 +51,14 @@ export default function TechStack() {
   return (
     <section id="stack" className="container-xl py-24 relative">
       <div className="mb-14 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[#A1A1AA] font-sans text-xs font-medium mb-3">
-          <Server className="h-3.5 w-3.5 text-[#8B5CF6]" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#30302B] bg-[#1C1C19] text-[#AAA69B] font-sans text-xs font-medium mb-3">
+          <Server className="h-3.5 w-3.5 text-[#FF6A3D]" />
           <span>Production Architecture</span>
         </div>
-        <h2 className="text-3xl md:text-4xl font-semibold text-[#FAFAFA] font-display">
+        <h2 className="text-3xl md:text-4xl font-semibold text-[#F2EFE6] font-display">
           Four production layers. Zero paid infrastructure.
         </h2>
-        <p className="mt-4 text-[#A1A1AA] text-base leading-relaxed font-sans">
+        <p className="mt-4 text-[#AAA69B] text-base leading-relaxed font-sans">
           Engineered from day one for extreme reliability, thread safety, and zero deployment cost utilizing best-in-class free tier services.
         </p>
       </div>
@@ -69,29 +69,29 @@ export default function TechStack() {
           return (
             <div
               key={layer.layer}
-              className="card p-6 border border-[#27272A] hover:border-[#3F3F4A] bg-[#18181F] hover:bg-[#20202A] rounded-2xl transition-all duration-200 relative group flex flex-col justify-between"
+              className="card p-6 border border-[#30302B] hover:border-[#414139] bg-[#171714] hover:bg-[#22221E] rounded-2xl transition-all duration-200 relative group flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="font-display font-semibold text-xs text-[#71717A]">0{idx + 1}</span>
-                  <div className="h-8 w-8 rounded-xl bg-[#211635] border border-[#8B5CF6]/30 flex items-center justify-center text-[#A78BFA]">
+                  <span className="font-display font-semibold text-xs text-[#77756D]">0{idx + 1}</span>
+                  <div className="h-8 w-8 rounded-xl bg-[#261912] border border-[#FF6A3D]/30 flex items-center justify-center text-[#FFB08E]">
                     <Icon className="h-4 w-4" />
                   </div>
                 </div>
 
-                <h3 className="font-display font-semibold text-base text-[#FAFAFA]">
+                <h3 className="font-display font-semibold text-base text-[#F2EFE6]">
                   {layer.layer}
                 </h3>
-                <p className="text-xs font-sans font-medium text-[#A78BFA] mt-0.5">{layer.role}</p>
+                <p className="text-xs font-sans font-medium text-[#FFB08E] mt-0.5">{layer.role}</p>
 
-                <div className="mt-6 space-y-3 pt-4 border-t border-[#27272A]">
+                <div className="mt-6 space-y-3 pt-4 border-t border-[#30302B]">
                   {layer.items.map((item) => (
                     <div key={item.name} className="flex flex-col">
-                      <span className="font-sans text-xs font-medium text-[#FAFAFA] flex items-center gap-1.5">
-                        <span className="h-1 w-1 rounded-full bg-[#8B5CF6]" />
+                      <span className="font-sans text-xs font-medium text-[#F2EFE6] flex items-center gap-1.5">
+                        <span className="h-1 w-1 rounded-full bg-[#FF6A3D]" />
                         {item.name}
                       </span>
-                      <span className="text-[11px] text-[#71717A] pl-2.5 font-sans">{item.note}</span>
+                      <span className="text-[11px] text-[#77756D] pl-2.5 font-sans">{item.note}</span>
                     </div>
                   ))}
                 </div>

@@ -8,7 +8,7 @@ import React, { useState, useRef } from "react";
  * - Base state: Completely transparent fill with a sleek hairline grey outline, PLUS
  *   a continuous kinetic "light sweep" — a soft diagonal beam that glides across the
  *   glyphs on a loop, clipped strictly inside the text.
- * - Hover state (Text only): A burnt-purple CIRCLE glow follows the cursor at a fixed
+ * - Hover state (Text only): A warm orange circle glow follows the cursor at a fixed
  *   420px size. No size animation — instead its COLOR/OPACITY fades in smoothly over
  *   exactly 1.5 seconds the moment the cursor reaches the text, and fades back out the
  *   same way on mouse leave. Clipped strictly inside the text glyphs.
@@ -53,7 +53,7 @@ export default function CinematicTypography({ className = "" }) {
           onMouseMove={handleMouseMove}
           className="relative inline-block cursor-default select-none text-[clamp(3.5rem,14.5vw,15.5rem)] leading-none pointer-events-auto tracking-[-0.02em] font-black transition-all duration-500 ease-out"
           style={{
-            fontFamily: "'Archivo Black', 'Montserrat', -apple-system, sans-serif",
+            fontFamily: "'Manrope', system-ui, sans-serif",
             fontWeight: 900,
           }}
         >
@@ -77,7 +77,7 @@ export default function CinematicTypography({ className = "" }) {
        
 
           {/* =========================================================
-              LAYER 3: BURNT-PURPLE CIRCLE GLOW — STRICTLY INSIDE THE TEXT
+              LAYER 3: WARM ORANGE CIRCLE GLOW — STRICTLY INSIDE THE TEXT
               Fixed circular gradient, fixed 420px size (no spreading).
               Position tracks the cursor instantly; only opacity (the
               color rising in) is transitioned, smoothly, over 1.5s.
@@ -87,7 +87,7 @@ export default function CinematicTypography({ className = "" }) {
             className="pointer-events-none absolute inset-0 select-none"
             style={{
               opacity: isHovered ? 1 : 0,
-              backgroundImage: `radial-gradient(circle closest-side, rgba(216, 170, 255, 1) 0%, rgba(168, 85, 247, 0.9) 20%, rgba(109, 40, 217, 0.6) 40%, rgba(59, 20, 110, 0.3) 65%, transparent 85%)`,
+              backgroundImage: `radial-gradient(circle closest-side, rgba(255, 209, 187, 1) 0%, rgba(255, 106, 61, 0.9) 20%, rgba(201, 72, 39, 0.6) 40%, rgba(111, 44, 29, 0.3) 65%, transparent 85%)`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: `${mousePos.x}% ${mousePos.y}%`,
               backgroundSize: `${GLOW_SIZE}px ${GLOW_SIZE}px`,
