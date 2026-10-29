@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { HelpCircle, ChevronDown } from "lucide-react";
 
 const FAQS = [
@@ -26,73 +26,146 @@ const FAQS = [
   {
     question: "How can VerifAI operate at ₹0 infrastructure cost?",
     answer:
-      "The entire stack is engineered to leverage generous production-grade free tiers: React & Vite on Vercel, Express on Render, MongoDB Atlas free tier, Upstash Redis for Bull queues, Judge0 API via RapidAPI free tier, and Google Gemini / Groq API free quotas.",
+      "The entire stack is engineered to use production-grade free tiers: React & Vite on Vercel, Express on Render, MongoDB Atlas, Upstash Redis for Bull queues, Judge0 via RapidAPI, and Google Gemini / Groq API free quotas.",
   },
 ];
 
 export default function FAQSection() {
-  const [openIdx, setOpenIdx] = useState(0);
+  const [openIdx, setOpenIdx]   = useState(0);
+  const [visible, setVisible]   = useState(false);
+  const sectionRef              = useRef(null);
+  const shouldReduce            = useReducedMotion();
+
+  /* Fires ONCE when the section enters the viewport — not scroll-triggered fade-up */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+      { threshold: 0.08 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="faq" className="container-xl py-24 relative">
-      <div className="mb-16 max-w-2xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#27272A] bg-[#14141B] text-[#A1A1AA] font-sans text-xs font-medium mb-3">
-          <HelpCircle className="h-3.5 w-3.5 text-[#8B5CF6]" />
-          <span>Frequently Asked Questions</span>
-        </div>
-        <h2 className="text-3xl md:text-4xl font-semibold text-[#FAFAFA] font-display">
-          Everything you need to know about VerifAI.
-        </h2>
-        <p className="mt-4 text-[#A1A1AA] text-base leading-relaxed font-sans">
-          Have questions about the evaluation pipeline, sandboxing security, or public verification? We've got answers.
-        </p>
-      </div>
+    <section
+      id="faq"
+      ref={sectionRef}
+      className="relative py-24"
+      style={{ backgroundColor: "#0B0B0A", borderTop: "1px solid #30302B" }}
+    >
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
 
-      <div className="max-w-3xl space-y-3.5">
-        {FAQS.map((faq, idx) => {
-          const isOpen = openIdx === idx;
-          return (
-            <div
-              key={idx}
-              className={`card overflow-hidden border rounded-xl transition-all duration-200 ${
-                isOpen ? "border-[#8B5CF6]/50 bg-[#18181F]" : "border-[#27272A] bg-[#14141B] hover:border-[#3F3F4A]"
-              }`}
+        {/* Header — fades in once on enter */}
+        <motion.div
+          className="mb-14 max-w-2xl"
+          initial={shouldReduce ? {} : { opacity: 0, y: 14 }}
+          animate={visible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.28, ease: "easeOut" }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <HelpCircle className="h-3.5 w-3.5" style={{ color: "#FF6A3D" }} strokeWidth={1.5} />
+            <p
+              className="font-mono text-[10px] uppercase tracking-[0.18em] sm:text-[11px]"
+              style={{ color: "#77756D" }}
             >
-              <button
-                onClick={() => setOpenIdx(isOpen ? -1 : idx)}
-                className="w-full p-5 md:p-6 text-left flex items-center justify-between gap-4"
-              >
-                <span className="font-display font-semibold text-base text-[#FAFAFA]">
-                  {faq.question}
-                </span>
-                <span
-                  className={`h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 transition-all duration-200 ${
-                    isOpen
-                      ? "border-[#8B5CF6]/40 bg-[#211635] text-[#C4B5FD] rotate-180"
-                      : "border-[#27272A] bg-[#20202A] text-[#71717A]"
-                  }`}
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </span>
-              </button>
+              05 — FAQ
+            </p>
+          </div>
+          <h2
+            className="font-display text-3xl font-semibold md:text-4xl"
+            style={{ color: "#F2EFE6", letterSpacing: "-0.02em", lineHeight: 1.1 }}
+          >
+            Everything you need to know about VerifAI.
+          </h2>
+          <p
+            className="mt-4 text-base leading-relaxed font-sans"
+            style={{ color: "#AAA69B", lineHeight: 1.6 }}
+          >
+            Questions about the evaluation pipeline, sandbox security, or public verification?
+          </p>
+        </motion.div>
 
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+        {/* FAQ list — staggered entrance (fires once, not on every scroll) */}
+        <div className="max-w-3xl space-y-2.5">
+          {FAQS.map((faq, idx) => {
+            const isOpen = openIdx === idx;
+
+            return (
+              <motion.div
+                key={idx}
+                initial={shouldReduce ? {} : { opacity: 0, y: 10 }}
+                animate={visible ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: 0.24,
+                  ease: "easeOut",
+                  delay: shouldReduce ? 0 : 0.06 + idx * 0.07,
+                }}
+                className="overflow-hidden rounded-[8px] border transition-colors duration-200"
+                style={{
+                  backgroundColor: isOpen ? "#171714" : "#111110",
+                  borderColor:     isOpen ? "rgba(255,106,61,0.45)" : "#30302B",
+                }}
+              >
+                {/* Question row */}
+                <button
+                  onClick={() => setOpenIdx(isOpen ? -1 : idx)}
+                  className="w-full px-5 py-4 md:px-6 text-left flex items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  style={{ focusRingColor: "#FF6A3D" }}
+                  aria-expanded={isOpen}
+                >
+                  <span
+                    className="font-display font-semibold text-base leading-snug transition-colors duration-200"
+                    style={{ color: isOpen ? "#F2EFE6" : "#D5D1C8" }}
                   >
-                    <div className="px-5 pb-6 md:px-6 text-sm text-[#A1A1AA] leading-relaxed border-t border-[#27272A] pt-4 font-sans">
-                      {faq.answer}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
+                    {faq.question}
+                  </span>
+
+                  {/* Animated chevron */}
+                  <motion.span
+                    animate={shouldReduce ? {} : { rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="h-7 w-7 rounded-[4px] border flex items-center justify-center shrink-0 transition-colors duration-200"
+                    style={{
+                      borderColor:     isOpen ? "rgba(255,106,61,0.35)" : "#30302B",
+                      backgroundColor: isOpen ? "rgba(255,106,61,0.08)" : "#1C1C19",
+                      color:           isOpen ? "#FF6A3D" : "#77756D",
+                    }}
+                  >
+                    <ChevronDown className="h-4 w-4" strokeWidth={1.5} />
+                  </motion.span>
+                </button>
+
+                {/* Answer panel — height + opacity animate */}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={shouldReduce ? {} : { height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={shouldReduce ? {} : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div
+                        className="px-5 pb-5 md:px-6 pt-0 font-sans text-sm leading-relaxed"
+                        style={{
+                          borderTop: "1px solid #30302B",
+                          color: "#AAA69B",
+                          lineHeight: 1.6,
+                          paddingTop: "1rem",
+                        }}
+                      >
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+
       </div>
     </section>
   );

@@ -32,65 +32,89 @@ export default function HowItWorks() {
   const step = STEPS[active];
 
   return (
-    <section id="flow" className="container-xl py-24">
-      <div className="mb-12 max-w-xl">
-        <p className="eyebrow mb-3 text-violet-400">
-          the pipeline
-        </p>
+    /* bg-base (#0B0B0A) — alternates with bg-raised PipelineSimulator */
+    <section
+      id="flow"
+      className="relative py-20 md:py-28"
+      style={{ backgroundColor: "#0B0B0A", borderTop: "1px solid #30302B" }}
+    >
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+        {/* Section header */}
+        <div className="mb-12 max-w-xl">
+          <p
+            className="font-mono text-[10px] uppercase tracking-[0.18em] sm:text-[11px]"
+            style={{ color: "#77756D" }}
+          >
+            03 — Pipeline
+          </p>
 
-        <h2 className="text-3xl font-semibold text-mist-100 md:text-4xl">
-          Four commands between "submit" and "verified."
-        </h2>
-      </div>
-
-      <div className="grid gap-10 md:grid-cols-[280px_1fr]">
-        {/* Step navigation */}
-        <div className="flex gap-2 overflow-x-auto md:flex-col md:overflow-visible">
-          {STEPS.map((s, i) => (
-            <button
-              key={s.cmd}
-              onClick={() => setActive(i)}
-              className={`flex shrink-0 items-center gap-3 rounded-lg border px-4 py-3 text-left font-mono text-sm transition-all duration-200 md:shrink ${
-                i === active
-                  ? "border-violet-500/50 bg-violet-500/10 text-violet-400 shadow-[0_0_20px_rgba(139,92,246,0.08)]"
-                  : "border-ink-600 bg-transparent text-mist-500 hover:border-violet-500/20 hover:text-mist-300"
-              }`}
-            >
-              <span
-                className={`h-1.5 w-1.5 rounded-full transition-all ${
-                  i === active
-                    ? "bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.8)]"
-                    : "bg-ink-500"
-                }`}
-              />
-
-              {s.cmd}
-            </button>
-          ))}
+          <h2
+            className="mt-3 font-display text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl"
+            style={{ color: "#F2EFE6", letterSpacing: "-0.02em", lineHeight: 1.1 }}
+          >
+            Four commands between "submit" and "verified."
+          </h2>
         </div>
 
-        {/* Active step */}
-        <div
-          className="card relative overflow-hidden animate-rise px-7 py-8"
-          key={active}
-        >
-          {/* Subtle purple moon glow */}
-          <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-violet-600/10 blur-3xl" />
+        <div className="grid gap-8 md:grid-cols-[260px_1fr]">
+          {/* Step navigation */}
+          <div className="flex gap-2 overflow-x-auto md:flex-col md:overflow-visible">
+            {STEPS.map((s, i) => (
+              <button
+                key={s.cmd}
+                onClick={() => setActive(i)}
+                className="flex shrink-0 items-center gap-3 rounded-[4px] border px-4 py-3 text-left font-mono text-sm transition-colors duration-200 md:shrink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{
+                  backgroundColor: i === active ? "#171714" : "transparent",
+                  borderColor:     i === active ? "#FF6A3D" : "#30302B",
+                  color:           i === active ? "#F2EFE6" : "#77756D",
+                  focusRingColor:  "#FF6A3D",
+                }}
+              >
+                {/* Accent dot — only on active tab */}
+                <span
+                  className="h-1.5 w-1.5 rounded-full shrink-0 transition-colors duration-200"
+                  style={{ backgroundColor: i === active ? "#FF6A3D" : "#30302B" }}
+                />
+                {s.cmd}
+              </button>
+            ))}
+          </div>
 
-          <div className="relative">
-            <p className="font-mono text-xs text-violet-400">
+          {/* Active step panel */}
+          <div
+            key={active}
+            className="relative overflow-hidden rounded-[8px] border px-6 py-7"
+            style={{ backgroundColor: "#171714", borderColor: "#30302B" }}
+          >
+            {/* Mono command label */}
+            <p className="font-mono text-xs" style={{ color: "#FF6A3D" }}>
               {step.cmd}
             </p>
 
-            <h3 className="mt-3 text-xl font-semibold text-mist-100 md:text-2xl">
+            <h3
+              className="mt-3 font-display text-xl font-semibold md:text-2xl"
+              style={{ color: "#F2EFE6", lineHeight: 1.2 }}
+            >
               {step.title}
             </h3>
 
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-mist-300 md:text-base">
+            <p
+              className="mt-4 max-w-xl text-sm leading-relaxed md:text-base"
+              style={{ color: "#AAA69B", lineHeight: 1.6 }}
+            >
               {step.body}
             </p>
 
-            <div className="mt-6 rounded-lg border border-ink-600 bg-ink-900 px-4 py-3 font-mono text-xs text-mist-500">
+            {/* Detail row — monospace terminal-style */}
+            <div
+              className="mt-6 rounded-[4px] border px-4 py-3 font-mono text-xs"
+              style={{
+                backgroundColor: "#0B0B0A",
+                borderColor:     "#30302B",
+                color:           "#77756D",
+              }}
+            >
               {step.detail}
             </div>
           </div>
